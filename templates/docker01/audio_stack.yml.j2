@@ -1,0 +1,28 @@
+services:
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    container_name: audioshelf
+    ports:
+      - 8080:80
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - {{ docker_container_data_folder }}/audio/audioshelf/audiobooks:/audiobooks
+      - {{ docker_container_data_folder }}/audio/audioshelf/podcasts:/podcasts
+      - {{ docker_container_config_folder }}/audio/audioshelf/config:/config
+      - {{ docker_container_data_folder }}/audio/audioshelf/metadata:/metadata
+  libation:
+    image: rmcrackan/libation:latest
+    container_name: libation
+    restart: unless-stopped
+    user: 1000:1000
+    environment:
+      - SLEEP_TIME=30m
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - {{ docker_container_config_folder }}/audio/libation/config:/config
+      - {{ docker_container_data_folder }}/audio/libation/logs:/logs
+      - {{ docker_container_data_folder }}/audio/audioshelf/audiobooks/audible:/data

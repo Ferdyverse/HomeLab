@@ -1,0 +1,17 @@
+prometheus.scrape "caddy" {
+    targets = [{
+        __address__ = "localhost:2019",
+    }]
+    forward_to = [prometheus.remote_write.default.receiver]
+    job_name   = "caddy"
+}
+
+prometheus.remote_write "default" {
+    endpoint {
+        url = "{{ prometheus_write_url }}"
+
+        queue_config { }
+
+        metadata_config { }
+    }
+}

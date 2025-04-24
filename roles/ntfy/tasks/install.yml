@@ -1,0 +1,83 @@
+---
+
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
+- name: Stop service
+  ansible.builtin.service:
+    name: ntfy
+    enabled: true
+    state: stopped
+  when: ansible_facts['services']['ntfy.service']['status'] | default('not-found') != 'not-found'
+  become: true
+
+- name: Install Ntfy
+  become: true
+  block:
+    - name: Install dependencies
+      ansible.builtin.apt:
+        update_cache: true
+        pkg:
+          - apt-transport-https
+          - gnupg
+          - expect
+
+    - name: Create ntfy system group
+      ansible.builtin.group:
+        name: "{{ ntfy_system_group }}"
+
+    - name: Create ntfy system user
+      ansible.builtin.user:
+        name: "{{ ntfy_system_user }}"
+        group: "{{ ntfy_system_group }}"
+        append: true
+        shell: /usr/sbin/nologin
+        create_home: false
+
+    - name: Create ntfy directories and set permissions
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: directory
+        owner: "{{ ntfy_system_user if item.set_permission else omit }}"
+        group: "{{ ntfy_system_group if item.set_permission else omit }}"
+        mode: '{{ "0700" if item.set_permission else omit }}'
+      loop:
+        - path: "{{ ntfy_dirs_installation }}"
+          set_permission: false
+        - path: "{{ ntfy_dirs_data }}"
+          set_permission: true
+        - path: "{{ ntfy_dirs_config }}"
+          set_permission: true
+        - path: "{{ ntfy_dirs_cache }}"
+          set_permission: true
+        - path: "{{ ntfy_dirs_attachment }}"
+          set_permission: true
+
+    - name: Add APT-Repository
+      ansible.builtin.deb822_repository:
+        name: ntfy
+        uris: 'https://archive.heckel.io/apt'
+        types: deb
+        suites: stable
+        components: main
+        signed_by: 'https://archive.heckel.io/apt/pubkey.txt'
+        state: present
+
+    - name: Install ntfy
+      ansible.builtin.apt:
+        update_cache: true
+        name: ntfy
+
+    - name: Create the systemd service file from template
+      ansible.builtin.template:
+        src: ntfy.service.j2
+        dest: /etc/systemd/system/ntfy.service
+        mode: "0640"
+
+    - name: Start service
+      ansible.builtin.systemd_service:
+        name: ntfy
+        enabled: true
+        state: started
+        daemon_reload: true
+      become: true

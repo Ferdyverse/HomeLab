@@ -1,0 +1,20 @@
+---
+
+- name: Install caddy
+  ansible.builtin.include_tasks: install.yml
+  tags:
+    - caddy.setup
+
+- name: Install scraper
+  ansible.builtin.include_tasks: tasks/alloy.yml
+  vars:
+    alloy_config_files:
+      - { "src": "alloy/logfiles.alloy.j2", "dest": "logfiles.alloy" }
+      - { "src": "alloy/prometheus.alloy.j2", "dest": "prometehus.alloy" }
+  tags:
+    - caddy.alloy
+
+- name: Generate Caddy config
+  ansible.builtin.include_tasks: configure.yml
+  tags:
+    - caddy.configure

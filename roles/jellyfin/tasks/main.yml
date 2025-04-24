@@ -1,0 +1,52 @@
+---
+
+- name: Install required packages
+  ansible.builtin.apt:
+    pkg:
+      - va-driver-all
+      - ocl-icd-libopencl1
+      - intel-opencl-icd
+      - vainfo
+      - intel-gpu-tools
+
+- name: Change file permissions
+  ansible.builtin.file:
+    path: '{{ item.path }}'
+    owner: '{{ item.owner }}'
+    group: '{{ item.group }}'
+    mode: '{{ item.mode }}'
+  loop:
+    - { "path": "/dev/dri", "owner": "root", "group": "video", "mode": "0755" }
+    - { "path": "/dev/dri/*", "owner": "root", "group": "video", "mode": "0660" }
+
+- name: Create Jellyfin user
+  ansible.builtin.user:
+    name: "{{ jellyfin_user }}"
+    group: "{{ jellyfin_group }}"
+    groups:
+      - video
+      - render
+    state: present
+    shell: /bin/false
+
+- name: Create dirs owned by Jellyfin user
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ jellyfin_user }}"
+    group: "{{ jellyfin_group }}"
+    mode: "0755"
+  loop:
+    - "{{ jellyfin_cache_dir }}"
+    - "{{ jellyfin_data_dir }}"
+    - "{{ jellyfin_log_dir }}"
+    - "{{ jellyfin_config_dir }}"
+
+- name: Edit fstab
+  ansible.builtin.blockinfile:
+    path: "/etc/fstab"
+    block: |
+      192.168.1.12:/volume1/Filme /mnt/hardbase/filme  nfs      defaults    0       0
+      192.168.1.12:/volume1/Serien /mnt/hardbase/serien  nfs      defaults    0       0
+      192.168.1.12:/volume1/video /mnt/hardbase/video  nfs      defaults    0       0
+    validate: mount -a

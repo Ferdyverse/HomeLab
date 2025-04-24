@@ -1,0 +1,49 @@
+---
+
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
+- name: Stop service
+  ansible.builtin.service:
+    name: uptime-kuma
+    enabled: true
+    state: stopped
+  when: ansible_facts['services']['uptime-kuma.service']['status'] | default('not-found') != 'not-found'
+  become: true
+
+- name: Install Uptime Kuma
+  become: true
+  block:
+    - name: Clone new version from GitHub # noqa: latest
+      ansible.builtin.git:
+        repo: '{{ uptimekuma_github_url }}'
+        dest: '{{ uptimekuma_temp_path }}'
+
+    - name: Move install files
+      ansible.builtin.copy:
+        src: '{{ uptimekuma_temp_path }}'
+        dest: '{{ uptimekuma_root_foler }}'
+        owner: root
+        group: root
+        mode: '0755'
+        remote_src: true
+        force: true
+
+    - name: Install Uptimekuma
+      community.general.npm:
+        path: '{{ uptimekuma_path }}'
+
+    - name: Create service
+      ansible.builtin.template:
+        src: uptime-kuma.service.j2
+        dest: '/etc/systemd/system/uptime-kuma.service'
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Start service
+      ansible.builtin.systemd_service:
+        name: uptime-kuma
+        enabled: true
+        daemon_reload: true
+        state: started

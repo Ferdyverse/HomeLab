@@ -1,0 +1,41 @@
+---
+
+- name: Create config dir
+  ansible.builtin.file:
+    path: '{{ item }}'
+    state: directory
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+    mode: '0755'
+    recurse: true
+  become: true
+  loop:
+    - '{{ docker_container_data_folder }}/runner'
+    - '{{ docker_container_config_folder }}/runner'
+
+- name: Copy required config file
+  ansible.builtin.template:
+    src: runner_config.yaml.j2
+    dest: '{{ gitea_runner_config }}'
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+    mode: '0755'
+
+- name: Deploy gitea runner
+  community.docker.docker_container:
+    name: '{{ gitea_runner_name }}'
+    image: '{{ gitea_runner_image }}'
+    restart_policy: "unless-stopped"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - '{{ gitea_runner_config }}:/config.yaml'
+      - '{{ gitea_runner_folder }}/data:/data'
+    env:
+      GITEA_INSTANCE_URL: '{{ gitea_url }}'
+      GITEA_RUNNER_REGISTRATION_TOKEN: "{{ gitea_runner_token }}"
+      GITEA_RUNNER_NAME: '{{ gitea_runner_name }}'
+      GITEA_RUNNER_LABELS: 'docker'
+    networks:
+      - name: "{{ gitea_docker_network_name }}"
+    state: started
+  become: true

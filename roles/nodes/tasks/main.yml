@@ -1,0 +1,50 @@
+---
+
+- name: Install additional packages
+  ansible.builtin.package:
+    name: sudo
+    state: present
+
+- name: Create ansible user
+  ansible.builtin.user:
+    name: ansible
+    comment: Ansible User
+    home: /opt/ansible-pct
+    shell: /bin/sh
+    create_home: true
+    system: true
+
+- name: Create .ssh directory
+  ansible.builtin.file:
+    path: /opt/ansible-pct/.ssh
+    state: directory
+    owner: ansible
+    group: ansible
+    mode: '0700'
+
+- name: Generate SSH key for ansible user
+  community.crypto.openssh_keypair:
+    path: '{{ default_pub_key_folder }}/{{ proxmox_nodes_ssh_key }}'
+    type: ed25519
+    comment: 'ansible'
+    force: true
+    mode: '0600'
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+  delegate_to: localhost
+  become: false
+
+- name: Deploy SSH Public Key
+  ansible.posix.authorized_key:
+    user: "ansible"
+    state: present
+    exclusive: true
+    key: "{{ lookup('file', '{{ default_pub_key_folder }}/{{ proxmox_nodes_ssh_key }}.pub') }}"
+
+- name: Add sudoers entry for ansible user
+  ansible.builtin.copy:
+    content: 'ansible ALL = (root) NOPASSWD: /usr/sbin/pct'
+    dest: /etc/sudoers.d/ansible_pct
+    owner: root
+    group: root
+    mode: '0440'

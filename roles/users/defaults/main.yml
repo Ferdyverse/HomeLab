@@ -1,0 +1,10 @@
+---
+# Default user
+users_username: '{{ default_user }}'
+
+# Homelab Key
+# will search in '~/.ssh/' for the key
+users_homelab_pub_key: '{{ default_pub_key_file }}'
+
+# SSH
+users_sshd_config_file: /etc/ssh/sshd_config

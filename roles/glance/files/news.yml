@@ -1,0 +1,79 @@
+- name: News
+  columns:
+    - size: small
+      widgets:
+        - type: calendar
+          first-day-of-week: monday
+        - type: rss
+          limit: 10
+          collapse-after: 3
+          cache: 12h
+          feeds:
+            - url: https://selfh.st/rss/
+              title: selfh.st
+              limit: 4
+
+        - type: twitch-channels
+          channels:
+            - 5n4fu
+            - jvpeek
+            - feinekatze
+
+    - size: full
+      widgets:
+        - type: group
+          widgets:
+            - type: hacker-news
+            - type: lobsters
+              tags:
+                - linux
+                - unix
+
+        - type: videos
+          channels:
+            - UCU0EcCb7B_Ln-8hR_edLsHw # Joey Does Tech
+            - UCfOrKQtC1tDfGf_fFVb8pYw # TronicsFix
+            - UCnuMwZoIxPK-ilnemcMOUiQ # Stream Clips Germany
+            - UCcDj9XqT2YQERsdAnHGR7xg # YeahMad
+            - UCEEYC7-n3iCQSyZBAZOmpEg # OG Crew
+
+        - type: group
+          widgets:
+            - type: reddit
+              subreddit: homelab
+              show-thumbnails: true
+            - type: reddit
+              subreddit: selfhosted
+              show-thumbnails: true
+
+    - size: small
+      widgets:
+        - type: weather
+          location: Emmendingen, Germany
+          units: metric
+          hour-format: 24h
+
+        - type: change-detection
+          title: Changes
+          instance-url: https://changedetection.berger-em.net
+          token: 4db54a82c3e77925bd1525dbf890c47a
+          collapse-after: 5
+          cache: 1h
+
+        - type: custom-api
+          title: Steam Specials
+          cache: 1h
+          url: https://store.steampowered.com/api/featuredcategories?cc=de
+          template: |
+            <ul class="list list-gap-10 collapsible-container" data-collapse-after="5">
+              {{ range .JSON.Array "specials.items" }}
+              <li>
+                <a class="size-h4 color-highlight block text-truncate" href="https://store.steampowered.com/app/{{ .Int "id" }}/">{{ .String "name" }}</a>
+                <ul class="list-horizontal-text">
+                  <li>{{ div (.Int "final_price" | toFloat) 100 | printf "€%.2f" }}</li>
+                  {{ $discount := .Int "discount_percent" }}
+                  <li{{ if ge $discount 40 }} class="color-positive"{{ end }}>{{ $discount }}% off</li>
+                </ul>
+              </li>
+              {{ end }}
+            </ul>

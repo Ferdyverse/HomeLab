@@ -1,0 +1,25 @@
+{
+  "bolt": {
+    "host": "{{ semaphore_install_path }}/semaphore_db.bolt"
+  },
+  "tmp_path": "{{ semaphore_data_path }}/tmp",
+  "cookie_hash": "{{ lookup('community.general.random_string', length=32, special=false) }}",
+  "cookie_encryption": "{{ lookup('community.general.random_string', length=32, special=false) }}",
+  "access_key_encryption": "{{ semaphore_access_encryption }}",
+  "web_host": "{{ semaphore_url }}",
+  "slack_alert": true,
+  "slack_url": "{{ semaphore_discord_webhook }}/slack",
+  "oidc_providers": {
+    "authentik": {
+      "display_name": "Sign in with Authentik",
+      "provider_url": "https://auth.berger-em.net/application/o/semaphore/",
+      "client_id": "{{ semaphore_auth_client_id }}",
+      "client_secret": "{{ semaphore_auth_client_secret }}",
+      "redirect_url": "{{ semaphore_url }}/api/auth/oidc/authentik/redirect/",
+      "scopes": ["openid", "profile", "email"],
+      "username_claim": "username",
+      "name_claim": "name",
+      "email_claim": "email"
+    }
+  }
+}

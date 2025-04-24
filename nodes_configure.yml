@@ -1,0 +1,9 @@
+---
+
+- name: Setup ansible-pct user and configure environment on Proxmox host
+  hosts: proxmox_nodes
+  become: true
+  gather_facts: false
+
+  roles:
+    - nodes

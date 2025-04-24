@@ -1,0 +1,17 @@
+---
+
+forgejo_codeberg_url: https://codeberg.org/api/v1/repos/forgejo/forgejo/releases/latest
+
+forgejo_version_file: '/home/{{ forgejo_system_user }}/forgejo.txt'
+
+forgejo_binary_path: '/usr/local/bin/forgejo'
+forgejo_work_path: '/var/lib/forgejo'
+forgejo_config_path: '/etc/forgejo'
+
+forgejo_runner_path: '{{ docker_container_data_folder }}/runner'
+
+forgejo_system_user: git
+forgejo_system_group: git
+
+forgejo_admin_user: '{{ default_user }}'
+forgejo_admin_email: 'forgejo@berger-em.de'

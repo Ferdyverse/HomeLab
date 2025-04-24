@@ -1,0 +1,95 @@
+---
+
+# creates and starts containers from container vars with host vars defaults
+- name: Configure containers
+
+  hosts: proxmox_all_lxc
+  gather_facts: false
+
+  tasks:
+
+    - name: Ansible Ping server
+      ansible.builtin.ping:
+      ignore_unreachable: true
+      ignore_errors: true
+      register: pingtest
+
+    - name: Clear host errors
+      ansible.builtin.meta: clear_host_errors
+
+    - name: "Set ansible_user to {{ bootstrap_user }}"
+      ansible.builtin.set_fact:
+        ansible_user: "{{ bootstrap_user }}"
+      when: pingtest.failed | default(pingtest.unreachable) | default(false)
+
+    - name: Install basic packages
+      ansible.builtin.apt:
+        pkg:
+          - sudo
+          - expect
+          - git
+          - curl
+          - vim
+        state: present
+        update_cache: true
+      become: true
+
+    - name: Create default user
+      ansible.builtin.include_role:
+        name: users
+      tags:
+        - user
+
+    - name: Collect facts
+      ansible.builtin.setup:
+      tags:
+        - always
+
+    - name: "Set ansible_user to {{ default_user }}"
+      ansible.builtin.set_fact:
+        ansible_user: "{{ default_user }}"
+      when: pingtest.failed | default(pingtest.unreachable) | default(false)
+
+    - name: Update ssh config
+      ansible.builtin.include_role:
+        name: ssh_config
+      tags:
+        - ssh_config
+
+    - name: Configure/Install Docker
+      when:
+        - ("docker" in inventory_hostname) or ("gitea" in inventory_hostname) or ("authentik" in inventory_hostname)
+      tags:
+        - docker
+      block:
+        - name: Install Docker
+          ansible.builtin.include_role:
+            name: docker
+
+        - name: Deploy host container
+          ansible.builtin.include_tasks: 'tasks/{{ inventory_hostname }}/main.yml'
+
+    - name: 'Configure/Install container'
+      ansible.builtin.include_tasks: tasks/lxc_config.yml
+      vars:
+        container: '{{ lxc }}'
+      loop:
+        - name: adguard
+          role: adguard_home
+          search: dns
+        - name: actualbudget
+        - name: glance
+        - name: semaphore
+        - name: ntfy
+        - name: caddy
+        - name: uptimekuma
+        - name: grafana
+        - name: forgejo
+      loop_control:
+        loop_var: lxc
+
+    - name: Configure/Install Authentik
+      ansible.builtin.include_tasks: tasks/authentik.yml
+      when:
+        - '"authentik" in inventory_hostname'
+      tags: authentik

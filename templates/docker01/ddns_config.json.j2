@@ -1,0 +1,28 @@
+{
+  "cloudflare": [
+    {
+      "authentication": {
+        "api_token": "{{ ddns_cloudflare_token }}"
+      },
+      "zone_id": "{{ ddns_cloudflare_zone }}",
+      "subdomains": [
+        {
+          "name": "home",
+          "proxied": false
+        },
+        {
+          "name": "ntfy",
+          "proxied": false
+        },
+        {
+          "name": "git",
+          "proxied": false
+        }
+      ]
+    }
+  ],
+  "a": true,
+  "aaaa": false,
+  "purgeUnknownRecords": false,
+  "ttl": 300
+}

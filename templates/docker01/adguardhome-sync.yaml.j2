@@ -1,0 +1,50 @@
+# cron expression to run in daemon mode. (default; "" = runs only once)
+cron: "0 */2 * * *"
+
+# runs the synchronisation on startup
+runOnStart: true
+
+# If enabled, the synchronisation task will not fail on single errors, but will log the errors and continue
+continueOnError: false
+
+origin:
+  # url of the origin instance
+  url: http://192.168.1.8
+
+  # apiPath: define an api path if other than "/control"
+  insecureSkipVerify: true # disable tls check
+  username: {{ default_user }}
+  password: {{ passwd_bergefe }}
+
+# replicas instances
+replicas:
+  # url of the replica instance
+  - url: http://192.168.1.13
+    username: {{ default_user }}
+    password: {{ passwd_bergefe }}
+
+# Configure the sync API server, disabled if api port is 0
+api:
+  # Port, default 8080
+  port: 8086
+  # if username and password are defined, basic auth is applied to the sync API
+  username: {{ default_user }}
+  password: {{ passwd_bergefe }}
+  # enable api dark mode
+  darkMode: true
+
+# Configure sync features; by default all features are enabled.
+features:
+  generalSettings: true
+  queryLogConfig: true
+  statsConfig: true
+  clientSettings: true
+  services: true
+  filters: true
+  dhcp:
+    serverConfig: true
+    staticLeases: true
+  dns:
+    serverConfig: true
+    accessLists: true
+    rewrites: true

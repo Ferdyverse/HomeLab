@@ -1,0 +1,126 @@
+{{ ansible_managed | comment(decoration="# ") }}
+
+{% if vhost.www_redir %}
+www.{{ vhost.hostname }} {
+	import ../snippets/tls.conf
+	redir https://{{ vhost.hostname }}{uri} permanent
+}
+{% endif -%}
+
+{{ vhost.hostname }} {
+	import ../snippets/tls.conf
+	{{ 'encode zstd gzip' if vhost.compress else '' }}
+	log {
+		output file {{ caddy_log_path }}/{{ vhost.hostname }}.log {
+			roll_size 100M
+			mode: 660
+		}
+	}
+
+{% if vhost.bind %}
+	bind {{ vhost.bind }}
+{% endif -%}
+
+{% if vhost.root %}
+	root {{ vhost.root }}
+{% endif -%}
+
+{% if vhost.file_server %}
+{% if vhost.file_server_browse %}
+	file_server browse
+{% else %}
+	file_server
+{% endif -%}
+{% endif -%}
+
+{% for respond in vhost.responds %}
+	respond {{ respond }}
+{% endfor -%}
+
+{% for rewrite in vhost.rewrites %}
+	rewrite {{ rewrite }}
+{% endfor -%}
+
+{% if vhost.authentik_enabled %}
+	import ../snippets/authentik.conf
+{% endif %}
+
+{% if vhost.protected_enabled %}
+	import ../snippets/protected.conf
+
+{%- if vhost.protected_remote_ips|length > 0 -%}
+	@protected {
+		client_ip {% for ip in vhost.protected_remote_ips %}{{ ip }} {% endfor %}
+	}
+{%- endif -%}
+
+{% if vhost.protected_header_name %}
+	@protected {
+		header {{ vhost.protected_header_name }} {{ vhost.protected_header_value }}
+	}
+{% endif %}
+{% endif %}
+
+{% if vhost.proxy_host %}
+{% if vhost.protected_enabled %}
+{% if vhost.protected_internal %}
+	handle @protected_internal {
+{% elif vhost.protected_private %}
+	handle @protected_private {
+{% else %}
+	handle @protected {
+{% endif %}
+{% endif %}
+	reverse_proxy {{ vhost.proxy_host }} {
+		# You can add custom settings here
+		{% if vhost.proxy_transparent_disable %} {
+		header_up -X-Forwarded-For
+		header_up -X-Forwarded-Proto
+		header_up -Host
+		{% endif %}
+		{% if "https" in vhost.proxy_host %}
+		transport http {
+			tls
+			tls_insecure_skip_verify
+		}
+		{% endif %}
+	}
+{% if vhost.protected_enabled %}
+}
+{% endif %}
+{% endif %}
+
+{% if vhost.php_fastcgi_enabled %}
+{% if vhost.php_fastcgi_path %}
+	php_fastcgi {{ vhost.php_fastcgi_path }}
+{% else %}
+	php_fastcgi unix//run/php/php-fpm-{{ vhost.name }}.sock
+{% endif %}
+{% endif %}
+
+{%- if vhost.security_headers %}
+	header {
+		# enable HSTS
+		Strict-Transport-Security max-age=31536000;
+
+		# disable clients from sniffing the media type
+		X-Content-Type-Options nosniff
+
+		# clickjacking protection
+		X-Frame-Options DENY
+
+		# keep referrer data off of HTTP connections
+		Referrer-Policy no-referrer-when-downgrade
+	}
+{% endif -%}
+
+{%- if vhost.basicauth %}
+	basicauth {{ vhost.basicauth_path }}* {
+		{{ vhost.basicauth_user }} {{ vhost.basicauth_password }}
+	}
+{% endif %}
+
+{% if vhost.protected_enabled %}
+	respond 403
+{% endif %}
+}

@@ -1,0 +1,15 @@
+[Unit]
+Description=Forgejo
+After=syslog.target
+After=network.target
+[Service]
+RestartSec=2s
+Type=simple
+User={{ forgejo_system_user }}
+Group={{ forgejo_system_group }}
+WorkingDirectory={{ forgejo_work_path }}/
+ExecStart=/usr/local/bin/forgejo web --config /etc/forgejo/app.ini
+Restart=always
+Environment=USER={{ forgejo_system_group }} HOME=/home/{{ forgejo_system_group }} FORGEJO_WORK_DIR={{ forgejo_work_path }}
+[Install]
+WantedBy=multi-user.target

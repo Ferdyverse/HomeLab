@@ -1,0 +1,27 @@
+[Unit]
+Description=Semaphore UI
+Documentation=https://docs.semaphoreui.com/
+Wants=network-online.target
+After=network-online.target
+ConditionPathExists=/usr/bin/semaphore
+ConditionPathExists={{ semaphore_install_path }}/config.json
+
+[Service]
+User=semaphore
+Group=semaphore
+Restart=always
+RestartSec=10s
+Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:~/.local/bin"
+
+ExecStartPre=/bin/bash -c 'source /home/{{ semaphore_username }}/venv/bin/activate \
+                            && python3 -m pip install --upgrade -r /home/{{ semaphore_username }}/requirements.txt'
+ExecStartPre=/bin/bash -c 'source /home/{{ semaphore_username }}/venv/bin/activate \
+                            && ansible-galaxy collection install --upgrade -r /home/{{ semaphore_username }}/requirements.yml \
+                            && ansible-galaxy role install --force -r /home/{{ semaphore_username }}/requirements.yml'
+
+ExecStart=/bin/bash -c 'source /home/{{ semaphore_username }}/venv/bin/activate \
+                        && /usr/bin/semaphore server --config {{ semaphore_install_path }}/config.json'
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target

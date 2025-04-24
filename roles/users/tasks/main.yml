@@ -1,0 +1,28 @@
+---
+
+- name: Create user bergefe
+  ansible.builtin.user:
+    name: "{{ users_username }}"
+    shell: /bin/bash
+    state: present
+    password: "{{ passwd_bergefe | password_hash('sha512') }}"
+    groups: sudo
+    append: true
+  become: true
+
+- name: Deploy SSH Public Key
+  ansible.posix.authorized_key:
+    user: "{{ users_username }}"
+    state: present
+    key: "{{ bergefe_pub_ssh_key }}"
+  become: true
+
+- name: Disable SSH Root Login
+  ansible.builtin.lineinfile:
+    dest: "{{ users_sshd_config_file }}"
+    regexp: "^PermitRootLogin"
+    line: "PermitRootLogin no"
+    state: present
+    backup: true
+  notify: Restart sshd
+  become: true

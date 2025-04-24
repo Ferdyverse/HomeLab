@@ -1,0 +1,10 @@
+{{ ansible_managed | comment(decoration="# ") }}
+@protected_internal {
+    client_ip {% for ip in caddy_homelab_internal_ips %}{{ ip }} {% endfor %}
+
+}
+
+@protected_private {
+    client_ip {% for ip in caddy_homelab_priv_ips %}{{ ip }} {% endfor %}
+
+}

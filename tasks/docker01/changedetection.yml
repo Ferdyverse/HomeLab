@@ -1,0 +1,25 @@
+---
+
+- name: Create dirs
+  ansible.builtin.file:
+    path: '{{ item }}'
+    state: directory
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+    mode: '0755'
+    recurse: true
+  loop:
+    - '{{ docker_container_config_folder }}/changedetection'
+    - '/home/{{ default_user }}/docker/changedetection/'
+
+- name: Create compose file
+  ansible.builtin.template:
+    src: docker01/changes_stack.yml.j2
+    dest: '/home/{{ default_user }}/docker/changedetection/docker-compose.yml'
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+    mode: '0755'
+
+- name: Run `docker compose up`
+  community.docker.docker_compose_v2:
+    project_src: '/home/{{ default_user }}/docker/changedetection'

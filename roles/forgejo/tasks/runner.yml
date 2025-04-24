@@ -1,0 +1,59 @@
+---
+
+- name: Setup forgejo runner
+  become: true
+  block:
+
+    - name: Install Docker
+      ansible.builtin.include_role:
+        name: docker
+
+    - name: Create config dir
+      ansible.builtin.file:
+        path: '{{ item }}'
+        state: directory
+        owner: '{{ default_user }}'
+        group: '{{ default_user }}'
+        mode: '0755'
+        recurse: true
+      loop:
+        - '{{ forgejo_runner_path }}'
+        - '{{ forgejo_runner_path }}/data/.cache'
+        - '/home/{{ default_user }}/docker/runner'
+
+    - name: Create .runner file
+      ansible.builtin.file:
+        path: '{{ forgejo_runner_path }}/data/.runner'
+        state: touch
+        owner: '{{ default_user }}'
+        group: '{{ default_user }}'
+        mode: '0755'
+
+    - name: Create compose file
+      ansible.builtin.template:
+        src: runner.yml.j2
+        dest: '/home/{{ default_user }}/docker/runner/docker-compose.yml'
+        owner: '{{ default_user }}'
+        group: '{{ default_user }}'
+        mode: '0755'
+
+    - name: Register shared token
+      ansible.builtin.shell:
+        cmd: >
+          runuser -u git -- forgejo
+          --config {{ forgejo_config_path }}/app.ini
+          forgejo-cli actions register
+          --secret {{ forgejo_runner_shared_secret }}
+        executable: /bin/bash
+      register: shared_secret
+      changed_when: true
+      ignore_errors: true
+
+    - name: Show secret output
+      ansible.builtin.debug:
+        msg: '{{ shared_secret.stdout_lines }}'
+      when: shared_secret is defined
+
+    - name: Run `docker compose up`
+      community.docker.docker_compose_v2:
+        project_src: '/home/{{ default_user }}/docker/runner/'

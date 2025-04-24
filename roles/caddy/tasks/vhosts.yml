@@ -1,0 +1,12 @@
+---
+
+- name: 'Add vhost {{ vhost.name }}'
+  ansible.builtin.template:
+    src: "{{ vhost.template }}"
+    dest: "{{ caddy_config_path }}/vhosts/{{ vhost.name }}"
+    owner: '{{ caddy_user_name }}'
+    group: '{{ caddy_group_name }}'
+    mode: "0644"
+    lstrip_blocks: true
+  tags: caddy.vhosts
+  notify: Reload caddy

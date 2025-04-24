@@ -1,0 +1,40 @@
+---
+
+ntfy_config_file: "{{ ntfy_dirs_config }}/server.yml"
+ntfy_auth_file: "{{ ntfy_dirs_data }}/user.db"
+
+ntfy_dirs_attachment: "{{ ntfy_dirs_cache }}/attachments"
+ntfy_dirs_cache: /var/cache/ntfy
+ntfy_dirs_config: /etc/ntfy
+ntfy_dirs_data: /var/lib/ntfy
+ntfy_dirs_installation: /usr/bin
+ntfy_dirs_tmp: /tmp/ntfy
+
+ntfy_system_group: ntfy
+ntfy_system_user: ntfy
+
+ntfy_url: https://ntfy.berger-em.net
+
+ntfy_admin_user: "{{ default_user }}"
+ntfy_admin_password: "{{ passwd_bergefe }}"
+
+ntfy_users:
+  - '{ "user": "ansible", "password": {{ ntfy_ansible_password }} }'
+  - '{ "user": "suki", "password": {{ ntfy_suki_password }} }'
+  - '{ "user": "proxmox", "password": {{ passwd_bergefe }} }'
+  - '{ "user": "kuma", "password": {{ passwd_bergefe }} }'
+  - '{ "user": "changes", "password": {{ passwd_bergefe }} }'
+
+# Permissions:
+# read-write (alias: rw)
+# read-only (aliases: read, ro)
+# write-only (aliases: write, wo)
+# deny (alias: none
+ntfy_user_access:
+  - '{ "user": "ansible", "topic": "ansible", "permission": "wo" }'
+  - '{ "user": "suki", "topic": "alerts", "permission": "wo" }'
+  - '{ "user": "suki", "topic": "watchtower", "permission": "wo" }'
+  - '{ "user": "proxmox", "topic": "alerts", "permission": "wo" }'
+  - '{ "user": "proxmox", "topic": "proxmox", "permission": "wo" }'
+  - '{ "user": "kuma", "topic": "kuma", "permission": "wo" }'
+  - '{ "user": "changes", "topic": "changedetection", "permission": "rw" }'

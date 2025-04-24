@@ -1,0 +1,13 @@
+---
+
+# Source script: https://github.com/stevenengland/ntfy_ansible_role/tree/master
+
+- name: Install Ntfy
+  ansible.builtin.include_tasks: install.yml
+  tags:
+    - ntfy.setup
+
+- name: Configure Ntfy
+  ansible.builtin.include_tasks: configuration.yml
+  tags:
+    - ntfy.configure

@@ -1,0 +1,43 @@
+---
+
+# Role based on: https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/install/actualbudget-install.sh
+
+- name: Install nodejs
+  ansible.builtin.include_tasks: nodejs.yml
+
+- name: Get latest release tag from Github
+  when: (latest_release is not defined) or (latest_release == 'latest')
+  run_once: true
+  block:
+    - name: Determine latest GitHub release (local)
+      ansible.builtin.uri:
+        url: '{{ actualbudget_github_url }}'
+        body_format: json
+      register: _github_release
+      until: _github_release.status == 200
+      retries: 5
+
+    - name: Set latest_release
+      ansible.builtin.set_fact:
+        latest_release: "{{ _github_release.json.tag_name
+          | regex_replace('^v?(.*)$', '\\1') }}"
+
+- name: Latest version
+  ansible.builtin.debug:
+    msg: "Latest version {{ latest_release }}"
+
+- name: Check if version file exists
+  ansible.builtin.stat:
+    path: '{{ actualbudget_version_file }}'
+  register: release_file
+
+- name: Get version file
+  ansible.builtin.slurp:
+    src: '{{ actualbudget_version_file }}'
+  register: current_release
+  become: true
+  when: release_file.stat.exists
+
+- name: Install Actualbudget
+  ansible.builtin.include_tasks: install.yml
+  when: (not release_file.stat.exists) or (latest_release not in current_release['content'] | b64decode)

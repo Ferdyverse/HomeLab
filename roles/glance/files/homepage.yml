@@ -1,0 +1,193 @@
+- name: Homepage
+  columns:
+    - size: small
+      widgets:
+        - type: dns-stats
+          service: adguard
+          title: dns1.berger-em.net
+          url: https://dns1.berger-em.net
+          username: ${ADGUARD_USER}
+          password: ${ADGUARD_PASSWORD}
+        - type: dns-stats
+          service: adguard
+          title: dns2.berger-em.net
+          url: https://dns2.berger-em.net
+          username: ${ADGUARD_USER}
+          password: ${ADGUARD_PASSWORD}
+        - type: custom-api
+          title: Gluten VPN
+          cache: 5m
+          url: https://gluten.berger-em.net/v1/publicip/ip
+          headers:
+            x-api-key: ${GLUTEN_API_KEY}
+            Accept: application/json
+          template: |
+              <div>
+                <div class="color-highlight size-h3">{{ .JSON.String "public_ip" }}</div>
+                <div class="size-h5">Public IP</div>
+              </div>
+              <div>
+                <div class="color-highlight size-h3">{{ .JSON.String "city" }} - {{ .JSON.String "country" }}</div>
+                <div class="size-h5">Location</div>
+              </div>
+        - type: bookmarks
+          groups:
+            - links:
+                - title: Amazon
+                  url: https://www.amazon.de/
+                - title: Github
+                  url: https://github.com/
+            - title: Entertainment
+              color: 10 70 50
+              links:
+                - title: Jellyfin
+                  url: https://jellyfin.berger-em.net
+                - title: Netflix
+                  url: https://www.netflix.com/
+                - title: Disney+
+                  url: https://www.disneyplus.com/
+                - title: YouTube
+                  url: https://www.youtube.com/
+            - title: Social
+              color: 200 50 50
+              links:
+                - title: Reddit
+                  url: https://www.reddit.com/
+
+    - size: full
+      widgets:
+        - type: search
+          search-engine: google
+          new-tab: true
+          autofocus: true
+          bangs:
+            - title: YouTube
+              shortcut: "!yt"
+              url: https://www.youtube.com/results?search_query={QUERY}
+            - title: Amazon
+              shortcut: "!am"
+              url: https://www.amazon.de/s?k={QUERY}
+            - title: Github
+              shortcut: "!gh"
+              url: https://github.com/search?q={QUERY}&type=repositories
+        - type: split-column
+          max-columns: 2
+          widgets:
+            - type: monitor
+              cache: 1m
+              title: Network
+              sites:
+                - title: DNS1
+                  url: https://dns1.berger-em.net
+                  icon: di:adguard-home
+                - title: DNS2
+                  url: https://dns1.berger-em.net
+                  icon: di:adguard-home
+                - title: UDM
+                  url: https://udm.berger-em.net
+                  icon: di:ubiquiti-networks
+            - type: monitor
+              title: Infrastructure
+              cache: 1m
+              sites:
+                - title: Authentik
+                  url: https://auth.berger-em.net
+                  icon: di:authentik
+                - title: Grafana
+                  url: https://grafana.berger-em.net
+                  icon: di:grafana
+                - title: Portainer
+                  url: https://portainer.berger-em.net
+                  icon: di:portainer
+                - title: Proxmox
+                  url: https://proxmox.berger-em.net
+                  icon: di:proxmox
+
+            - type: monitor
+              title: Applications
+              cache: 1m
+              sites:
+                - title: Actual Budget
+                  url: https://money.berger-em.net/
+                  icon: di:actual-budget
+                - title: AudiobookShelf
+                  url: https://audiobookshelf.berger-em.net
+                  icon: di:audiobookshelf
+                - title: Home Assistant
+                  url: https://hass.berger-em.net
+                  icon: di:home-assistant
+                - title: Jellyfin
+                  url: https://jellyfin.berger-em.net
+                  icon: di:jellyfin
+                - title: Personal Zoo
+                  url: https://zoo.berger-em.net
+                  icon: di:atuin
+                - title: Paperless
+                  url: https://paperless.berger-em.net
+                  icon: di:paperless-ngx
+                - title: Semaphore
+                  url: https://semaphore.berger-em.net
+                  icon: di:semaphore
+
+            - type: monitor
+              title: Services
+              cache: 1m
+              sites:
+                - title: Changedetection
+                  url: https://changedetection.berger-em.net
+                  icon: di:changedetection
+                - title: Drone
+                  url: https://drone.berger-em.net
+                  icon: si:drone
+                - title: Gitea
+                  url: https://gitea.berger-em.net
+                  icon: di:gitea
+                - title: Hardbase
+                  url: https://hardbase.berger-em.net
+                  icon: di:synology
+                - title: Uptime Kuma
+                  url: https://kuma.berger-em.net
+                  icon: di:uptime-kuma
+                - title: Minimailer
+                  url: https://minimailer.berger-em.net
+                  icon: di:ciphermail
+                - title: Twitch Channel Points
+                  url: https://twitch-points.berger-em.net
+                  icon: di:twitch
+
+            - type: monitor
+              title: Servarr
+              cache: 1m
+              sites:
+                - title: Bazarr
+                  url: https://bazarr.berger-em.net
+                  icon: di:bazarr
+                - title: Radarr
+                  url: https://radarr.berger-em.net
+                  icon: di:radarr
+                - title: Sonarr
+                  url: https://sonarr.berger-em.net
+                  icon: di:sonarr
+                - title: Lidarr
+                  url: https://lidarr.berger-em.net
+                  icon: di:lidarr
+                - title: Readarr
+                  url: https://readarr.berger-em.net
+                  icon: di:readarr
+
+            - type: monitor
+              title: Downloader
+              cache: 1m
+              sites:
+                - title: NZBGet
+                  url: https://nzb.berger-em.net
+                  icon: di:nzbget
+                  alt-status-codes:
+                    - 401
+                    - 403
+                - title: qBittorrent
+                  url: https://qbit.berger-em.net
+                  icon: di:qbittorrent
+                - title: Prowlarr
+                  url: https://prowlarr.berger-em.net
+                  icon: di:prowlarr

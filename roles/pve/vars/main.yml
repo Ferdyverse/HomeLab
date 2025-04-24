@@ -1,0 +1,161 @@
+---
+# We use localhost to connect to the Proxmox API
+# So wee need the vars to be defined here
+
+pve_lxc_container:
+  actualbudget:
+    vmid: 104
+    node: evoli
+    cores: 2
+    memory: 2048
+    disk: 'zfs:10'
+    netif:
+      net0: "name=eth0,gw=192.168.1.1,ip=192.168.1.27/24,bridge=vmbr0,firewall=0,tag=1"
+  authentik:
+    vmid: 114
+    node: "pikachu"
+    cores: 4
+    memory: 4096
+    disk: 'zfs:20'
+    netif:
+      net0: "name=eth0,gw=192.168.1.1,ip=192.168.1.7/24,bridge=vmbr0,firewall=0,tag=1"
+  caddy:
+    vmid: 110
+    node: 'pikachu'
+    coes: 4
+    memory: 4096
+    disk: 'zfs:5'
+    netif:
+      net0: "name=eth0,gw=192.168.1.1,ip=192.168.1.50/24,bridge=vmbr0,firewall=0,tag=1"
+  dns2:
+    vmid: 117
+    node: "pikachu"
+    cores: 2
+    memory: 2048
+    disk: 'zfs:10'
+    netif:
+      net0: "name=eth0,gw=192.168.1.1,ip=192.168.1.8/24,bridge=vmbr0,firewall=0,tag=1"
+    do_update: false
+  docker01:
+    vmid: 106
+    node: "pikachu"
+    cores: 4
+    memory: 4096
+    disk: 'zfs:80'
+    netif:
+      net0: "name=eth0,gw=192.168.1.1,ip=192.168.1.24/24,bridge=vmbr0,firewall=0,tag=1"
+    tags:
+      - ansible
+      - docker
+  docker02:
+    vmid: 112
+    node: "evoli"
+    cores: 2
+    memory: 4096
+    disk: 'zfs:80'
+    netif:
+      net0: "name=eth0,gw=192.168.1.1,ip=192.168.1.30/24,bridge=vmbr0,firewall=0,tag=1"
+    tags:
+      - ansible
+      - docker
+  forgejo:
+    vmid: 119
+    node: "pikachu"
+    cores: 2
+    memory: 2048
+    disk: 'zfs:35'
+    netif:
+      net0: "name=eth0,gw=192.168.1.1,ip=192.168.1.34/24,bridge=vmbr0,firewall=0,tag=1"
+  gitea:
+    vmid: 101
+    node: "pikachu"
+    cores: 2
+    memory: 2048
+    disk: 'zfs:35'
+    netif:
+      net0: "name=eth0,gw=192.168.20.1,ip=192.168.20.11/24,bridge=vmbr0,firewall=0,tag=20"
+  glance:
+    vmid: 105
+    node: "evoli"
+    cores: 2
+    memory: 2048
+    disk: 'zfs:5'
+    netif:
+      net0: "name=eth0,gw=192.168.1.1,ip=192.168.1.31/24,bridge=vmbr0,firewall=0,tag=1"
+  grafana:
+    vmid: 118
+    node: "evoli"
+    cores: 2
+    memory: 4096
+    disk: 'zfs:10'
+    netif:
+      net0: "name=eth0,gw=192.168.1.1,ip=192.168.1.33/24,bridge=vmbr0,firewall=0,tag=1"
+  homepage:
+    vmid: 107
+    node: "evoli"
+    cores: 2
+    memory: 1024
+    disk: 'zfs:8'
+    netif:
+      net0: "name=eth0,gw=192.168.1.1,ip=192.168.1.15/24,bridge=vmbr0,firewall=0,tag=1"
+  jellyfin:
+    vmid: 102
+    node: "pikachu"
+    cores: 2
+    memory: 2048
+    disk: 'zfs:18'
+    netif:
+      net0: "name=eth0,gw=192.168.20.1,ip=192.168.20.13/24,bridge=vmbr0,firewall=0,tag=20"
+  nginxproxymanager:
+    vmid: 111
+    node: "pikachu"
+    cores: 4
+    memory: 4096
+    disk: 'zfs:4'
+    netif:
+      net0: "name=eth0,gw=192.168.1.1,ip=192.168.1.9/24,bridge=vmbr0,firewall=0,tag=1"
+      net1: "name=eth1,gw=192.168.136.1,ip=192.168.136.2/24,bridge=vmbr0,firewall=0,tag=136"
+    do_update: false
+  ntfy:
+    vmid: 116
+    node: "pikachu"
+    cores: 2
+    memory: 2048
+    disk: 'zfs:10'
+    netif:
+      net0: "name=eth0,gw=192.168.1.1,ip=192.168.1.26/24,bridge=vmbr0,firewall=0,tag=1"
+  paperless-ngx-docker:
+    vmid: 109
+    node: "pikachu"
+    cores: 4
+    memory: 4096
+    disk: 'zfs:20'
+    netif:
+      net0: "name=eth0,gw=192.168.1.1,ip=192.168.1.19/24,bridge=vmbr0,firewall=0,tag=1"
+    tags:
+      - ansible
+      - docker
+  semaphore:
+    vmid: 108
+    node: "pikachu"
+    cores: 2
+    memory: 2048
+    disk: 'zfs:10'
+    netif:
+      net0: "name=eth0,gw=192.168.1.1,ip=192.168.1.32/24,bridge=vmbr0,firewall=0,tag=1"
+  uptimekuma:
+    vmid: 115
+    node: "pikachu"
+    cores: 2
+    memory: 2048
+    disk: 'zfs:10'
+    netif:
+      net0: "name=eth0,gw=192.168.1.1,ip=192.168.1.20/24,bridge=vmbr0,firewall=0,tag=1"
+  webserver:
+    vmid: 113
+    node: "evoli"
+    cores: 1
+    memory: 1024
+    disk: 'zfs:5'
+    netif:
+      net0: "name=eth0,gw=192.168.1.1,ip=192.168.1.25/24,bridge=vmbr0,firewall=0,tag=1"

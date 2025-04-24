@@ -1,0 +1,42 @@
+---
+
+- name: Get latest release tag from Codeberg
+  when: (latest_release is not defined) or (latest_release == 'latest')
+  run_once: true
+  block:
+    - name: Determine latest Codeberg release (local)
+      ansible.builtin.uri:
+        url: '{{ forgejo_codeberg_url }}'
+        body_format: json
+      register: _codeberg_release
+      until: _codeberg_release.status == 200
+      retries: 5
+
+    - name: Set latest_release
+      ansible.builtin.set_fact:
+        latest_release: "{{ _codeberg_release.json.tag_name
+          | regex_replace('^v?(.*)$', '\\1') }}"
+
+- name: Latest version
+  ansible.builtin.debug:
+    msg: "Latest version {{ latest_release }}"
+
+- name: Check if version file exists
+  ansible.builtin.stat:
+    path: '{{ forgejo_version_file }}'
+  register: release_file
+
+- name: Get version file
+  ansible.builtin.slurp:
+    src: '{{ forgejo_version_file }}'
+  register: current_release
+  when: release_file.stat.exists
+
+- name: Install forgejo
+  ansible.builtin.include_tasks: install.yml
+  when: (not release_file.stat.exists) or (latest_release not in current_release['content'] | b64decode)
+  tags: forgejo.setup
+
+- name: Deploy forgejo
+  ansible.builtin.include_tasks: runner.yml
+  tags: forgejo.runner

@@ -1,0 +1,25 @@
+---
+
+- name: Setup Alloy
+  become: true
+  block:
+    - name: Install Alloy
+      ansible.builtin.include_role:
+        name: grafana.grafana.alloy
+      vars:
+        alloy_user_groups:
+          - caddy
+        alloy_env_file_vars:
+          CONFIG_FILE: '{{ alloy_config_path }}'
+        alloy_config: '{}'
+
+    - name: 'Create alloy config files'
+      ansible.builtin.template:
+        src: "{{ item.src }}"
+        dest: "{{ alloy_config_path }}/{{ item.dest }}"
+        owner: 'alloy'
+        group: 'alloy'
+        mode: "0644"
+        lstrip_blocks: true
+      loop: '{{ alloy_config_files | default("{}") }}'
+      notify: Restart alloy

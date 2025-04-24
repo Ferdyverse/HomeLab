@@ -1,0 +1,226 @@
+---
+
+caddy_homelab_internal_ips: ["192.168.0.0/16"]
+caddy_homelab_priv_ips: ["192.168.1.0/24", "192.168.10.0/24", "192.168.40.0/24", "192.168.136.0/24"]
+
+# Vhost default values
+caddy_vhost_defaults:
+  template: reverse.j2
+  compress: true
+  proxy_host: null
+  proxy_transparent_disable: false
+  security_headers: false
+  basicauth: false
+  basicauth_path: "/"
+  www_redir: false
+  root: null
+  php_fastcgi_enabled: null
+  php_fastcgi_path: null
+  responds: []
+  rewrites: []
+  file_server: false
+  file_server_browse: false
+  authentik_enabled: false
+  protected_enabled: true
+  protected_internal: true
+  protected_private: false
+  protected_remote_ips: []
+  protected_header_name: null
+  protected_header_value: null
+  bind: null
+
+# Vhost config
+caddy_vhosts:
+  - name: audiobookshelf
+    hostname: 'audiobookshelf.berger-em.net'
+    proxy_host: http://192.168.1.24:8080
+
+  - name: authentik
+    hostname: auth.berger-em.net
+    proxy_host: http://192.168.1.7:80
+
+  - name: bazarr
+    hostname: 'bazarr.berger-em.net'
+    proxy_host: http://192.168.1.30:6767
+    protected_enabled: false
+
+  - name: changedetection
+    hostname: 'changedetection.berger-em.net'
+    proxy_host: http://192.168.1.24:5001
+
+  - name: dashboard
+    hostname: 'dashboard.berger-em.net'
+    proxy_host: http://192.168.1.31:8080
+    protected_enabled: false
+
+  - name: dns1
+    hostname: 'dns1.berger-em.net'
+    proxy_host: http://192.168.1.13
+
+  - name: dns2
+    hostname: 'dns2.berger-em.net'
+    proxy_host: http://192.168.1.8
+
+  - name: evoli
+    hostname: 'evoli.berger-em.net'
+    proxy_host: https://192.168.1.14:8006
+    protected_private: true
+    protected_internal: false
+
+  - name: files
+    hostname: 'files.berger-em.net'
+    proxy_host: http://192.168.1.24:24424
+
+  - name: git
+    hostname: 'git.berger-em.net'
+    proxy_host: http://192.168.1.34:3000
+    protected_enabled: false
+
+  - name: gitea
+    hostname: 'gitea.berger-em.net'
+    proxy_host: http://192.168.20.11:3000
+
+  - name: gluten
+    hostname: 'gluten.berger-em.net'
+    proxy_host: http://192.168.1.30:8000
+
+  - name: grafana
+    hostname: 'grafana.berger-em.net'
+    proxy_host: http://192.168.1.33:3000
+
+  - name: hardbase
+    hostname: 'hardbase.berger-em.net'
+    proxy_host: https://192.168.1.12:5001
+
+  - name: hass
+    hostname: 'hass.berger-em.net'
+    proxy_host: http://192.168.20.10:8123
+
+  - name: home
+    hostname: 'home.berger-em.net'
+    proxy_host: http://192.168.1.30:8000
+
+  - name: jellyfin
+    hostname: 'jellyfin.berger-em.net'
+    proxy_host: http://192.168.20.13:8096
+
+  - name: k1
+    hostname: 'k1.berger-em.net'
+    proxy_host: http://192.168.20.56:4408
+
+  - name: kuma
+    hostname: 'kuma.berger-em.net'
+    proxy_host: http://192.168.1.20:3001
+
+  - name: lidarr
+    hostname: 'lidarr.berger-em.net'
+    proxy_host: http://192.168.1.30:8686
+
+  - name: minimailer
+    hostname: 'minimailer.berger-em.net'
+    proxy_host: http://192.168.1.24:5000
+    authentik_enabled: true
+
+  - name: money
+    hostname: 'money.berger-em.net'
+    proxy_host: https://192.168.1.27:5006
+    protected_private: true
+    protected_internal: false
+
+  - name: mqtt
+    hostname: 'mqtt.berger-em.net'
+    proxy_host: http://192.168.20.10:1883
+
+  - name: ntfy
+    hostname: 'ntfy.berger-em.net'
+    proxy_host: http://192.168.1.26:80
+    protected_enabled: false
+
+  - name: nzb
+    hostname: 'nzb.berger-em.net'
+    proxy_host: http://192.168.1.30:6789
+
+  - name: paperless
+    hostname: 'paperless.berger-em.net'
+    proxy_host: http://192.168.1.19
+    protected_private: true
+    protected_internal: false
+
+  - name: pikachu
+    hostname: 'pikachu.berger-em.net'
+    proxy_host: https://192.168.1.11:8006
+    protected_private: true
+
+  - name: portainer
+    hostname: 'portainer.berger-em.net'
+    proxy_host: https://192.168.1.24:9443
+    protected_private: true
+    protected_internal: false
+
+  - name: prometheus
+    hostname: 'prometheus.berger-em.net'
+    proxy_host: http://192.168.1.33:9090
+
+  - name: prowlarr
+    hostname: 'prowlarr.berger-em.net'
+    proxy_host: http://192.168.1.30:9696
+
+  - name: proxmox
+    hostname: 'proxmox.berger-em.net'
+    proxy_host: https://192.168.1.14:8006
+    protected_private: true
+    protected_internal: false
+
+  - name: qbit
+    hostname: 'qbit.berger-em.net'
+    proxy_host: http://192.168.1.30:8080
+
+  - name: radarr
+    hostname: 'radarr.berger-em.net'
+    proxy_host: http://192.168.1.30:7878
+
+  - name: readarr
+    hostname: 'readarr.berger-em.net'
+    proxy_host: http://192.168.1.30:8787
+
+  - name: semaphore
+    hostname: 'semaphore.berger-em.net'
+    proxy_host: http://192.168.1.32:3000
+
+  - name: solar
+    hostname: 'solar.berger-em.net'
+    proxy_host: http://192.168.20.29
+
+  - name: sonarr
+    hostname: 'sonarr.berger-em.net'
+    proxy_host: http://192.168.1.30:8989
+
+  - name: teddycloud
+    hostname: 'teddycloud.berger-em.net'
+    proxy_host: https://192.168.1.24:443
+    protected_enabled: false
+
+  - name: twitch-points
+    hostname: 'twitch-points.berger-em.net'
+    proxy_host: http://192.168.1.24:5002
+    protected_private: true
+    protected_internal: false
+
+  - name: udm
+    hostname: 'udm.berger-em.net'
+    proxy_host: https://192.168.1.1:443
+    protected_private: true
+    protected_internal: false
+
+  - name: webserver
+    hostname: 'webserver.berger-em.net'
+    proxy_host: http://192.168.1.25
+
+  - name: zoo
+    hostname: 'zoo.berger-em.net'
+    proxy_host: http://192.168.1.22:5000
+
+# Dummy
+#  - name:
+#    hostname: '{{ name }}.berger-em.net'
+#    proxy_host:

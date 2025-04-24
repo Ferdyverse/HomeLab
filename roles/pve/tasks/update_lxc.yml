@@ -1,0 +1,59 @@
+---
+
+- name: Update existsing container
+  community.general.proxmox:
+    api_host: '{{ pve_api_host }}'
+    api_port: '{{ pve_api_port }}'
+    api_user: '{{ pve_apiuser }}'
+    api_password: '{{ pve_root_password }}'
+
+    cores: '{{ item.value.cores | default(pve_lxc_defaults.cores) }}'
+    description: '{{ item.description | default(pve_lxc_defaults.description) }}'
+    disk: '{{ item.value.disk | default(pve_lxc_defaults.disk) }}'
+    features: '{{ item.value.features | default(pve_lxc_defaults.features) }}'
+    force: '{{ item.value.force | default(pve_lxc_defaults.force) }}'
+    hostname: '{{ item.key }}'
+    memory: '{{ item.value.memory | default(pve_lxc_defaults.memory.ct) }}'
+    netif: '{{ item.value.netif | default(pve_lxc_defaults.netif) }}'
+    node: '{{ item.value.node | default(pve_lxc_defaults.node) }}'
+    onboot: '{{ item.value.onboot | default(pve_lxc_defaults.onboot) }}'
+    password: '{{ item.value.password | default(pve_lxc_defaults.password) }}'
+    swap: '{{ item.value.swap | default(pve_lxc_defaults.swap) }}'
+    update: '{{ item.value.do_update | default(pve_lxc_defaults.do_update) }}'
+    vmid: '{{ item.value.vmid | default(pve_lxc_defaults.vmid) }}'
+    state: 'present'
+  with_dict: '{{ pve_lxc_container }}'
+  timeout: 60
+  loop_control:
+    pause: 2
+  notify:
+    - Sleep
+  register: 'updated_lxc_container'
+  when: 'item.key in groups["lxc_container"]'
+  delegate_to: localhost
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Set facts
+  ansible.builtin.set_fact:
+    changed_hosts: '{{ changed_hosts | combine({item.item.key: {"node": item.item.value.node, "vmid": item.item.value.vmid}}) }}'
+  with_items: '{{ updated_lxc_container.results }}'
+  when: item.changed # noqa: no-handler
+  run_once: true
+  delegate_to: localhost
+
+- name: Start container
+  community.general.proxmox:
+    api_host: '{{ pve_api_host }}'
+    api_port: '{{ pve_api_port }}'
+    api_user: '{{ pve_apiuser }}'
+    api_password: '{{ pve_root_password }}'
+
+    node: '{{ item.value.node | default(pve_lxc_defaults.node) }}'
+    hostname: '{{ item.key }}'
+    state: started
+  with_dict: '{{ changed_hosts }}'
+  notify:
+    - Sleep
+  delegate_to: localhost

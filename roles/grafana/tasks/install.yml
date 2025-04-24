@@ -1,0 +1,65 @@
+---
+
+- name: Install Grafana and Loki
+  become: true
+  block:
+
+    - name: Install/Configure Grafana
+      ansible.builtin.include_role:
+        name: grafana.grafana.grafana
+      vars:
+        grafana_version: latest
+        grafana_url: '{{ undef() }}'
+        grafana_ini:
+          auth:
+            signout_redirect_url: "https://auth.berger-em.net/application/o/grafana/end-session/"
+            oauth_auto_login: false
+            generic_oauth:
+              name: authentik
+              enabled: true
+              client_id: '{{ grafana_authentik_id }}'
+              client_secret: '{{ grafana_authentik_secret }}'
+              scopes: "openid profile email"
+              auth_url: "https://auth.berger-em.net/application/o/authorize/"
+              token_url: "https://auth.berger-em.net/application/o/token/"
+              api_url: "https://auth.berger-em.net/application/o/userinfo/"
+              # Optionally map user groups to Grafana roles
+              role_attribute_path: contains(groups, 'authentik Admins') && 'Admin' || 'Viewer'
+          paths:
+            logs: /var/log/grafana
+            data: /data/grafana
+          database:
+            type: "sqlite3"
+          security:
+            admin_user: '{{ grafana_admin_user }}'
+            admin_password: '{{ grafana_admin_password }}'
+          server:
+            http_addr: "0.0.0.0"
+            http_port: 3000
+            root_url: https://grafana.berger-em.net
+      tags:
+        - grafana.base.setup
+
+    - name: Install/Configure Loki
+      ansible.builtin.include_role:
+        name: grafana.grafana.loki
+      vars:
+        loki_http_listen_port: 3100
+        loki_http_listen_address: "0.0.0.0"
+        loki_working_path: /data/loki
+      tags:
+        - loki.setup
+
+    - name: Install/Configure Prometheus
+      ansible.builtin.include_role:
+        name: prometheus.prometheus.prometheus
+      vars:
+        prometheus_web_listen_address: "0.0.0.0:9090"
+        prometheus_web_external_url: '{{ prometheus_base_url }}'
+        prometheus_external_labels:
+          environment: "prometheus.berger-em.net"
+        prometheus_scrape_configs: []
+        prometheus_config_flags_extra:
+          web.enable-remote-write-receiver: ""
+      tags:
+        - prometheus.setup

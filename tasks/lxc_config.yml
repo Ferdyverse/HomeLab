@@ -1,0 +1,5 @@
+- name: 'Configure/Install {{ container.name }}'
+  ansible.builtin.include_role:
+    name: '{{ container.role | default(container.name) }}'
+  when: 'container.search | default(container.name) in inventory_hostname'
+  tags: '{{ container.name }}'

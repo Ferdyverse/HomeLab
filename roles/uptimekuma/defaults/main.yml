@@ -1,0 +1,9 @@
+---
+
+nodejs_version: "22.x" # noqa: var-naming[no-role-prefix]
+
+uptimekuma_github_url: https://github.com/louislam/uptime-kuma.git
+
+uptimekuma_root_foler: /opt
+uptimekuma_path: '{{ uptimekuma_root_foler }}/uptime-kuma'
+uptimekuma_temp_path: /tmp/uptime-kuma

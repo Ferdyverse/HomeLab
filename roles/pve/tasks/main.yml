@@ -1,0 +1,17 @@
+---
+
+- name: Install dependencies
+  ansible.builtin.apt:
+    name: python3-proxmoxer
+    state: present
+  become: true
+
+- name: Create LXC Container
+  ansible.builtin.include_tasks: create_lxc.yml
+  tags:
+    - create_lxc
+
+- name: Update LXC Container
+  ansible.builtin.include_tasks: update_lxc.yml
+  tags:
+    - update_lxc

@@ -1,0 +1,119 @@
+---
+
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
+- name: Stop service
+  ansible.builtin.service:
+    name: semaphore
+    enabled: true
+    state: stopped
+  when: ansible_facts['services']['semaphore.service']['status'] | default('not-found') != 'not-found'
+  become: true
+
+- name: Install Semaphore
+  become: true
+  block:
+    - name: Install dependencies
+      ansible.builtin.apt:
+        name: '{{ item }}'
+        state: present
+        update_cache: true
+      loop:
+        - git
+        - sudo
+        - python3-pip
+        - python3-virtualenv
+
+    - name: Get latest release from Github
+      ansible.builtin.apt:
+        deb: 'https://github.com/semaphoreui/semaphore/releases/download/v{{ latest_release }}/semaphore_{{ latest_release }}_linux_amd64.deb'
+
+    - name: Create user semaphore
+      ansible.builtin.user:
+        name: '{{ semaphore_username }}'
+        shell: /bin/bash
+        create_home: true
+        state: present
+        append: true
+
+    - name: Create requirements files
+      ansible.builtin.template:
+        src: '{{ item }}.j2'
+        dest: '/home/{{ semaphore_username }}/{{ item }}'
+        owner: '{{ semaphore_username }}'
+        group: '{{ semaphore_username }}'
+        mode: '0755'
+      loop:
+        - requirements.txt
+        - requirements.yml
+
+    - name: Create virtual environment and install requirements into it
+      ansible.builtin.pip:
+        requirements: '/home/{{ semaphore_username }}/requirements.txt'
+        virtualenv: '/home/{{ semaphore_username }}/venv'
+        state: present
+      become: true # Needed for linting
+      become_user: '{{ semaphore_username }}'
+
+    - name: Create required directories
+      ansible.builtin.file:
+        path: '{{ semaphore_install_path }}'
+        state: directory
+        owner: root
+        group: '{{ semaphore_username }}'
+        mode: '0775'
+
+    - name: Check if there is a config file
+      ansible.builtin.stat:
+        path: '{{ semaphore_install_path }}/config.json'
+      register: config_file
+
+    - name: Create basic config file
+      ansible.builtin.template:
+        src: config.json.j2
+        dest: '{{ semaphore_install_path }}/config.json'
+        owner: root
+        group: '{{ semaphore_username }}'
+        mode: '0775'
+      when: not (config_file.stat.exists and config_file.stat.isreg)
+
+    - name: Create service
+      ansible.builtin.template:
+        src: semaphore.service.j2
+        dest: '/etc/systemd/system/semaphore.service'
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Start service
+      ansible.builtin.systemd_service:
+        name: semaphore
+        enabled: true
+        state: started
+        daemon_reload: true
+
+    - name: Add Admin user
+      ansible.builtin.shell:
+        executable: /bin/bash
+        cmd: >
+          /usr/bin/semaphore user add --admin
+          --login {{ semaphore_admin_account }}
+          --email {{ semaphore_admin_email }}
+          --name {{ semaphore_admin_name }}
+          --password {{ semaphore_admin_password }}
+          --config {{ semaphore_install_path }}/config.json
+      changed_when: true
+      when: not (config_file.stat.exists and config_file.stat.isreg)
+
+    - name: Save current version to file
+      ansible.builtin.blockinfile:
+        path: '{{ semaphore_version_file }}'
+        create: true
+        mode: '0744'
+        block: |
+          {{ latest_release }}
+
+    - name: Set installed flag
+      ansible.builtin.set_fact:
+        sempahore_installed: true

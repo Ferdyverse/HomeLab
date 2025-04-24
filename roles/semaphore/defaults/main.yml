@@ -1,0 +1,15 @@
+---
+
+semaphore_github_url: https://api.github.com/repos/semaphoreui/semaphore/releases/latest
+
+semaphore_username: semaphore
+
+semaphore_version_file: '/home/{{ semaphore_username }}/semaphore.txt'
+semaphore_install_path: /etc/semaphore
+semaphore_data_path: '/home/{{ semaphore_username }}'
+
+semaphore_url: https://semaphore.berger-em.net
+semaphore_admin_password: '{{ passwd_bergefe }}'
+semaphore_admin_name: Administrator
+semaphore_admin_email: semaphore@berger-em.de
+semaphore_admin_account: bergefe_local

@@ -1,0 +1,25 @@
+---
+
+- name: Create config dir
+  ansible.builtin.file:
+    path: '{{ item }}'
+    state: directory
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+    mode: '0755'
+    recurse: true
+  loop:
+    - '{{ docker_container_data_folder }}/portainer/data'
+
+- name: Deploy Portainer
+  community.docker.docker_container:
+    name: portainer
+    image: portainer/portainer-ce:latest
+    restart_policy: "unless-stopped"
+    ports:
+      - 8000:8000
+      - 9443:9443
+    volumes:
+      - '{{ docker_container_data_folder }}/portainer/data:/data'
+      - /var/run/docker.sock:/var/run/docker.sock
+    state: started

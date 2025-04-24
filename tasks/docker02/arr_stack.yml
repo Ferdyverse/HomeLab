@@ -1,0 +1,22 @@
+---
+
+- name: Create config dir
+  ansible.builtin.file:
+    path: '/home/{{ default_user }}/docker/arr_stack/'
+    state: directory
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+    mode: '0755'
+    recurse: true
+
+- name: Create compose file
+  ansible.builtin.template:
+    src: docker02/arr_stack.yml.j2
+    dest: '/home/{{ default_user }}/docker/arr_stack/docker-compose.yml'
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+    mode: '0755'
+
+- name: Run `docker compose up` again
+  community.docker.docker_compose_v2:
+    project_src: '/home/{{ default_user }}/docker/arr_stack/'

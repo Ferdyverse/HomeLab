@@ -1,0 +1,27 @@
+---
+
+# User for new hosts
+bootstrap_user: root
+default_user: bergefe
+
+# HomeLab SSH Key
+default_pub_key_file: id_ed25519_sk_rk_HomeLab.pub
+default_prv_key_file: id_ed25519_sk_rk_HomeLab
+default_pub_key_folder: '/home/{{ default_user }}/.ssh'
+default_pub_key_path: '{{ default_pub_key_folder }}/{{ default_pub_key_file }}'
+default_prv_key_path: '{{ default_pub_key_folder }}/{{ default_prv_key_file }}'
+
+proxmox_nodes_ssh_key: id_ed25519_proxmox.ansible
+
+# Default folder
+docker_container_config_folder: /docker
+docker_container_data_folder: /data
+
+# Loki
+loki_push_url: http://192.168.1.33:3100/loki/api/v1/push
+prometheus_base_url: https://prometheus.berger-em.net
+prometheus_push_url: '{{ prometheus_base_url }}/v1/metrics'
+prometheus_write_url: '{{ prometheus_base_url }}/api/v1/write'
+
+# Alloy
+alloy_config_path: /etc/alloy

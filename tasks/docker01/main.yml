@@ -1,0 +1,43 @@
+---
+
+- name: Deploy AdguardHome sync
+  ansible.builtin.include_tasks:
+    file: adguardhome-sync.yml
+  tags:
+    - adguard-sync
+
+- name: Deploy Audiobookshelf
+  ansible.builtin.include_tasks:
+    file: audio_stack.yml
+  tags:
+    - audiobookshelf
+
+- name: Deploy Changedetection
+  ansible.builtin.include_tasks:
+    file: changedetection.yml
+  tags:
+    - changedetection
+
+- name: Deploy DDNS
+  ansible.builtin.include_tasks:
+    file: ddns.yml
+  tags:
+    - ddns
+
+- name: Deploy Portainer
+  ansible.builtin.include_tasks:
+    file: portainer.yml
+  tags:
+    - portainer
+
+- name: Deploy Teddycloud
+  ansible.builtin.include_tasks:
+    file: teddycloud.yml
+  tags:
+    - teddycloud
+
+- name: Deploy Twitch Points Farmer
+  ansible.builtin.include_tasks:
+    file: twitch-points.yml
+  tags:
+    - twitch

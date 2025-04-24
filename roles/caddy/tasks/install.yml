@@ -1,0 +1,125 @@
+---
+
+- name: Install xCaddy
+  become: true
+  block:
+    - name: Ensure dependencies are installed.
+      ansible.builtin.apt:
+        name:
+          - debian-keyring
+          - debian-archive-keyring
+          - apt-transport-https
+          - gnupg2
+          - curl
+        state: present
+
+    - name: Install golang if missing
+      ansible.builtin.include_tasks: golang.yml
+
+    - name: Download xcaddy repo setup script
+      ansible.builtin.get_url:
+        url: https://dl.cloudsmith.io/public/caddy/xcaddy/setup.deb.sh
+        dest: /tmp/xcaddy.sh
+        mode: '0755'
+
+    - name: Add xcaddy repository
+      ansible.builtin.command:
+        cmd: "/bin/bash /tmp/xcaddy.sh"
+        creates: /etc/apt/sources.list.d/caddy-xcaddy.list
+
+    - name: Install xCaddy
+      ansible.builtin.apt:
+        name: xcaddy
+        state: present
+        update_cache: true
+
+    - name: Check if Caddy is already installed.
+      ansible.builtin.command:
+        cmd: /usr/local/go/bin/go version
+      ignore_errors: true
+      register: go_version_result
+      changed_when: false
+
+    - name: Build custom caddy binary
+      ansible.builtin.shell:
+        executable: /bin/bash
+        cmd: |
+          export PATH=$PATH:/usr/local/go/bin
+          xcaddy build --with github.com/caddy-dns/cloudflare --output {{ caddy_bin_path }}
+        creates: '{{ caddy_bin_path }}'
+
+    - name: Make caddy executable
+      ansible.builtin.file:
+        path: '{{ caddy_bin_path }}'
+        mode: '0755'
+
+    - name: Create Caddy systemd unit file
+      ansible.builtin.template:
+        src: caddy.service.j2
+        dest: /etc/systemd/system/caddy.service
+        mode: "0644"
+
+    - name: Add caddy group
+      ansible.builtin.group:
+        name: "{{ caddy_group_name }}"
+        system: true
+
+    - name: Add caddy user
+      ansible.builtin.user:
+        name: "{{ caddy_user_name }}"
+        group: "{{ caddy_group_name }}"
+        home: "{{ caddy_user_home_dir }}"
+        create_home: true
+        shell: "/usr/sbin/nologin"
+        system: true
+
+    - name: Create config directorys
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+        owner: "{{ caddy_user_name }}"
+        group: '{{ caddy_group_name }}'
+      loop:
+        - "{{ caddy_config_path }}"
+        - "{{ caddy_config_path }}/vhosts"
+        - "{{ caddy_config_path }}/snippets"
+        - "{{ caddy_log_path }}"
+
+    - name: Add Caddyfile
+      ansible.builtin.template:
+        src: Caddyfile.j2
+        dest: "{{ caddy_config_path }}/Caddyfile"
+        mode: "0644"
+        owner: "{{ caddy_user_name }}"
+        group: '{{ caddy_group_name }}'
+        lstrip_blocks: true
+      notify: Reload caddy
+
+    - name: Create config snippets
+      ansible.builtin.template:
+        mode: "0644"
+        src: '{{ item }}.j2'
+        dest: "{{ caddy_config_path }}/snippets/{{ item }}"
+        owner: "{{ caddy_user_name }}"
+        group: '{{ caddy_group_name }}'
+      loop:
+        - tls.conf
+        - protected.conf
+      notify: Reload caddy
+
+    - name: Create environment file
+      ansible.builtin.template:
+        mode: "0640"
+        src: env.j2
+        dest: "{{ caddy_config_path }}/.env"
+        owner: "{{ caddy_user_name }}"
+        group: '{{ caddy_group_name }}'
+      notify: Reload caddy
+
+    - name: Enable and start Caddy service
+      ansible.builtin.systemd_service:
+        name: caddy
+        enabled: true
+        daemon_reload: true
+        state: started

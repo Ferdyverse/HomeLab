@@ -1,0 +1,5 @@
+---
+
+grafana_url: "http://192.168.1.33:3000"
+grafana_user: '{{ grafana_admin_user }}'
+grafana_password: '{{ grafana_admin_password }}'

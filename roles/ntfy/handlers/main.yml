@@ -1,0 +1,9 @@
+---
+- name: Restart ntfy
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: true
+    name: "{{ item }}"
+    state: restarted
+  loop:
+    - ntfy.service

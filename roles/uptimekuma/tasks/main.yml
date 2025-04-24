@@ -1,0 +1,7 @@
+---
+
+- name: Install nodejs
+  ansible.builtin.include_tasks: nodejs.yml
+
+- name: Install Uptimekuma
+  ansible.builtin.include_tasks: install.yml

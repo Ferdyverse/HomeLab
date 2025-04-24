@@ -1,0 +1,18 @@
+# Config
+caddy_src_bin: bin/caddy
+caddy_bin_path: /usr/bin/caddy
+caddy_log_path: /var/log/caddy
+caddy_config_path: /etc/caddy
+caddy_user_name: caddy
+caddy_group_name: '{{ caddy_user_name }}'
+caddy_user_home_dir: /var/lib/caddy
+caddy_env_vars:
+  - "CLOUDFLARE_API_TOKEN={{ caddy_cloudflare_token }}"
+caddy_service_after_units: []
+caddy_metrics_enabled: true
+
+# TLS
+caddy_tls_dns_cloudflare_enabled: true
+
+# Remove unmanged confis
+caddy_rm_unmanaged_vhosts: true

@@ -1,0 +1,7 @@
+#jinja2:lstrip_blocks: True
+  
+Host {{ inventory_hostname }}
+  User {{ default_user }}
+  IdentityFile {{ default_prv_key_path }}
+  ServerAliveInterval 120
+  Hostname {{ ansible_host }}

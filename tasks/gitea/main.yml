@@ -1,0 +1,7 @@
+---
+
+- name: Configure/Install Gitea
+  ansible.builtin.include_role:
+    name: gitea
+  when:
+    - '"gitea" in inventory_hostname'

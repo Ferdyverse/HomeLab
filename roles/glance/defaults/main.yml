@@ -1,0 +1,6 @@
+---
+
+glance_github_url: https://api.github.com/repos/glanceapp/glance/releases/latest
+
+glance_version_file: /opt/glance.txt
+glance_install_folder: /opt/glance

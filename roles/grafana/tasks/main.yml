@@ -1,0 +1,26 @@
+---
+
+- name: Install Grafana and Loki
+  ansible.builtin.include_tasks: install.yml
+  tags:
+    - grafana.setup
+
+- name: Setup Loki datasource
+  community.grafana.grafana_datasource:
+    name: "Loki"
+    grafana_url: '{{ grafana_url }}'
+    grafana_user: '{{ grafana_user }}'
+    grafana_password: '{{ grafana_password }}'
+    org_id: "1"
+    ds_type: "loki"
+    ds_url: "http://localhost:3100"
+
+- name: Setup Prometheus datasource
+  community.grafana.grafana_datasource:
+    name: "Prometheus"
+    grafana_url: '{{ grafana_url }}'
+    grafana_user: '{{ grafana_user }}'
+    grafana_password: '{{ grafana_password }}'
+    org_id: "1"
+    ds_type: "prometheus"
+    ds_url: "http://localhost:9090"

@@ -1,0 +1,18 @@
+---
+
+- name: Proxmox tests
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: Enable root ssh in container
+      ansible.builtin.shell:
+        cmd: |
+          sudo /usr/sbin/pct exec "108" -- bash -c 'sed -i "s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g" /etc/ssh/sshd_config'
+          sudo /usr/sbin/pct exec "108" -- bash -c 'systemctl restart sshd'
+        executable: /bin/bash
+      changed_when: true
+      delegate_to: 'pikachu'
+      vars:
+        ansible_user: ansible
+        ansible_ssh_private_key_file: '{{ default_pub_key_folder }}/pikachu.ansible'

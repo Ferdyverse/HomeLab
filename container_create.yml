@@ -1,0 +1,10 @@
+---
+
+# creates and starts containers from container vars with host vars defaults
+- name: Deploy containers
+
+  hosts: proxmox_nodes
+  gather_facts: false
+
+  roles:
+    - pve

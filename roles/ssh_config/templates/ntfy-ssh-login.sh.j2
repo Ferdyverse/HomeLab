@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+set -eu  # exit on error / undefined var
+
+DATE=$(date)
+SERVER=$(uname -n)
+CIDR="192.168.10.0/24"
+
+is_ip_in_cidr() {
+  local ip=$1 cidr=$2
+
+  # Split CIDR
+  local IFS=/ network mask
+  read -r network mask <<< "$cidr"
+
+  # Convert dotted-decimal to int
+  local IFS=. n1 n2 n3 n4 i1 i2 i3 i4
+  read -r n1 n2 n3 n4 <<< "$network"
+  read -r i1 i2 i3 i4 <<< "$ip"
+
+  local network_dec=$(( (n1<<24)|(n2<<16)|(n3<<8)|n4 ))
+  local    ip_dec=$(( (i1<<24)|(i2<<16)|(i3<<8)|i4 ))
+  local   mask_dec=$(( mask==0 ? 0 : (0xFFFFFFFF << (32-mask)) & 0xFFFFFFFF ))
+
+  (( (ip_dec & mask_dec) == (network_dec & mask_dec) ))
+}
+
+[[ $PAM_TYPE == open_session ]] || exit 0
+
+if [[ $PAM_RHOST == 192.168.1.32 ]]; then
+  echo "Session from Semaphore!"
+  exit 0
+fi
+
+if is_ip_in_cidr "$PAM_RHOST" "$CIDR"; then
+  curl -H "Title:$SERVER" \
+      -d "SSH login from private VLAN was successful!
+
+User:   $PAM_USER
+IP:     $PAM_RHOST
+Server: $SERVER" \
+      --connect-timeout 5 \
+      -u "{{ ntfy_login_suki }}" \
+      https://ntfy.berger-em.net/alerts
+else
+  curl -H prio:high -H tags:warning -H "Title:$SERVER" \
+      -d "SSH login was successful:
+
+User:    $PAM_USER
+IP:      $PAM_RHOST
+Service: $PAM_SERVICE
+TTY:     $PAM_TTY
+Date:    $DATE
+Server:  $SERVER" \
+      --connect-timeout 5 \
+      -u "{{ ntfy_login_suki }}" \
+      https://ntfy.berger-em.net/alerts
+fi

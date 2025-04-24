@@ -1,0 +1,10 @@
+---
+
+- name: Enable root ssh in container
+  ansible.builtin.shell:
+    cmd: |
+      sudo /usr/sbin/pct exec '{{ lxc_id }}' -- bash -c 'sed -i "s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g" /etc/ssh/sshd_config'
+      sudo /usr/sbin/pct exec '{{ lxc_id }}' -- bash -c 'systemctl restart sshd'
+    executable: /bin/bash
+  changed_when: true
+  delegate_to: '{{ lxc_node }}'

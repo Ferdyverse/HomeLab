@@ -1,0 +1,4 @@
+---
+
+# We use root for our Proxmox nodes
+ansible_user: root

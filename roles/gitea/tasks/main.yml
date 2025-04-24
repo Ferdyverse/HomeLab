@@ -1,0 +1,11 @@
+---
+
+- name: Deploy Gitea
+  ansible.builtin.include_tasks: deploy_gitea.yml
+  tags:
+    - gitea.setup
+
+- name: Deploy Gitea runner
+  ansible.builtin.include_tasks: deploy_runner.yml
+  tags:
+    - gitea.runner

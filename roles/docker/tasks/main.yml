@@ -1,0 +1,7 @@
+---
+
+- name: Install Docker
+  ansible.builtin.include_tasks: install_docker.yml
+
+- name: Deploy default Container
+  ansible.builtin.include_tasks: default_container.yml

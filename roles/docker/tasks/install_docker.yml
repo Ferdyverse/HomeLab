@@ -1,0 +1,88 @@
+---
+
+- name: Install Docker
+  become: true
+  block:
+    - name: Install required system packages
+      ansible.builtin.apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - python3-pip
+          - virtualenv
+          - python3-setuptools
+          - python3-docker
+        state: present
+        update_cache: true
+
+    - name: Add Docker APT-Repository
+      ansible.builtin.deb822_repository:
+        name: docker
+        uris: 'https://download.docker.com/linux/{{ ansible_distribution | lower }}'
+        types: deb
+        suites: '{{ ansible_distribution_release }}'
+        components: stable
+        signed_by: 'https://download.docker.com/linux/{{ ansible_os_family | lower }}/gpg'
+        state: present
+      register: docker_setup_repo
+
+    - name: Update apt and install docker packages
+      ansible.builtin.apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+        update_cache: true
+      when: docker_setup_repo is changed # noqa: no-handler
+
+    - name: Ensure group "docker" exists
+      ansible.builtin.group:
+        name: docker
+        state: present
+
+    - name: Create config dir
+      ansible.builtin.file:
+        path: "/etc/docker/"
+        state: directory
+        owner: root
+        group: docker
+        mode: '0755'
+
+    - name: Create daemon.json
+      ansible.builtin.template:
+        src: daemon.json.j2
+        dest: '/etc/docker/daemon.json'
+        owner: root
+        group: docker
+        mode: '0755'
+
+    - name: Add bergefe to docker users
+      ansible.builtin.user:
+        name: '{{ default_user }}'
+        groups: docker
+        append: true
+
+    - name: Create default folders
+      ansible.builtin.file:
+        path: '{{ item }}'
+        state: directory
+        owner: '{{ default_user }}'
+        group: '{{ default_user }}'
+        mode: '0755'
+        recurse: true
+      loop:
+        - '{{ docker_container_config_folder }}'
+        - '{{ docker_container_data_folder }}'
+        - '/home/{{ default_user }}/docker/'
+
+    - name: Start service
+      ansible.builtin.systemd_service:
+        name: docker
+        enabled: true
+        daemon_reload: true
+        state: started

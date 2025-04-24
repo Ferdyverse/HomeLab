@@ -1,0 +1,48 @@
+local.file_match "local_files" {
+    path_targets = [{"__path__" = "/var/log/caddy/*.log"}]
+    sync_period = "5s"
+}
+
+loki.source.file "log_scrape" {
+    targets    = local.file_match.local_files.targets
+    forward_to = [loki.process.process_logs.receiver]
+    tail_from_end = true
+}
+
+loki.process "process_logs" {
+
+    // Use filename to get the hostename
+    stage.regex {
+        source = "filename"
+        expression = ".*/(?P<host_name>[^.]+)\\..*"
+    }
+
+    // Extract some json values to generate labels
+    stage.json {
+        // default source is the whole log line (`message`)
+        expressions = {
+            remote_ip = "request.remote_ip",
+            client_ip = "request.client_ip",
+            status    = "status",
+        }
+        drop_malformed = true
+    }
+
+    // Set the values as labels so I can serach for them
+    stage.labels {
+        values = {
+            host_name = "host_name",
+            remote_ip = "remote_ip",
+            client_ip = "client_ip",
+            status    = "status",
+        }
+    }
+
+    forward_to = [loki.write.grafana_loki.receiver]
+}
+
+loki.write "grafana_loki" {
+    endpoint {
+        url = "{{ loki_push_url }}"
+    }
+}

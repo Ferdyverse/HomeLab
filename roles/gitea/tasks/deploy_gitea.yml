@@ -1,0 +1,37 @@
+---
+
+- name: Create config dir
+  ansible.builtin.file:
+    path: '{{ item }}'
+    state: directory
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+    mode: '0755'
+    recurse: true
+  become: true
+  loop:
+    - '{{ docker_container_data_folder }}/gitea'
+
+- name: Deploy gitea
+  community.docker.docker_container:
+    name: '{{ gitea_docker_name }}'
+    image: '{{ gitea_docker_image }}'
+    restart_policy: "always"
+    volumes:
+      - '{{ docker_container_data_folder }}/gitea/data:/data'
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "3000:3000"
+      - "2222:22"
+    env:
+      USER_UID: "1000"
+      USER_GID: "1000"
+      GITEA__SERVER__ROOT_URL: '{{ gitea_url }}'
+      GITEA__SERVER__SSH_PORT: "2222"
+      GITEA__SERVER__SSH_DOMAIN: "gitea.berger-em.net"
+      GITEA__WEBHOOK__ALLOWED_HOST_LIST: "192.168.20.0/24,192.168.10.0/24,192.168.1.0/24"
+    networks:
+      - name: "{{ gitea_docker_network_name }}"
+    state: started
+  become: true

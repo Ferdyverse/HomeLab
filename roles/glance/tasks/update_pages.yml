@@ -1,0 +1,29 @@
+---
+
+- name: Create env file
+  ansible.builtin.template:
+    src: 'env.j2'
+    dest: '{{ glance_install_folder }}/.env'
+    owner: root
+    group: root
+    mode: '0775'
+  become: true
+
+- name: Create config files
+  ansible.builtin.copy:
+    src: '{{ item }}'
+    dest: '{{ glance_install_folder }}/{{ item }}'
+    owner: root
+    group: root
+    mode: '0775'
+  become: true
+  loop:
+    - glance.yml
+    - homepage.yml
+    - news.yml
+
+- name: Restart Glance
+  ansible.builtin.service:
+    name: glance
+    state: restarted
+  become: true

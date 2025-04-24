@@ -1,0 +1,12 @@
+[Unit]
+Description=uptime-kuma
+
+[Service]
+Type=simple
+Restart=always
+User=root
+WorkingDirectory={{ uptimekuma_path }}
+ExecStart=/usr/bin/npm start
+
+[Install]
+WantedBy=multi-user.target

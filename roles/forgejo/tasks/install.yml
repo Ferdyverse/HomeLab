@@ -1,0 +1,118 @@
+---
+
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
+- name: Stop service
+  ansible.builtin.service:
+    name: forgejo
+    enabled: true
+    state: stopped
+  when: ansible_facts['services']['forgejo.service']['status'] | default('not-found') != 'not-found'
+  become: true
+
+- name: Install forgejo
+  become: true
+  block:
+    - name: Install dependencies
+      ansible.builtin.apt:
+        update_cache: true
+        pkg:
+          - git
+          - git-lfs
+
+    - name: Create forgejo system user
+      ansible.builtin.user:
+        name: "{{ forgejo_system_user }}"
+        append: true
+        shell: /bin/bash
+        system: true
+        password: '!'
+        create_home: true
+
+    - name: Create forgejo directories and set permissions
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: directory
+        owner: "{{ item.user }}"
+        group: "{{ item.group }}"
+        mode: '{{ item.mode }}'
+        recurse: true
+      loop:
+        - path: '{{ forgejo_work_path }}'
+          user: '{{ forgejo_system_user }}'
+          group: '{{ forgejo_system_group }}'
+          mode: '0750'
+        - path: '{{ forgejo_config_path }}'
+          user: 'root'
+          group: '{{ forgejo_system_group }}'
+          mode: '0770'
+        - path: /opt/forgejo
+          user: 'root'
+          group: 'root'
+          mode: '0655'
+
+    - name: Get latest release from Codeberg
+      ansible.builtin.get_url:
+        url: 'https://codeberg.org/forgejo/forgejo/releases/download/v{{ latest_release }}/forgejo-{{ latest_release }}-linux-amd64'
+        dest: '/opt/forgejo/forgejo-{{ latest_release }}-linux-amd64'
+        mode: '0755'
+
+    - name: Link binary to path
+      ansible.builtin.file:
+        src: '/opt/forgejo/forgejo-{{ latest_release }}-linux-amd64'
+        dest: '{{ forgejo_binary_path }}'
+        owner: root
+        group: root
+        mode: '0755'
+        state: link
+        force: true
+
+    - name: Create forgejo config file
+      ansible.builtin.template:
+        src: app.ini.j2
+        dest: '{{ forgejo_config_path }}/app.ini'
+        mode: "0644"
+        variable_end_string: '$$'
+        variable_start_string: '$$'
+
+    - name: Create forgejo systemd unit file
+      ansible.builtin.template:
+        src: forgejo.service.j2
+        dest: /etc/systemd/system/forgejo.service
+        mode: "0644"
+
+    - name: Start service
+      ansible.builtin.systemd_service:
+        name: forgejo
+        enabled: true
+        state: started
+        daemon_reload: true
+
+    - name: Generate admin user
+      ansible.builtin.shell:
+        cmd: >
+          runuser -u git -- forgejo admin user create
+          --username {{ forgejo_admin_user }}
+          --admin
+          --random-password
+          --must-change-password
+          --email {{ forgejo_admin_email }}
+          --config {{ forgejo_config_path }}/app.ini
+        executable: /bin/bash
+      register: admin_account
+      changed_when: true
+      ignore_errors: true
+
+    - name: Show admin password
+      ansible.builtin.debug:
+        var: admin_account.stdout_lines
+      when: admin_account is defined
+
+    - name: Save current version to file
+      ansible.builtin.blockinfile:
+        path: '{{ forgejo_version_file }}'
+        create: true
+        mode: '0744'
+        block: |
+          {{ latest_release }}

@@ -1,0 +1,24 @@
+---
+
+- name: Lookup system architecture
+  ansible.builtin.command:
+    cmd: dpkg --print-architecture
+  changed_when: false
+  register: jellyfin_arch
+
+- name: Add Jellyfin repo
+  ansible.builtin.deb822_repository:
+    name: jellyfin
+    types: deb
+    uris: https://repo.jellyfin.org/{{ ansible_distribution | lower }}
+    suites:
+      - "{{ ansible_distribution_release | lower }}"
+    components: main
+    architectures: '{{ jellyfin_arch.stdout }}'
+    signed_by: "https://repo.jellyfin.org/jellyfin_team.gpg.key"
+
+- name: Install Jellyfin
+  ansible.builtin.apt:
+    pkg: jellyfin
+    update_cache: true
+  notify: restart_jellyfin

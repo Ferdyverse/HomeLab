@@ -1,0 +1,14 @@
+---
+
+gitea_data_folder: '{{ docker_container_data_folder }}/gitea'
+
+gitea_docker_name: gitea
+gitea_docker_image: docker.io/gitea/gitea:latest
+gitea_docker_network_name: gitea
+
+gitea_runner_name: gitea_runner
+gitea_runner_image: docker.io/gitea/act_runner:latest
+gitea_runner_folder: '{{ docker_container_data_folder }}/runner'
+gitea_runner_config: '{{ gitea_runner_folder }}/runner_config.yaml'
+
+gitea_url: https://gitea.berger-em.net

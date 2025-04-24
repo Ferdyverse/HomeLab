@@ -1,0 +1,13 @@
+---
+
+jellyfin_user: jellyfin
+jellyfin_group: '{{ jellyfin_user }}'
+
+jellyfin_data_dir: /var/lib/jellyfin
+jellyfin_config_dir: /etc/jellyfin
+jellyfin_cache_dir: /var/cache/jellyfin
+jellyfin_log_dir: /var/log/jellyfin
+
+jellyfin_web_bin: /usr/share/jellyfin/web
+jellyfin_restart_bin: /usr/lib/jellyfin/restart.sh
+jellyfin_ffmpeg_bin: /usr/lib/jellyfin-ffmpeg/ffmpeg

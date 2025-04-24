@@ -1,0 +1,35 @@
+---
+
+- name: Create folders
+  ansible.builtin.file:
+    path: '{{ item }}'
+    state: directory
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+    mode: '0755'
+    recurse: true
+  loop:
+    - '{{ docker_container_data_folder }}/twitch_points'
+    - '{{ docker_container_config_folder }}/twitch_points'
+
+- name: Copy required config file
+  ansible.builtin.template:
+    src: docker01/twitch_points_run.py.j2
+    dest: '{{ docker_container_config_folder }}/twitch_points/run.py'
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+    mode: '0755'
+
+- name: Deploy Twitch Points Farmer
+  community.docker.docker_container:
+    name: twitch_points
+    image: rdavidoff/twitch-channel-points-miner-v2
+    restart_policy: "unless-stopped"
+    ports:
+      - 5002:5000
+    volumes:
+      - '{{ docker_container_data_folder }}/twitch_points/analytics:/usr/src/app/analytics'
+      - '{{ docker_container_data_folder }}/twitch_points/cookies:/usr/src/app/cookies'
+      - '{{ docker_container_data_folder }}/twitch_points/logs:/usr/src/app/logs'
+      - '{{ docker_container_config_folder }}/twitch_points/run.py:/usr/src/app/run.py:ro'
+    state: started

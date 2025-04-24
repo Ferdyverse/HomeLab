@@ -1,0 +1,19 @@
+---
+
+- name: Update Semaphore configuration
+  become: true
+  block:
+
+    - name: Update config file
+      ansible.builtin.template:
+        src: config.json.j2
+        dest: '{{ semaphore_install_path }}/config.json'
+        owner: root
+        group: '{{ semaphore_username }}'
+        mode: '0775'
+
+    - name: Reload Semaphore service
+      ansible.builtin.systemd_service:
+        name: semaphore
+        enabled: true
+        state: reloaded

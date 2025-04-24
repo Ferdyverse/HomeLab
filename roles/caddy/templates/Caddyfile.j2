@@ -1,0 +1,20 @@
+{{ ansible_managed | comment(decoration="# ") }}
+{
+	log {
+		output file {{ caddy_log_path }}/caddy.log {
+			roll_size 100M
+			mode: 660
+		}
+	}
+
+	{% if caddy_metrics_enabled %}
+	metrics {
+		per_host
+	}
+	{% endif %}
+
+	servers {
+	}
+}
+
+import vhosts/*

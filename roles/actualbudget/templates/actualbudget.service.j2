@@ -1,0 +1,16 @@
+[Unit]
+Description=Actual Budget Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory={{ actualbudget_install_folder }}
+EnvironmentFile={{ actualbudget_data_folder }}/.env
+ExecStart=/usr/bin/yarn start:server
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

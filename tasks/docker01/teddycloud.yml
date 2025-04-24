@@ -1,0 +1,46 @@
+---
+
+- name: Create config dir
+  ansible.builtin.file:
+    path: '{{ item }}'
+    state: directory
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+    mode: '0755'
+    recurse: true
+  loop:
+    - '{{ docker_container_config_folder }}/teddycloud/config'
+
+- name: Create config dir
+  ansible.builtin.file:
+    path: '{{ docker_container_data_folder }}/teddycloud/{{ item }}'
+    state: directory
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+    mode: '0755'
+    recurse: true
+  loop:
+    - certs
+    - content
+    - library
+    - firmware
+    - cache
+
+- name: Deploy Teddycloud
+  community.docker.docker_container:
+    name: teddycloud
+    hostname: teddycloud
+    image: ghcr.io/toniebox-reverse-engineering/teddycloud:latest
+    restart_policy: "unless-stopped"
+    ports:
+      - 80:80
+      - 443:443
+      - 8443:8443
+    volumes:
+      - '{{ docker_container_data_folder }}/teddycloud/certs:/teddycloud/certs'
+      - '{{ docker_container_config_folder }}/teddycloud/config:/teddycloud/config'
+      - '{{ docker_container_data_folder }}/teddycloud/content:/teddycloud/data/content'
+      - '{{ docker_container_data_folder }}/teddycloud/library:/teddycloud/data/library'
+      - '{{ docker_container_data_folder }}/teddycloud/firmware:/teddycloud/data/firmware'
+      - '{{ docker_container_data_folder }}/teddycloud/cache:/teddyCloud/data/cache'
+    state: started

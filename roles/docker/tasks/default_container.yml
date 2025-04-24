@@ -1,0 +1,32 @@
+---
+
+- name: Deploy default container
+  become: true
+  block:
+    - name: Deploy portainer agent
+      community.docker.docker_container:
+        name: '{{ docker_portainer_agent_name }}'
+        image: '{{ docker_portainer_agent_image }}'
+        restart_policy: "unless-stopped"
+        ports:
+          - 9001:9001
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+          - /var/lib/docker/volumes:/var/lib/docker/volumes
+          - /:/host
+        state: started
+
+    - name: Deploy watchtower
+      community.docker.docker_container:
+        name: '{{ docker_watchtower_name }}'
+        image: '{{ docker_watchtower_image }}'
+        restart_policy: "always"
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+        env:
+          WATCHTOWER_NOTIFICATIONS: "shoutrrr"
+          WATCHTOWER_NOTIFICATION_URL: "{{ ntfy_url_suki }}"
+          WATCHTOWER_CLEANUP: "true"
+          WATCHTOWER_NOTIFICATIONS_HOSTNAME: "{{ inventory_hostname_short }}"
+          WATCHTOWER_SCHEDULE: "0 0 0 * * *"
+        state: started

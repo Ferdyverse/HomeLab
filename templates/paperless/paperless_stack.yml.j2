@@ -1,0 +1,130 @@
+---
+
+services:
+  broker:
+    image: docker.io/library/redis:7
+    restart: unless-stopped
+    user: 1000:1000
+    volumes:
+      - {{ docker_container_data_folder }}/paperless/redisdata:/data
+    networks:
+      - paperless
+
+  db:
+    image: docker.io/library/mariadb:10
+    restart: unless-stopped
+    user: 1000:1000
+    volumes:
+      - {{ docker_container_data_folder }}/paperless/dbdata:/var/lib/mysql
+    environment:
+      MARIADB_HOST: paperless
+      MARIADB_DATABASE: paperless
+      MARIADB_USER: {{ paperless_db_user }}
+      MARIADB_PASSWORD: {{ paperless_db_password }}
+      MARIADB_ROOT_PASSWORD: {{ paperless_db_password }}
+    networks:
+      - paperless
+
+  webserver:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    restart: unless-stopped
+    user: 1000:1000
+    depends_on:
+      - db
+      - broker
+    ports:
+      - 80:8000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - {{ docker_container_data_folder }}/paperless/data:/usr/src/paperless/data
+      - {{ docker_container_data_folder }}/paperless/media:/usr/src/paperless/media
+      - {{ docker_container_data_folder }}/paperless/export:/usr/src/paperless/export
+      - {{ docker_container_data_folder }}/paperless/consume:/usr/src/paperless/consume
+      - {{ docker_container_data_folder }}/paperless/scripts:/usr/src/paperless/scripts
+    env_file: docker-compose.env
+    environment:
+      PAPERLESS_REDIS: redis://broker:6379
+      PAPERLESS_DBENGINE: mariadb
+      PAPERLESS_DBHOST: db
+      PAPERLESS_DBUSER: {{ paperless_db_user }}
+      PAPERLESS_DBPASS: {{ paperless_db_password }}
+      PAPERLESS_DBPORT: 3306
+      PAPERLESS_TIKA_ENABLED: 1
+      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000
+      PAPERLESS_TIKA_ENDPOINT: http://tika:9998
+      PAPERLESS_FILENAME_FORMAT: "{document_type}/{created_year}/{correspondent}/{created_year}-{created_month}-{created_day}_{title}"
+      PAPERLESS_FILENAME_FORMAT_REMOVE_NONE: "True"
+      PAPERLESS_OCR_ROTATE_PAGES: "True"
+      PAPERLESS_POST_CONSUME_SCRIPT: /usr/src/paperless/scripts/post-consumption.sh
+      PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
+      PAPERLESS_SOCIALACCOUNT_PROVIDERS: >
+          {
+            "openid_connect": {
+              "APPS": [
+                {
+                  "provider_id": "authentik",
+                  "name": "Authentik",
+                  "client_id": "{{ paperless_auth_client_it }}",
+                  "secret": "{{ paperless_auth_secret }}",
+                  "settings": {
+                    "server_url": "{{ paperless_auth_url }}"
+                  }
+                }
+              ],
+              "OAUTH_PKCE_ENABLED": "True"
+            }
+          }
+    networks:
+      - paperless
+
+  gotenberg:
+    image: docker.io/gotenberg/gotenberg:7.4
+    restart: unless-stopped
+    user: 1000:1000
+    environment:
+      CHROMIUM_DISABLE_ROUTES: 1
+    networks:
+      - paperless
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  tika:
+    image: ghcr.io/paperless-ngx/tika:latest
+    restart: unless-stopped
+    user: 1000:1000
+    networks:
+      - paperless
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  paperless-ai:
+    image: clusterzx/paperless-ai
+    container_name: paperless-ai
+    restart: unless-stopped
+    user: 1000:1000
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges=true
+    env_file:
+      - "/home/{{ default_user }}/docker/paperless/ai.env"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - PAPERLESS_AI_PORT=${PAPERLESS_AI_PORT:-3000}
+    ports:
+      - "3000:${PAPERLESS_AI_PORT:-3000}"
+    volumes:
+      - {{ docker_container_data_folder }}/paperless/ai_data:/app/data
+    networks:
+      - paperless
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+networks:
+  paperless:
+    name: paperless

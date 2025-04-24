@@ -1,0 +1,47 @@
+---
+
+# group_vars/all
+created_hosts: {}
+changed_hosts: {}
+
+# PVS vars
+pve_apiuser: 'root@pam'
+pve_api_token_id: 'ansible'
+pve_api_host: 'proxmox.berger-em.net'
+pve_api_port: 443
+
+# Homelab Data
+pve_local_username: '{{ default_user }}'
+
+# Default settings for lxc containers
+pve_lxc_defaults:
+  cores: 2
+  description: '{{ pve_description }}'
+  disk: 'zfs:5'
+  features:
+    - keyctl=1
+    - nesting=1
+  memory: 1024
+  node: 'evoli'
+  onboot: true
+  ostemplate: "local:vztmpl/debian-12-standard_12.7-1_amd64.tar.zst"
+  password: '{{ pve_default_root_password }}' # Vault item
+  pubkey: "{{ bergefe_pub_ssh_key }}" # Vault item
+  netif:
+    net0: "name=eth0,ip=dhcp,bridge=vmbr0,firewall=0"
+  state: 'started'
+  swap: 512
+  tags:
+    - ansible
+  unprivileged: true
+  do_update: true
+  force: false
+  vmid: ''
+
+pve_description: |
+  <div align='center'>
+    <h2 style='font-size: 24px; margin: 20px 0;'>Ansible managed</h2>
+    <p style='margin: 16px 0;'>
+      This host is manged by ansible. No not change things manually!
+    </p>
+  </div>

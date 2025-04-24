@@ -1,0 +1,28 @@
+---
+
+- name: Create dirs
+  ansible.builtin.file:
+    path: '{{ item }}'
+    state: directory
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+    mode: '0755'
+    recurse: true
+  loop:
+    - '{{ docker_container_config_folder }}/audio/audioshelf'
+    - '{{ docker_container_config_folder }}/audio/libation'
+    - '{{ docker_container_data_folder }}/audio/audioshelf'
+    - '{{ docker_container_data_folder }}/audio/libation'
+    - '/home/{{ default_user }}/docker/audio_stack/'
+
+- name: Create compose file
+  ansible.builtin.template:
+    src: docker01/audio_stack.yml.j2
+    dest: '/home/{{ default_user }}/docker/audio_stack/docker-compose.yml'
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+    mode: '0755'
+
+- name: Run `docker compose up`
+  community.docker.docker_compose_v2:
+    project_src: '/home/{{ default_user }}/docker/audio_stack/'

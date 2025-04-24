@@ -1,0 +1,31 @@
+---
+
+- name: Create config dir
+  ansible.builtin.file:
+    path: '{{ item }}'
+    state: directory
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+    mode: '0755'
+    recurse: true
+  loop:
+    - '{{ docker_container_config_folder }}/adguardhome-sync'
+
+- name: Copy required config file
+  ansible.builtin.template:
+    src: docker01/adguardhome-sync.yaml.j2
+    dest: '{{ docker_container_config_folder }}/adguardhome-sync/adguardhome-sync.yaml'
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+    mode: '0755'
+
+- name: Deploy adguardhome-sync
+  community.docker.docker_container:
+    name: adguardhome-sync
+    image: ghcr.io/bakito/adguardhome-sync
+    restart_policy: "unless-stopped"
+    ports:
+      - 8086:8086
+    volumes:
+      - '{{ docker_container_config_folder }}/adguardhome-sync/adguardhome-sync.yaml:/config/adguardhome-sync.yaml'
+    state: started

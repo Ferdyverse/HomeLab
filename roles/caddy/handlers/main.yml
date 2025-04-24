@@ -1,0 +1,14 @@
+---
+
+- name: Reload caddy
+  ansible.builtin.service:
+    name: caddy
+    state: reloaded
+  become: true
+
+- name: Restart caddy
+  listen: service modified
+  ansible.builtin.service:
+    name: caddy
+    state: restarted
+  become: true
