@@ -136,12 +136,9 @@
                 - title: Changedetection
                   url: https://changedetection.berger-em.net
                   icon: di:changedetection
-                - title: Drone
-                  url: https://drone.berger-em.net
-                  icon: si:drone
-                - title: Gitea
-                  url: https://gitea.berger-em.net
-                  icon: di:gitea
+                - title: Forgejo
+                  url: https://git.berger-em.net
+                  icon: di:forgejo
                 - title: Hardbase
                   url: https://hardbase.berger-em.net
                   icon: di:synology
