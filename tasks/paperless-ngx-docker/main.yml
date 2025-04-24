@@ -13,6 +13,15 @@
     - '/home/{{ default_user }}/docker/paperless/'
     - '{{ docker_container_data_folder }}/paperless/scripts/'
 
+- name: Create consume dir with ftp
+  ansible.builtin.file:
+    path: '{{ docker_container_data_folder }}/paperless/consume/'
+    state: directory
+    owner: '{{ default_user }}'
+    group: 'ftpuser'
+    mode: '0755'
+    recurse: true
+
 - name: Create config files
   ansible.builtin.template:
     src: 'paperless/{{ item.name }}'
