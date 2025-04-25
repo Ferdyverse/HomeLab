@@ -81,7 +81,7 @@
                   url: https://dns1.berger-em.net
                   icon: di:adguard-home
                 - title: DNS2
-                  url: https://dns1.berger-em.net
+                  url: https://dns2.berger-em.net
                   icon: di:adguard-home
                 - title: UDM
                   url: https://udm.berger-em.net

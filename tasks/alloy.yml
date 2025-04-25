@@ -11,6 +11,7 @@
           - caddy
         alloy_env_file_vars:
           CONFIG_FILE: '{{ alloy_config_path }}'
+          CUSTOM_ARGS: "--disable-reporting"
         alloy_config: '{}'
 
     - name: 'Create alloy config files'

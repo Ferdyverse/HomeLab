@@ -25,6 +25,8 @@
               api_url: "https://auth.berger-em.net/application/o/userinfo/"
               # Optionally map user groups to Grafana roles
               role_attribute_path: contains(groups, 'authentik Admins') && 'Admin' || 'Viewer'
+          analytics:
+            reporting_enabled: false
           paths:
             logs: /var/log/grafana
             data: /data/grafana
