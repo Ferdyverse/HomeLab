@@ -32,13 +32,14 @@
     - name: Rewrite config snippets
       ansible.builtin.template:
         mode: "0644"
-        src: '{{ item }}.j2'
+        src: 'snippets/{{ item }}.j2'
         dest: "{{ caddy_config_path }}/snippets/{{ item }}"
         owner: "{{ caddy_user_name }}"
         group: '{{ caddy_group_name }}'
       loop:
         - tls.conf
         - protected.conf
+        - layer4.conf
       notify: Reload caddy
 
     - name: Configure vhosts

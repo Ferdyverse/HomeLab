@@ -49,7 +49,7 @@
       register: existing_caddy
 
     - name: Remove existing version
-      when: config_file.stat.exists
+      when: existing_caddy.stat.exists
       block:
         - name: Create backup
           ansible.builtin.copy:
@@ -57,6 +57,8 @@
             dest: '/home/{{ default_user }}/caddy_backup'
             force: true
             mode: '0777'
+            remote_src: true
+
         - name: Remove existing version
           ansible.builtin.file:
             path: '{{ caddy_bin_path }}'
@@ -121,13 +123,14 @@
     - name: Create config snippets
       ansible.builtin.template:
         mode: "0644"
-        src: '{{ item }}.j2'
+        src: 'snippets/{{ item }}.j2'
         dest: "{{ caddy_config_path }}/snippets/{{ item }}"
         owner: "{{ caddy_user_name }}"
         group: '{{ caddy_group_name }}'
       loop:
         - tls.conf
         - protected.conf
+        - layer4.conf
       notify: Reload caddy
 
     - name: Create environment file
