@@ -1,4 +1,14 @@
 ---
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
+- name: Stop service
+  ansible.builtin.service:
+    name: caddy
+    enabled: true
+    state: stopped
+  when: ansible_facts['services']['caddy.service']['status'] | default('not-found') != 'not-found'
+  become: true
 
 - name: Install xCaddy
   become: true
@@ -33,19 +43,31 @@
         state: present
         update_cache: true
 
-    - name: Check if Caddy is already installed.
-      ansible.builtin.command:
-        cmd: /usr/local/go/bin/go version
-      ignore_errors: true
-      register: go_version_result
-      changed_when: false
+    - name: Check for existing version
+      ansible.builtin.stat:
+        path: '{{ caddy_bin_path }}'
+      register: existing_caddy
+
+    - name: Remove existing version
+      when: config_file.stat.exists
+      block:
+        - name: Create backup
+          ansible.builtin.copy:
+            src: '{{ caddy_bin_path }}'
+            dest: '/home/{{ default_user }}/caddy_backup'
+            force: true
+            mode: '0777'
+        - name: Remove existing version
+          ansible.builtin.file:
+            path: '{{ caddy_bin_path }}'
+            state: absent
 
     - name: Build custom caddy binary
       ansible.builtin.shell:
         executable: /bin/bash
         cmd: |
           export PATH=$PATH:/usr/local/go/bin
-          xcaddy build --with github.com/caddy-dns/cloudflare --output {{ caddy_bin_path }}
+          xcaddy build --with github.com/caddy-dns/cloudflare --with github.com/mholt/caddy-l4 --output {{ caddy_bin_path }}
         creates: '{{ caddy_bin_path }}'
 
     - name: Make caddy executable
