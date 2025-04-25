@@ -1,0 +1,43 @@
+---
+
+- name: Deploy paperless
+  become: true
+  block:
+    - name: Create dirs
+      ansible.builtin.file:
+        path: '{{ item }}'
+        state: directory
+        owner: '{{ default_user }}'
+        group: '{{ default_user }}'
+        mode: '0755'
+        recurse: true
+      loop:
+        - '{{ docker_container_data_folder }}/paperless'
+        - '/home/{{ default_user }}/docker/paperless/'
+        - '{{ docker_container_data_folder }}/paperless/scripts/'
+
+    - name: Create consume dir with ftp
+      ansible.builtin.file:
+        path: '{{ docker_container_data_folder }}/paperless/consume/'
+        state: directory
+        owner: '{{ default_user }}'
+        group: 'ftpuser'
+        mode: '0755'
+        recurse: true
+
+    - name: Create config files
+      ansible.builtin.template:
+        src: 'paperless/{{ item.name }}'
+        dest: '{{ item.dest_path }}/{{ item.dest_name }}'
+        owner: '{{ default_user }}'
+        group: '{{ default_user }}'
+        mode: '0755'
+      loop:
+        - { "name": "paperless_stack.yml.j2", "dest_name": "docker-compose.yml", "dest_path": "/home/{{ default_user }}/docker/paperless" }
+        - { "name": "docker-compose.env.j2", "dest_name": "docker-compose.env", "dest_path": "/home/{{ default_user }}/docker/paperless" }
+        - { "name": "ai.env.j2", "dest_name": "ai.env", "dest_path": "/home/{{ default_user }}/docker/paperless/" }
+        - { "name": "post-consumption.sh.j2", "dest_name": "post-consumption.sh", "dest_path": "{{ docker_container_data_folder }}/paperless/scripts/" }
+
+- name: Run `docker compose up`
+  community.docker.docker_compose_v2:
+    project_src: '/home/{{ default_user }}/docker/paperless/'

@@ -1,0 +1,43 @@
+---
+
+- name: Deploy proftpd
+  become: true
+  block:
+
+    - name: Install packages
+      ansible.builtin.apt:
+        pkg: proftpd-basic
+        state: present
+
+    - name: Create user ftpuser
+      ansible.builtin.user:
+        name: "{{ ftp_user }}"
+        shell: /bin/bash
+        state: present
+        home: '{{ docker_container_data_folder }}/paperless/consume/'
+        password: "{{ passwd_bergefe | password_hash('sha512') }}"
+
+    - name: Change access rights
+      ansible.builtin.file:
+        path: '{{ docker_container_data_folder }}/paperless/consume/'
+        state: directory
+        owner: '{{ default_user }}'
+        group: 'ftpuser'
+        mode: '0755'
+        recurse: true
+
+    - name: Create config files
+      ansible.builtin.template:
+        src: 'paperless/{{ item.name }}'
+        dest: '{{ item.dest_path }}/{{ item.dest_name }}'
+        owner: 'root'
+        group: 'root'
+        mode: '0744'
+      loop:
+        - name: "proftpd.conf.j2"
+          dest_name: "proftpd.conf"
+          dest_path: "/etc/proftpd/"
+        - name: "ftp_custom.conf.j2"
+          dest_name: "custom.conf"
+          dest_path: "/etc/proftpd/conf.d"
+      notify: Restart proftpd

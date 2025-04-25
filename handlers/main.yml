@@ -5,3 +5,13 @@
     name: alloy
     state: restarted
   become: true
+
+- name: Reload proftpd
+  ansible.builtin.service:
+    name: proftpd
+    state: reloaded
+
+- name: Restart proftpd
+  ansible.builtin.service:
+    name: proftpd
+    state: restarted
