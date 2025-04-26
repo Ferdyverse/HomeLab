@@ -37,6 +37,10 @@
   when: (not release_file.stat.exists) or (latest_release not in current_release['content'] | b64decode)
   tags: forgejo.setup
 
-- name: Deploy forgejo
+- name: Deploy forgejo runner
   ansible.builtin.include_tasks: runner.yml
   tags: forgejo.runner
+
+- name: Customize Forgejo
+  ansible.builtin.include_tasks: customize.yml
+  tags: forgejo.customize

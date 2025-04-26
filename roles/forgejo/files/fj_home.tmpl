@@ -1,0 +1,20 @@
+{{template "base/head" .}}
+<div role="main" aria-label="{{if .IsSigned}}{{ctx.Locale.Tr "dashboard"}}{{else}}{{ctx.Locale.Tr "home"}}{{end}}" class="page->
+        <div class="tw-mb-8 tw-px-8">
+                <div class="center">
+                        <img class="logo" width="220" height="220" src="{{AssetUrlPrefix}}/img/logo.svg" alt="{{ctx.Locale.Tr ">
+                        <div class="hero">
+                                <h1 class="ui icon header title">
+                                        {{AppDisplayName}}
+                                </h1>
+                                <h2>Welcome to https://git.berger-em.net!</h2>
+                        </div>
+                </div>
+        </div>
+</div>
+
+<div class="center">
+        <p style="font-size: 20px;">If you want access to some projects, that are not publicly available, <br /> please feel fr>
+</div>
+
+{{template "base/footer" .}}

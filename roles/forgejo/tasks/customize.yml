@@ -1,0 +1,21 @@
+---
+
+- name: Create forgejo custom dir
+  ansible.builtin.file:
+    path: '{{ forgejo_work_path }}/custom/templates'
+    state: directory
+    owner: "git"
+    group: "git"
+    mode: '0644'
+    recurse: true
+
+- name: Copy custom templates
+  ansible.builtin.copy:
+    src: '{{ item.src }}'
+    dest: '{{ forgejo_work_path }}/custom/{{ item.name }}'
+    owner: 'git'
+    group: 'git'
+    mode: '0644'
+  loop:
+    - name: home.tmpl
+      src: 'fj_home.tmpl'
