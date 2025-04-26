@@ -32,12 +32,12 @@
   register: current_release
   when: release_file.stat.exists
 
-- name: Install forgejo
+- name: Install Forgejo
   ansible.builtin.include_tasks: install.yml
   when: (not release_file.stat.exists) or (latest_release not in current_release['content'] | b64decode)
   tags: forgejo.setup
 
-- name: Deploy forgejo runner
+- name: Deploy Forgejo runner
   ansible.builtin.include_tasks: runner.yml
   tags: forgejo.runner
 
