@@ -42,6 +42,15 @@
         - layer4.conf
       notify: Reload caddy
 
+    - name: Rewrite environment file
+      ansible.builtin.template:
+        mode: "0640"
+        src: env.j2
+        dest: "{{ caddy_config_path }}/.env"
+        owner: "{{ caddy_user_name }}"
+        group: '{{ caddy_group_name }}'
+      notify: Reload caddy
+
     - name: Configure vhosts
       ansible.builtin.include_tasks: vhosts.yml
       tags: caddy.vhosts

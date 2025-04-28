@@ -3,13 +3,13 @@
 - name: Install modules for semaphore
   become: true
   block:
-    - name: Install 1password cli
+    - name: Install 1password repo
       ansible.builtin.deb822_repository:
-        name: docker
-        uris: 'https://downloads.1password.com/linux/debian/{{ ansible_architecture | lower }}'
+        name: 1password
+        uris: 'https://downloads.1password.com/linux/debian/amd64'
         types: deb
-        suites: 'main'
-        components: stable
+        suites: stable
+        components: main
         signed_by: 'https://downloads.1password.com/linux/keys/1password.asc'
         state: present
 
