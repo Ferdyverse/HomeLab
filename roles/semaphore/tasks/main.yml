@@ -41,3 +41,7 @@
   ansible.builtin.include_tasks: configure.yml
   when: not sempahore_installed is defined
   tags: semaphore.config
+
+- name: Install modules
+  ansible.builtin.include_tasks: modules.yml
+  tags: semaphore.modules
