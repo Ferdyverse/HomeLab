@@ -57,8 +57,7 @@
         - ssh_config
 
     - name: Configure/Install Docker
-      when:
-        - ("docker" in inventory_hostname) or ("gitea" in inventory_hostname) or ("authentik" in inventory_hostname)
+      when: inventory_hostname is match('.*(docker|gitea|authentik|onepassword).*')
       tags:
         - docker
       block:
