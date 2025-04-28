@@ -31,6 +31,13 @@ caddy_vhost_defaults:
 
 # Vhost config
 caddy_vhosts:
+
+  - name: 1pw
+    hostname: '1pw.berger-em.net'
+    proxy_host: http://192.168.1.24:8085
+    protected_private: true
+    protected_internal: false
+
   - name: audiobookshelf
     hostname: 'audiobookshelf.berger-em.net'
     proxy_host: http://192.168.1.24:8080
