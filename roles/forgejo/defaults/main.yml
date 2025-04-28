@@ -13,5 +13,11 @@ forgejo_runner_path: '{{ docker_container_data_folder }}/runner'
 forgejo_system_user: git
 forgejo_system_group: git
 
-forgejo_admin_user: '{{ default_user }}'
+forgejo_admin_user: 'bergefe_local'
 forgejo_admin_email: 'forgejo@berger-em.de'
+
+# From 1Password
+forgejo_secret_key: '{{ lookup("community.general.onepassword", "Forgejo", field="Secret Key", vault="HomeLab") }}'
+forgejo_internal_token: '{{ lookup("community.general.onepassword", "Forgejo", field="Internal Token", vault="HomeLab") }}'
+forgejo_oauth_jwt_secret: '{{ lookup("community.general.onepassword", "Forgejo", field="JWT Secret", vault="HomeLab") }}'
+forgejo_runner_shared_secret: '{{ lookup("community.general.onepassword", "Forgejo", field="Runner Shared Secret", vault="HomeLab") }}'

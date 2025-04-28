@@ -16,14 +16,14 @@ ntfy_system_user: ntfy
 ntfy_url: https://ntfy.berger-em.net
 
 ntfy_admin_user: "{{ default_user }}"
-ntfy_admin_password: "{{ passwd_bergefe }}"
+ntfy_admin_password: '{{ lookup("community.general.onepassword", "Ntfy", vault="HomeLab") }}'
 
 ntfy_users:
-  - '{ "user": "ansible", "password": {{ ntfy_ansible_password }} }'
-  - '{ "user": "suki", "password": {{ ntfy_suki_password }} }'
-  - '{ "user": "proxmox", "password": {{ passwd_bergefe }} }'
-  - '{ "user": "kuma", "password": {{ passwd_bergefe }} }'
-  - '{ "user": "changes", "password": {{ passwd_bergefe }} }'
+  - '{ "user": "ansible", "password": {{ lookup("community.general.onepassword", "Ntfy", section="Ansible", vault="HomeLab") }} }'
+  - '{ "user": "suki", "password": {{ lookup("community.general.onepassword", "Ntfy", section="Suki", vault="HomeLab") }} }'
+  - '{ "user": "proxmox", "password": {{ lookup("community.general.onepassword", "Ntfy", section="Proxmox", vault="HomeLab") }} }'
+  - '{ "user": "kuma", "password": {{ lookup("community.general.onepassword", "Ntfy", section="Kuma", vault="HomeLab") }} }'
+  - '{ "user": "changes", "password": {{ lookup("community.general.onepassword", "Ntfy", section="Changes", vault="HomeLab") }} }'
 
 # Permissions:
 # read-write (alias: rw)

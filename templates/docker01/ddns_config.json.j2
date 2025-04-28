@@ -2,9 +2,9 @@
   "cloudflare": [
     {
       "authentication": {
-        "api_token": "{{ ddns_cloudflare_token }}"
+        "api_token": "{{ lookup("community.general.onepassword", "Cloudflare DDNS", field="Token", vault="HomeLab") }}"
       },
-      "zone_id": "{{ ddns_cloudflare_zone }}",
+      "zone_id": "{{ lookup("community.general.onepassword", "Cloudflare DDNS", field="Zone", vault="HomeLab") }}",
       "subdomains": [
         {
           "name": "home",
