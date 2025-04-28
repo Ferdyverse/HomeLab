@@ -3,15 +3,14 @@ services:
     image: 1password/connect-api:latest
     restart: unless-stopped
     volumes:
-      - '{{ docker_container_data_folder }}/onepassword/data:/home/opconnect'
-    environment:
-      - OP_BUS_PORT=11223
-      - OP_HTTP_PORT=8080
+      - '{{ docker_container_data_folder }}/onepassword/data:/home/opuser/.op/data'
+      - './token.json:/home/opuser/.op/1password-credentials.json'
+    ports:
+      - 8085:8080
 
   op-connect-sync:
     image: 1password/connect-sync:latest
     restart: unless-stopped
     volumes:
-      - '{{ docker_container_data_folder }}/onepassword/data:/home/opconnect'
-    environment:
-      - OP_BUS_PORT=11223
+      - '{{ docker_container_data_folder }}/onepassword/data:/home/opuser/.op/data'
+      - './token.json:/home/opuser/.op/1password-credentials.json'
