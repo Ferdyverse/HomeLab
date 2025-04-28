@@ -1,5 +1,5 @@
 ---
 
 grafana_url: "http://192.168.1.33:3000"
-grafana_user: '{{ grafana_admin_user }}'
-grafana_password: '{{ grafana_admin_password }}'
+grafana_user: '{{ lookup("community.general.onepassword", "Grafana", field="Username", vault="HomeLab") }}'
+grafana_password: '{{ lookup("community.general.onepassword", "Grafana", vault="HomeLab") }}'

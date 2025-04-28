@@ -21,7 +21,7 @@ services:
       - VPN_TYPE=wireguard
       #- FIREWALL_VPN_INPUT_PORTS=7878
       - FIREWALL_OUTBOUND_SUBNETS=192.168.1.0/24
-      - WIREGUARD_PRIVATE_KEY={{ nordvpn_wireguard_key }}
+      - WIREGUARD_PRIVATE_KEY={{ lookup("community.general.onepassword", "NordVPN ARR", field="Wireguard Key", vault="HomeLab") }}
       - HEALTH_VPN_DURATION_INITIAL=120s
       - UNBLOCK=berger-em.net
     healthcheck:
@@ -80,8 +80,8 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/Berlin
-      - NZBGET_USER={{ nzb_user }}
-      - NZBGET_PASS={{ nzb_password }}
+      - NZBGET_USER={{ lookup("community.general.onepassword", "NZBGet", field="Username", vault="HomeLab") }}
+      - NZBGET_PASS={{ lookup("community.general.onepassword", "NZBGet", vault="HomeLab") }}
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - {{ docker_container_config_folder }}/nzbget:/config
