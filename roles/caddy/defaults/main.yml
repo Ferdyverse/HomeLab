@@ -7,7 +7,7 @@ caddy_user_name: caddy
 caddy_group_name: '{{ caddy_user_name }}'
 caddy_user_home_dir: /var/lib/caddy
 caddy_env_vars:
-  - "CLOUDFLARE_API_TOKEN={{ lookup('community.general.onepassword', vault='HomeLab', 'Caddy Cloudflare Token') }}"
+  - "CLOUDFLARE_API_TOKEN={{ lookup('community.general.onepassword', 'Caddy Cloudflare Token', vault='HomeLab') }}"
 caddy_service_after_units: []
 caddy_metrics_enabled: true
 
