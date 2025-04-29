@@ -115,6 +115,10 @@ caddy_vhosts:
     hostname: 'k1.berger-em.net'
     proxy_host: http://192.168.20.56:4408
 
+  - name: kestra
+    hostname: 'kestra.berger-em.net'
+    proxy_host: http://192.168.1.35:8080
+
   - name: kuma
     hostname: 'kuma.berger-em.net'
     proxy_host: http://192.168.1.20:3001
