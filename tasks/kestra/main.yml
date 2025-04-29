@@ -16,7 +16,7 @@
 
 - name: Create application config
   ansible.builtin.template:
-    src: kestra/application.yaml.j2
+    src: kestra/application.yml.j2
     dest: '{{ docker_container_config_folder }}/kestra/application.yaml'
     owner: '{{ default_user }}'
     group: '{{ default_user }}'
