@@ -1,8 +1,8 @@
 # Postgress PW
-PG_PASS={{ auth_pg_pass }}
+PG_PASS={{ lookup("community.general.onepassword", "Authentik", field="PG Password", vault="HomeLab") }}
 
 # SECRET KEY
-AUTHENTIK_SECRET_KEY={{ auth_secret_key }}
+AUTHENTIK_SECRET_KEY={{ lookup("community.general.onepassword", "Authentik", field="Secret key", vault="HomeLab") }}
 
 # Error Reporting
 AUTHENTIK_ERROR_REPORTING__ENABLED=true
@@ -12,11 +12,11 @@ COMPOSE_PORT_HTTP=80
 COMPOSE_PORT_HTTPS=443
 
 # SMTP Host Emails are sent to
-AUTHENTIK_EMAIL__HOST={{ auth_email_host }}
+AUTHENTIK_EMAIL__HOST={{ lookup("community.general.onepassword", "Authentik", field="EMail Server", vault="HomeLab") }}
 AUTHENTIK_EMAIL__PORT=465
 # Optionally authenticate (don't add quotation marks to your password)
 AUTHENTIK_EMAIL__USERNAME=authentik@berger-em.de
-AUTHENTIK_EMAIL__PASSWORD={{ auth_email_password }}
+AUTHENTIK_EMAIL__PASSWORD={{ lookup("community.general.onepassword", "Authentik", field="EMail Password", vault="HomeLab") }}
 # Use StartTLS
 AUTHENTIK_EMAIL__USE_TLS=false
 # Use SSL

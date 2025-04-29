@@ -12,8 +12,8 @@
 
 - name: Add ntfy Admin user
   ansible.builtin.shell: |
-    export NTFY_PASSWORD={{ ntfy_admin_password }}
-    ntfy user add --role=admin --ignore-exists {{ ntfy_admin_user }}
+    export NTFY_PASSWORD={{ lookup("community.general.onepassword", "Ntfy", vault="HomeLab") }}
+    ntfy user add --role=admin --ignore-exists {{ lookup("community.general.onepassword", "Ntfy", field="Username", vault="HomeLab") }}
     unset NTFY_PASSWORD
   changed_when: true
 

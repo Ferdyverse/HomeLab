@@ -17,8 +17,8 @@
             generic_oauth:
               name: authentik
               enabled: true
-              client_id: '{{ grafana_authentik_id }}'
-              client_secret: '{{ grafana_authentik_secret }}'
+              client_id: '{{ lookup("community.general.onepassword", "Grafana", field="Authentik Id", vault="HomeLab") }}'
+              client_secret: '{{ lookup("community.general.onepassword", "Grafana", field="Authentik Secret", vault="HomeLab") }}'
               scopes: "openid profile email"
               auth_url: "https://auth.berger-em.net/application/o/authorize/"
               token_url: "https://auth.berger-em.net/application/o/token/"
@@ -33,8 +33,8 @@
           database:
             type: "sqlite3"
           security:
-            admin_user: '{{ grafana_admin_user }}'
-            admin_password: '{{ grafana_admin_password }}'
+            admin_user: '{{ lookup("community.general.onepassword", "Grafana", field="username", vault="HomeLab") }}'
+            admin_password: '{{ lookup("community.general.onepassword", "Grafana", vault="HomeLab") }}'
           server:
             http_addr: "0.0.0.0"
             http_port: 3000
