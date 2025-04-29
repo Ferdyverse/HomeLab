@@ -8,7 +8,7 @@ services:
     environment:
       POSTGRES_DB: kestra
       POSTGRES_USER: kestra
-      POSTGRES_PASSWORD: {{ lookup("community.general.onepassword", "Kestra", field="Postgres password, vault="HomeLab") }}
+      POSTGRES_PASSWORD: {{ lookup("community.general.onepassword", "Kestra", field="Postgres password", vault="HomeLab") }}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
       interval: 30s

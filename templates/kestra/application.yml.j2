@@ -5,7 +5,7 @@ datasources:
     url: jdbc:postgresql://postgres:5432/kestra
     driverClassName: org.postgresql.Driver
     username: kestra
-    password: {{ lookup("community.general.onepassword", "Kestra", field="Postgres password, vault="HomeLab") }}
+    password: {{ lookup("community.general.onepassword", "Kestra", field="Postgres password", vault="HomeLab") }}
 kestra:
     server:
     basicAuth:
