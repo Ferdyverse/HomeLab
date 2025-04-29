@@ -119,6 +119,9 @@
                 - title: Jellyfin
                   url: https://jellyfin.berger-em.net
                   icon: di:jellyfin
+                - title: Kestra
+                  url: https://kestra.berger-em.net
+                  icon: di:kestra
                 - title: Personal Zoo
                   url: https://zoo.berger-em.net
                   icon: di:atuin
