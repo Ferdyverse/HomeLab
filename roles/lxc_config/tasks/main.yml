@@ -1,11 +1,14 @@
 ---
 
-- name: Create ssh config
-  ansible.builtin.include_tasks: ssh_config.yml
-  tags:
-    - lxc_config.ssh
+- name: Configure LXC container
+  become: true
+  block:
+    - name: Create ssh config
+      ansible.builtin.include_tasks: ssh_config.yml
+      tags:
+        - lxc_config.ssh
 
-- name: Update network settings
-  ansible.builtin.include_tasks: network.yml
-  tags:
-    - lxc_config.network
+    - name: Update network settings
+      ansible.builtin.include_tasks: network.yml
+      tags:
+        - lxc_config.network
