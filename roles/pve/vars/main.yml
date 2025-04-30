@@ -110,7 +110,7 @@ pve_lxc_container:
     vmid: 120
     node: "pikachu"
     cores: 2
-    memory: 2048
+    memory: 4096
     disk: 'zfs:20'
     netif:
       net0: "name=eth0,gw=192.168.1.1,ip=192.168.1.35/24,bridge=vmbr0,firewall=0,tag=1"
