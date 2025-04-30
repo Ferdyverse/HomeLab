@@ -52,9 +52,9 @@
 
     - name: Update ssh config
       ansible.builtin.include_role:
-        name: ssh_config
+        name: lxc_config
       tags:
-        - ssh_config
+        - lxc_config
 
     - name: Configure/Install Docker
       when: inventory_hostname is match('.*(docker|gitea|authentik|onepassword|kestra).*')
