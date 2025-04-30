@@ -3,6 +3,7 @@
 services:
   postgres:
     image: postgres
+    user: 1000:1000
     volumes:
       - {{ docker_container_data_folder }}/postgresql/data:/var/lib/postgresql/data
     environment:
