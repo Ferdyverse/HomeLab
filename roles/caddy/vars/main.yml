@@ -74,10 +74,6 @@ caddy_vhosts:
     protected_private: true
     protected_internal: false
 
-  - name: files
-    hostname: 'files.berger-em.net'
-    proxy_host: http://192.168.1.24:24424
-
   - name: git
     hostname: 'git.berger-em.net'
     proxy_host: http://192.168.1.34:3000
