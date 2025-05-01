@@ -3,5 +3,4 @@ ansible-lint
 proxmoxer
 requests
 passlib
-github3.py
 paramiko
