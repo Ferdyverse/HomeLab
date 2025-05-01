@@ -131,3 +131,11 @@ loki.write "grafana_loki" {
     }
 }
 ```
+
+### Forgejo runner
+
+Manual image clearing
+```
+export DOCKER_HOST='tcp://127.0.0.1:2376'
+docker --tlsverify --tlscacert /certs/server/ca.pem  --tlscert /certs/server/cert.pem --tlskey /certs/server/key.pem image rm git.berger-em.net/bergefe/forgejo-runners:ubuntu-2404-ansible
+```
