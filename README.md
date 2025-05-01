@@ -132,10 +132,17 @@ loki.write "grafana_loki" {
 }
 ```
 
-### Forgejo runner
+## Forgejo runner
 
 Manual image clearing
 ```
 export DOCKER_HOST='tcp://127.0.0.1:2376'
 docker --tlsverify --tlscacert /certs/server/ca.pem  --tlscert /certs/server/cert.pem --tlskey /certs/server/key.pem image rm git.berger-em.net/bergefe/forgejo-runners:ubuntu-2404-ansible
+```
+
+## Run in Docker container
+
+You can run ansible inside of my prepared docker container.
+```
+docker run --rm -it -v $(pwd):/ansible git.berger-em.net/bergefe/forgejo-runners:ubuntu-2404-ansible
 ```

@@ -31,6 +31,11 @@ if [[ $PAM_RHOST == 192.168.1.32 ]]; then
   exit 0
 fi
 
+if [[ $PAM_RHOST == 192.168.1.34 ]]; then
+  echo "Session from Forgejo!"
+  exit 0
+fi
+
 if is_ip_in_cidr "$PAM_RHOST" "$CIDR"; then
   curl -H "Title:$SERVER" \
       -d "SSH login from private VLAN was successful!
