@@ -36,7 +36,7 @@
 - name: Install Glance
   ansible.builtin.include_tasks: install.yml
   when: (not release_file.stat.exists) or (latest_release not in current_release['content'] | b64decode)
-  tags: glances.setup
+  tags: glance.setup
 
 - name: Update Pages
   ansible.builtin.include_tasks: update_pages.yml
