@@ -69,6 +69,8 @@
 
         - name: Deploy host container
           ansible.builtin.include_tasks: 'tasks/{{ inventory_hostname }}/main.yml'
+          tags:
+            - docker.deploy
 
     - name: 'Configure/Install container'
       ansible.builtin.include_tasks: tasks/lxc_config.yml

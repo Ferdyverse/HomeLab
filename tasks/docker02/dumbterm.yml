@@ -31,6 +31,6 @@
     group: '{{ default_user }}'
     mode: '0755'
 
-- name: Run `docker compose up` again
+- name: Run `docker compose up`
   community.docker.docker_compose_v2:
     project_src: '/home/{{ default_user }}/docker/dumbterm/'
