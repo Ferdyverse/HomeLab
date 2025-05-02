@@ -5,3 +5,9 @@
     file: docker02/arr_stack.yml
   tags:
     - arr
+
+- name: Deploy Dumbterm
+  ansible.builtin.include_tasks:
+    file: docker02/dumbterm.yml
+  tags:
+    - dumbterm

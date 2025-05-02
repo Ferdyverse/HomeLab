@@ -207,6 +207,11 @@ caddy_vhosts:
     proxy_host: https://192.168.1.24:443
     protected_enabled: false
 
+  - name: terminal
+    hostname: 'terminal.berger-em.net'
+    proxy_host: http://192.168.1.30:3000
+    authentik_enabled: true
+
   - name: twitch-points
     hostname: 'twitch-points.berger-em.net'
     proxy_host: http://192.168.1.24:5002

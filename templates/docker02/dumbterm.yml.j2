@@ -1,0 +1,26 @@
+services:
+  dumbterm:
+    image: dumbwareio/dumbterm:latest
+    container_name: dumbterm
+    restart: unless-stopped
+    user: 1000:1000
+    ports:
+      - 3000:3000
+    volumes:
+      - {{ docker_container_config_folder }}/dumbterm/config:/root/.config
+      - {{ docker_container_data_folder }}/dumbterm/data:/root/data
+    environment:
+      # Container timezone
+      TZ: Europe/Berlin
+      # The title shown in the web interface
+      SITE_TITLE: DumbTerm
+      # Recommended PIN protection (leave empty to disable)
+      DUMBTERM_PIN: 
+      # The base URL for the application
+      BASE_URL: http://localhost:3000
+      ENABLE_STARSHIP: true
+      LOCKOUT_TIME: 15 # Minutes
+      # Session duration in hours before requiring re-authentication
+      MAX_SESSION_AGE: 24 # Hours
+      # (OPTIONAL) - List of allowed origins for CORS
+      ALLOWED_ORIGINS: http://192.168.1.50:3000
