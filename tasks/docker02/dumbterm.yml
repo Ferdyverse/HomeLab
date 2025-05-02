@@ -18,8 +18,8 @@
       owner: root
       group: root
       mode: '0750'
-    - '{{ docker_container_data_folder }}/dumbterm/data'
-    - '/home/{{ default_user }}/docker/dumbterm/'
+    - path: '{{ docker_container_data_folder }}/dumbterm/data'
+    - path: '/home/{{ default_user }}/docker/dumbterm/'
   become: true
 
 - name: Create config dir
