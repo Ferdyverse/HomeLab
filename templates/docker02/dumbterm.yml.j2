@@ -7,6 +7,7 @@ services:
       - 3000:3000
     volumes:
       - {{ docker_container_config_folder }}/dumbterm/config:/root/.config
+      - {{ docker_container_config_folder }}/dumbterm/ssh:/root/.ssh
       - {{ docker_container_data_folder }}/dumbterm/data:/root/data
     environment:
       # Container timezone

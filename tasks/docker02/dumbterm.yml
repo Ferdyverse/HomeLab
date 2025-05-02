@@ -11,6 +11,7 @@
     recurse: true
   loop:
     - '{{ docker_container_config_folder }}/dumbterm/config'
+    - '{{ docker_container_config_folder }}/dumbterm/ssh'
     - '{{ docker_container_data_folder }}/dumbterm/data'
     - '/home/{{ default_user }}/docker/dumbterm/'
   become: true
