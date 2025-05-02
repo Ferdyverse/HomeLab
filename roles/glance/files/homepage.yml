@@ -136,6 +136,9 @@
                 - title: Changedetection
                   url: https://changedetection.berger-em.net
                   icon: di:changedetection
+                - title: Dumbterm
+                  url: https://terminal.berger-em.net
+                  icon: di:dumbterm
                 - title: Forgejo
                   url: https://git.berger-em.net
                   icon: di:forgejo
