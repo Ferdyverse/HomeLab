@@ -10,8 +10,8 @@
     mode: '0755'
     recurse: true
   loop:
-    - '{{ docker_container_config_folder }}/dumbterm/'
-    - '{{ docker_container_data_folder }}/dumbterm/'
+    - '{{ docker_container_config_folder }}/dumbterm/config'
+    - '{{ docker_container_data_folder }}/dumbterm/data'
     - '/home/{{ default_user }}/docker/dumbterm/'
 
 - name: Create config dir
