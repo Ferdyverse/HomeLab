@@ -9,3 +9,4 @@ collections:
   - name: community.grafana
   - name: prometheus.prometheus
   - name: onepassword.connect
+  - name: serverscom.mitogen
