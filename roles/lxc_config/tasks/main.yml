@@ -12,3 +12,9 @@
       ansible.builtin.include_tasks: network.yml
       tags:
         - lxc_config.network
+
+- name: Generate local ssh files
+  ansible.builtin.include_tasks: local_ssh.yml
+  tags:
+    - lxc_config.local_ssh
+    - never

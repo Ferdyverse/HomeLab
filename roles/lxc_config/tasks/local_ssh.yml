@@ -1,0 +1,13 @@
+---
+
+- name: Generate ssh config files
+  ansible.builtin.template:
+    src: ssh_template.j2
+    dest: '/home/{{ default_user }}/.ssh/include/{{ inventory_hostname }}'
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+    mode: '0600'
+    force: true
+  delegate_to: localhost
+  tags:
+    - lxc_config.local_ssh

@@ -26,6 +26,9 @@ openssl rand -base64 24 # 24 = length
 
 # Run command as user
 runuser -u <user> -- <COMMAND>
+
+# Generate local ssh_config
+ansible-playbook -i inventorys -J -k -K --tags lxc_config,lxc_config.local_ssh container_configure.yml
 ```
 
 ## Add new container
