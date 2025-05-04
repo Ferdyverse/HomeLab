@@ -1,6 +1,5 @@
 ---
 
-
 - name: Create dirs
   ansible.builtin.file:
     path: '{{ item.path }}'
@@ -21,15 +20,6 @@
     - path: '{{ docker_container_data_folder }}/dumbterm/data'
     - path: '/home/{{ default_user }}/docker/dumbterm/'
   become: true
-
-- name: Create config dir
-  ansible.builtin.file:
-    path: '/home/{{ default_user }}/docker/dumbterm/'
-    state: directory
-    owner: '{{ default_user }}'
-    group: '{{ default_user }}'
-    mode: '0755'
-    recurse: true
 
 - name: Create compose file
   ansible.builtin.template:

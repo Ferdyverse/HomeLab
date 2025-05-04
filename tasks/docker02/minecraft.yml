@@ -1,0 +1,27 @@
+---
+
+- name: Create dirs
+  ansible.builtin.file:
+    path: '{{ item.path }}'
+    state: directory
+    owner: '{{ item.owner | default(default_user) }}'
+    group: '{{ item.group | default(default_user) }}'
+    mode: '{{ item.mode | default("0755") }}'
+    recurse: true
+  loop:
+    - path: '{{ docker_container_data_folder }}/minecraft/data'
+    - path: '{{ docker_container_config_folder }}/minecraft'
+    - path: '/home/{{ default_user }}/docker/minecraft'
+  become: true
+
+- name: Create compose file
+  ansible.builtin.template:
+    src: docker02/minecraft.yml.j2
+    dest: '/home/{{ default_user }}/docker/minecraft/docker-compose.yml'
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+    mode: '0755'
+
+- name: Run `docker compose up`
+  community.docker.docker_compose_v2:
+    project_src: '/home/{{ default_user }}/docker/minecraft/'

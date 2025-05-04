@@ -6,7 +6,7 @@
 
 Some usefull commands
 
-```shell
+```bash
 
 # Edit vault
 ansible-vault edit group_vars/all/vault.yml
@@ -138,7 +138,7 @@ loki.write "grafana_loki" {
 ## Forgejo runner
 
 Manual image clearing
-```
+```bash
 export DOCKER_HOST='tcp://127.0.0.1:2376'
 docker --tlsverify --tlscacert /certs/server/ca.pem  --tlscert /certs/server/cert.pem --tlskey /certs/server/key.pem image rm git.berger-em.net/bergefe/forgejo-runners:ubuntu-2404-ansible
 ```
@@ -146,6 +146,6 @@ docker --tlsverify --tlscacert /certs/server/ca.pem  --tlscert /certs/server/cer
 ## Run in Docker container
 
 You can run ansible inside of my prepared docker container.
-```
+```bash
 docker run --rm -it -v $(pwd):/ansible git.berger-em.net/bergefe/forgejo-runners:ubuntu-2404-ansible
 ```
