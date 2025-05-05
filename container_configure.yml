@@ -64,8 +64,6 @@
         - name: Install Docker
           ansible.builtin.include_role:
             name: docker
-          tags:
-            - docker.setup
 
         - name: Deploy host container
           ansible.builtin.include_tasks: 'tasks/{{ inventory_hostname }}/main.yml'
