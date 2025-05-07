@@ -13,14 +13,20 @@
       ignore_unreachable: true
       ignore_errors: true
       register: pingtest
+      tags:
+        - always
 
     - name: Clear host errors
       ansible.builtin.meta: clear_host_errors
+      tags:
+        - always
 
     - name: "Set ansible_user to {{ bootstrap_user }}"
       ansible.builtin.set_fact:
         ansible_user: "{{ bootstrap_user }}"
       when: pingtest.failed | default(pingtest.unreachable) | default(false)
+      tags:
+        - always
 
     - name: Install basic packages
       ansible.builtin.apt:

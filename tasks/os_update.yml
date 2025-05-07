@@ -1,23 +1,20 @@
 ---
 
-- name: Do OS Update
+- name: Do os update
   become: true
+  tags:
+    - os_update
   block:
     - name: Update package cache
       ansible.builtin.apt:
         update_cache: true
         cache_valid_time: 3600
-      register: apt_update
-      failed_when: apt_update.rc != 0
 
     - name: Upgrade all packages
       ansible.builtin.apt:
         name: "*"
         state: latest
         only_upgrade: true
-      register: apt_upgrade
-      failed_when: apt_upgrade.rc != 0
-      changed_when: apt_upgrade.changed
 
     - name: Check if reboot is required
       ansible.builtin.stat:
