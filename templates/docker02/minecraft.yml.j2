@@ -9,7 +9,7 @@ services:
       - "25567:25565/tcp"
     environment:
       EULA: "TRUE"
-      RCON_PASSWORD: {{ lookup("community.general.onepassword", "Minecraft Server", field="RCON", vault="HomeLab") }}
+      RCON_PASSWORD: ${RCON_PASSWORD:-password}
       VERSION: ${MINECRAFT_VERSION:-LATEST}
       MAX_MEMORY: "4G"
       ENABLE_ROLLING_LOGS: "true"
@@ -32,7 +32,7 @@ services:
     environment:
       BACKUP_INTERVAL: "2h"
       RCON_HOST: mc_vanillatweaks
-      RCON_PASSWORD: {{ lookup("community.general.onepassword", "Minecraft Server", field="RCON", vault="HomeLab") }}
+      RCON_PASSWORD: ${RCON_PASSWORD:-password}
       # since this service waits for mc to be healthy, no initial delay is needed
       INITIAL_DELAY: 0
     volumes:

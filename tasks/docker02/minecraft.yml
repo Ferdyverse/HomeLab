@@ -15,6 +15,16 @@
     - path: '{{ docker_container_data_folder }}/minecraft/backups'
   become: true
 
+- name: Create .env file
+  ansible.builtin.template:
+    src: templates/dot_env.j2
+    dest: '/home/{{ default_user }}/docker/minecraft/.env'
+    mode: '0600'
+  vars:
+    secrets:
+      - key: RCON_PASSWORD
+        value: '{{ lookup("community.general.onepassword", "Minecraft Server", field="RCON", vault="HomeLab") }}'
+
 - name: Create compose file
   ansible.builtin.template:
     src: docker02/minecraft.yml.j2

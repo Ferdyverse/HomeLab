@@ -1,0 +1,5 @@
+{{ ansible_managed | comment(decoration="# ") }}
+
+{%- for secret in secrets -%}
+{{ secret.key }}={{ secret.value }}
+{%- endfor -%}
