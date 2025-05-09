@@ -12,6 +12,7 @@
     - path: '{{ docker_container_data_folder }}/minecraft/data'
     - path: '{{ docker_container_config_folder }}/minecraft'
     - path: '/home/{{ default_user }}/docker/minecraft'
+    - path: '{{ docker_container_data_folder }}/minecraft/backups'
   become: true
 
 - name: Create compose file

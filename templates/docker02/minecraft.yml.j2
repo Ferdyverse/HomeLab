@@ -2,12 +2,14 @@
 
 services:
   mc_vanillatweaks:
+    container_name: mc_vanillatweaks
     restart: "no"
     image: itzg/minecraft-server
     ports:
       - "25567:25565/tcp"
     environment:
       EULA: "TRUE"
+      RCON_PASSWORD: {{ lookup("community.general.onepassword", "Minecraft Server", field="RCON", vault="HomeLab") }}
       VERSION: ${MINECRAFT_VERSION:-LATEST}
       DIFFICULTY: "easy"
       MAX_PLAYERS: 3
@@ -18,4 +20,31 @@ services:
       RESOURCE_PACK_ENFORCE: "true"
       VIEW_DISTANCE: 16
     volumes:
-      - {{ docker_container_data_folder }}/minecraft/data:/data
+      - {{ docker_container_data_folder }}/minecraft/data:/data"
+  mc_backups:
+    image: itzg/mc-backup
+    depends_on:
+      mc_vanillatweaks:
+        condition: service_healthy
+    environment:
+      BACKUP_INTERVAL: "2h"
+      RCON_HOST: mc_vanillatweaks
+      RCON_PASSWORD: {{ lookup("community.general.onepassword", "Minecraft Server", field="RCON", vault="HomeLab") }}
+      # since this service waits for mc to be healthy, no initial delay is needed
+      INITIAL_DELAY: 0
+    volumes:
+      - {{ docker_container_data_folder }}/minecraft/data:/data:ro
+      - {{ docker_container_data_folder }}/minecraft/backups:/backups
+  mc-admin:
+    image: itzg/rcon
+    environment:
+      RWA_USERNAME: {{ lookup("community.general.onepassword", "Minecraft Server", field="username", vault="HomeLab") }} 
+      RWA_PASSWORD: {{ lookup("community.general.onepassword", "Minecraft Server", field="RCON", vault="HomeLab") }}
+      RWA_ADMIN: "TRUE"
+      # is referring to the service name 'mc' declared below
+      RWA_RCON_HOST: mc_vanillatweaks
+      # needs to match the password configured for the container, see RCON_PASSWORD below
+      RWA_RCON_PASSWORD: {{ lookup("community.general.onepassword", "Minecraft Server", field="RCON", vault="HomeLab") }}
+    ports:
+      - "4326:4326"
+      - "4327:4327"
