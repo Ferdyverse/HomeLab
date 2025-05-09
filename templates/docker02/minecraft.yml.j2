@@ -41,9 +41,12 @@ services:
   mc-admin:
     image: itzg/rcon
     restart: unless-stopped
+    depends_on:
+      mc_vanillatweaks:
+        condition: service_healthy
     environment:
       RWA_USERNAME: {{ lookup("community.general.onepassword", "Minecraft Server", field="username", vault="HomeLab") }} 
-      RWA_PASSWORD: {{ lookup("community.general.onepassword", "Minecraft Server", field="RCON", vault="HomeLab") }}
+      RWA_PASSWORD: {{ lookup("community.general.onepassword", "Minecraft Server", vault="HomeLab") }}
       RWA_ADMIN: "TRUE"
       # is referring to the service name 'mc' declared below
       RWA_RCON_HOST: mc_vanillatweaks
