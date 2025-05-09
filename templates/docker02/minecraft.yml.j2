@@ -3,7 +3,7 @@
 services:
   mc_vanillatweaks:
     container_name: mc_vanillatweaks
-    restart: "no"
+    restart: unless-stopped
     image: itzg/minecraft-server
     ports:
       - "25567:25565/tcp"
@@ -11,6 +11,8 @@ services:
       EULA: "TRUE"
       RCON_PASSWORD: {{ lookup("community.general.onepassword", "Minecraft Server", field="RCON", vault="HomeLab") }}
       VERSION: ${MINECRAFT_VERSION:-LATEST}
+      MAX_MEMORY: "4G"
+      ENABLE_ROLLING_LOGS: "true"
       DIFFICULTY: "easy"
       MAX_PLAYERS: 3
       FORCE_GAMEMODE: "true"
@@ -23,6 +25,7 @@ services:
       - {{ docker_container_data_folder }}/minecraft/data:/data"
   mc_backups:
     image: itzg/mc-backup
+    restart: unless-stopped
     depends_on:
       mc_vanillatweaks:
         condition: service_healthy
@@ -37,6 +40,7 @@ services:
       - {{ docker_container_data_folder }}/minecraft/backups:/backups
   mc-admin:
     image: itzg/rcon
+    restart: unless-stopped
     environment:
       RWA_USERNAME: {{ lookup("community.general.onepassword", "Minecraft Server", field="username", vault="HomeLab") }} 
       RWA_PASSWORD: {{ lookup("community.general.onepassword", "Minecraft Server", field="RCON", vault="HomeLab") }}
