@@ -36,3 +36,4 @@
     - name: Run `docker compose up`
       community.docker.docker_compose_v2:
         project_src: '/home/{{ default_user }}/docker/ddns_stack/'
+        recreate: always
