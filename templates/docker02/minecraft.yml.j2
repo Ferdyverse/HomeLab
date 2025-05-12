@@ -21,6 +21,16 @@ services:
       REMOVE_OLD_VANILLATWEAKS: "TRUE"
       RESOURCE_PACK_ENFORCE: "true"
       VIEW_DISTANCE: 16
+      MOTD: |
+        Hanna und Papas
+        §l§cMinecraft§r §nserver
+      ENABLE_WHITELIST: "true"
+      ENFORCE_WHITELIST: "true"
+      WHITELIST: |
+        - Brazier85
+        - SchlauMaus
+      OPS: |
+        - Brazier85
     volumes:
       - {{ docker_container_data_folder }}/minecraft/data:/data"
   mc_backups:

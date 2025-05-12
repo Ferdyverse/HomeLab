@@ -1,8 +1,16 @@
 0.0.0.0:2222 {
-	@gssh ssh
-	route @gssh {
+	@gitssh ssh
+	route @gitssh {
 		proxy {
 			upstream 192.168.1.34:2222 # Git Upstream
+		}
+	}
+}
+
+0.0.0.0:25567 {
+	route {
+		proxy {
+			upstream 192.168.1.30:25567
 		}
 	}
 }
