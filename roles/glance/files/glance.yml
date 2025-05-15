@@ -1,5 +1,5 @@
 theme:
-  $include: theme.yml
+  $include: themes.yml
 
 pages:
   - $include: homepage.yml
