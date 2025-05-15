@@ -1,25 +1,26 @@
 ---
 
-- name: Create notify script
-  ansible.builtin.template:
-    src: ntfy-ssh-login.sh.j2
-    dest: /usr/bin/ntfy-ssh-login.sh
-    owner: root
-    group: root
-    mode: u=rwx,g=rx,o=rx
-    force: true
+- name: Block for Tag
+  tags: lxc_config.ssh
   become: true
+  block:
+    - name: Create notify script
+      ansible.builtin.template:
+        src: ntfy-ssh-login.sh.j2
+        dest: /usr/bin/ntfy-ssh-login.sh
+        owner: root
+        group: root
+        mode: u=rwx,g=rx,o=rx
+        force: true
 
-- name: Add notify to ssh login
-  ansible.builtin.blockinfile:
-    path: /etc/pam.d/sshd
-    block: |
-      # Notify on SSH login
-      session optional pam_exec.so /usr/bin/ntfy-ssh-login.sh
-  become: true
+    - name: Add notify to ssh login
+      ansible.builtin.blockinfile:
+        path: /etc/pam.d/sshd
+        block: |
+          # Notify on SSH login
+          session optional pam_exec.so /usr/bin/ntfy-ssh-login.sh
 
-- name: Restart sshd
-  ansible.builtin.service:
-    name: sshd
-    state: restarted
-  become: true
+    - name: Restart sshd
+      ansible.builtin.service:
+        name: sshd
+        state: restarted
