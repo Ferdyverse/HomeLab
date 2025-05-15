@@ -1,0 +1,138 @@
+- name: HomeLab
+  columns:
+    - size: full
+      widgets:
+        - type: split-column
+          max-columns: 3
+          widgets:
+            - type: dns-stats
+              service: adguard
+              title: dns1.berger-em.net
+              hide-graph: true
+              hide-top-domains: true
+              hour-format: 24h
+              url: https://dns1.berger-em.net
+              username: ${ADGUARD_USER}
+              password: ${ADGUARD_PASSWORD}
+            - type: dns-stats
+              service: adguard
+              title: dns2.berger-em.net
+              hide-graph: true
+              hide-top-domains: true
+              hour-format: 24h
+              url: https://dns2.berger-em.net
+              username: ${ADGUARD_USER}
+              password: ${ADGUARD_PASSWORD}
+            - $include: gluten.yml
+
+        - type: monitor
+          title: Infrastructure
+          cache: 1m
+          sites:
+            - title: Grafana
+              url: https://grafana.berger-em.net
+              icon: di:grafana
+            - title: Portainer
+              url: https://portainer.berger-em.net
+              icon: di:portainer
+            - title: Proxmox
+              url: https://proxmox.berger-em.net
+              icon: di:proxmox
+            - title: UDM
+              url: https://udm.berger-em.net
+              icon: di:ubiquiti-networks
+
+        - type: monitor
+          title: Applications
+          cache: 1m
+          sites:
+            - title: Actual Budget
+              url: https://money.berger-em.net/
+              icon: di:actual-budget
+            - title: AudiobookShelf
+              url: https://audiobookshelf.berger-em.net
+              icon: di:audiobookshelf
+            - title: Home Assistant
+              url: https://hass.berger-em.net
+              icon: di:home-assistant
+            - title: Jellyfin
+              url: https://jellyfin.berger-em.net
+              icon: di:jellyfin
+            - title: Jellyseerr
+              url: https://jellyseerr.berger-em.net
+              icon: di:jellyseerr
+            - title: Personal Zoo
+              url: https://zoo.berger-em.net
+              icon: di:atuin
+            - title: Paperless
+              url: https://paperless.berger-em.net
+              icon: di:paperless-ngx
+            - title: Semaphore
+              url: https://semaphore.berger-em.net
+              icon: di:semaphore
+
+        - type: monitor
+          title: Services
+          cache: 1m
+          sites:
+            - title: Authentik
+              url: https://auth.berger-em.net
+              icon: di:authentik
+            - title: Changedetection
+              url: https://changedetection.berger-em.net
+              icon: di:changedetection
+            - title: Dumbterm
+              url: https://terminal.berger-em.net
+              icon: di:dumbterm
+            - title: Forgejo
+              url: https://git.berger-em.net
+              icon: di:forgejo
+            - title: Hardbase
+              url: https://hardbase.berger-em.net
+              icon: di:synology
+            - title: Uptime Kuma
+              url: https://kuma.berger-em.net
+              icon: di:uptime-kuma
+            - title: Minimailer
+              url: https://minimailer.berger-em.net
+              icon: di:ciphermail
+            - title: Twitch Points
+              url: https://twitch-points.berger-em.net
+              icon: di:twitch
+
+        - type: monitor
+          title: Servarr
+          cache: 1m
+          sites:
+            - title: Bazarr
+              url: https://bazarr.berger-em.net
+              icon: di:bazarr
+            - title: Radarr
+              url: https://radarr.berger-em.net
+              icon: di:radarr
+            - title: Sonarr
+              url: https://sonarr.berger-em.net
+              icon: di:sonarr
+            - title: Lidarr
+              url: https://lidarr.berger-em.net
+              icon: di:lidarr
+            - title: Readarr
+              url: https://readarr.berger-em.net
+              icon: di:readarr
+
+        - type: monitor
+          title: Downloader
+          cache: 1m
+          sites:
+            - title: NZBGet
+              url: https://nzb.berger-em.net
+              icon: di:nzbget
+              alt-status-codes:
+                - 401
+                - 403
+            - title: qBittorrent
+              url: https://qbit.berger-em.net
+              icon: di:qbittorrent
+            - title: Prowlarr
+              url: https://prowlarr.berger-em.net
+              icon: di:prowlarr

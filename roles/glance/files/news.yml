@@ -2,7 +2,11 @@
   columns:
     - size: small
       widgets:
+        - type: clock
+          hide-header: true
+          hour-format: 24h
         - type: calendar
+          hide-header: true
           first-day-of-week: monday
         - type: rss
           limit: 10
@@ -11,7 +15,10 @@
           feeds:
             - url: https://selfh.st/rss/
               title: selfh.st
-              limit: 4
+              limit: 1
+            - url: https://www.heise.de/rss/heise-Rubrik-IT.rdf
+              title: Heise IT
+              limit: 5
 
         - type: twitch-channels
           channels:
@@ -21,13 +28,28 @@
 
     - size: full
       widgets:
+        - type: search
+          search-engine: google
+          new-tab: true
+          autofocus: true
+          bangs:
+            - title: YouTube
+              shortcut: "!yt"
+              url: https://www.youtube.com/results?search_query={QUERY}
+            - title: Amazon
+              shortcut: "!am"
+              url: https://www.amazon.de/s?k={QUERY}
+            - title: Github
+              shortcut: "!gh"
+              url: https://github.com/search?q={QUERY}&type=repositories
         - type: group
           widgets:
-            - type: hacker-news
-            - type: lobsters
-              tags:
-                - linux
-                - unix
+            - type: reddit
+              subreddit: homelab
+              show-thumbnails: true
+            - type: reddit
+              subreddit: selfhosted
+              show-thumbnails: true
 
         - type: videos
           channels:
@@ -37,14 +59,32 @@
             - UCcDj9XqT2YQERsdAnHGR7xg # YeahMad
             - UCEEYC7-n3iCQSyZBAZOmpEg # OG Crew
 
-        - type: group
-          widgets:
-            - type: reddit
-              subreddit: homelab
-              show-thumbnails: true
-            - type: reddit
-              subreddit: selfhosted
-              show-thumbnails: true
+        - type: bookmarks
+          groups:
+            - title: Shopping
+              links:
+                - title: Amazon
+                  url: https://www.amazon.de/
+                - title: Github
+                  url: https://github.com/
+            - title: Entertainment
+              color: 10 70 50
+              links:
+                - title: Jellyfin
+                  url: https://jellyfin.berger-em.net
+                - title: Netflix
+                  url: https://www.netflix.com/
+                - title: Disney+
+                  url: https://www.disneyplus.com/
+                - title: YouTube
+                  url: https://www.youtube.com/
+            - title: Social
+              color: 200 50 50
+              links:
+                - title: Reddit
+                  url: https://www.reddit.com/
+                - title: Github
+                  url: https://www.github.com/
 
     - size: small
       widgets:

@@ -19,7 +19,7 @@
   become: true
   loop:
     - glance.yml
-    - homepage.yml
+    - homelab.yml
     - news.yml
     - gluten.yml
     - themes.yml
