@@ -1,0 +1,40 @@
+type: custom-api
+title: Gluten VPN
+cache: 5m
+url: https://gluten.berger-em.net/v1/publicip/ip
+headers:
+  x-api-key: ${GLUTEN_API_KEY}
+  Accept: application/json
+template: |
+  {{ if eq .Response.StatusCode 200 }}
+    {{ $ip := (.JSON.String "public_ip") }}
+    {{ $city := (.JSON.String "city") }}
+    {{ $country := (.JSON.String "country") }}
+    {{ if eq $ip "" }}
+      <div>
+        <div>
+          <div>
+            <div class="color-highlight size-h3">
+              Your VPN is not connected!
+            </div>
+          </dv>
+        </div>
+      </div>
+    {{ else }}
+      <div>
+        <div>
+          <div>
+            <div class="color-highlight size-h3">
+              Your VPN is connected!
+              <span class="color-positive">●</span>
+            </div>
+          </div>
+          <div class="size-h5">{{ $ip }} - {{ $city }}, {{ $country }}</div>
+        </div>
+      </div>
+    {{ end }}
+  {{ else }}
+    <div style="text-align: center; color: var(--color-negative);">
+      Error: {{ .Response.StatusCode }} - {{ .Response.Status }}
+    </div>
+  {{ end }}

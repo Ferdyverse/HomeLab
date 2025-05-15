@@ -21,6 +21,7 @@
     - glance.yml
     - homepage.yml
     - news.yml
+    - gluten.yml
 
 - name: Restart Glance
   ansible.builtin.service:
