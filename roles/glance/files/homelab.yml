@@ -3,7 +3,7 @@
     - size: full
       widgets:
         - type: split-column
-          max-columns: 3
+          max-columns: 4
           widgets:
             - type: dns-stats
               service: adguard
@@ -23,8 +23,8 @@
               url: https://dns2.berger-em.net
               username: ${ADGUARD_USER}
               password: ${ADGUARD_PASSWORD}
-            - $include: gluten.yml
-            - $include: minecraft.yml
+            - $include: modules/gluten.yml
+            - $include: modules/minecraft.yml
 
         - type: monitor
           title: Infrastructure

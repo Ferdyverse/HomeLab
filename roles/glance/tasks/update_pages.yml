@@ -21,9 +21,7 @@
     - glance.yml
     - homelab.yml
     - news.yml
-    - gluten.yml
-    - themes.yml
-    - minecraft.yml
+    - modules/
 
 - name: Restart Glance
   ansible.builtin.service:
