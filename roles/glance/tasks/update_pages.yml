@@ -23,6 +23,7 @@
     - news.yml
     - gluten.yml
     - themes.yml
+    - minecraft.yml
 
 - name: Restart Glance
   ansible.builtin.service:

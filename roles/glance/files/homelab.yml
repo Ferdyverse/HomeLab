@@ -24,6 +24,7 @@
               username: ${ADGUARD_USER}
               password: ${ADGUARD_PASSWORD}
             - $include: gluten.yml
+            - $include: minecraft.yml
 
         - type: monitor
           title: Infrastructure
