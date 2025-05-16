@@ -7,3 +7,7 @@ docker_portainer_agent_image: portainer/agent:latest
 # Watchtower
 docker_watchtower_name: watchtower
 docker_watchtower_image: containrrr/watchtower:latest
+
+# Docker Socket Proxy
+docker_socket_container_name: socket-proxy
+docker_socket_container_image: lscr.io/linuxserver/socket-proxy:latest

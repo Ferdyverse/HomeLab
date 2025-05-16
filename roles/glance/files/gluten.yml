@@ -15,7 +15,7 @@
           <div>
             <div>
               <div class="color-highlight size-h3">
-                Your VPN is not connected!
+                The VPN is not connected!
               </div>
             </dv>
           </div>
@@ -25,7 +25,7 @@
           <div>
             <div>
               <div class="color-highlight size-h3">
-                Your VPN is connected!
+                The VPN is connected!
                 <span class="color-positive">●</span>
               </div>
             </div>
