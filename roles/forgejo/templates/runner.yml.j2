@@ -28,7 +28,7 @@ services:
       done ;
       sed -i -e "s|\"labels\": null|\"labels\": [\"docker-cli:docker://code.forgejo.org/oci/docker:cli\",\"ubuntu-latest:docker://git.berger-em.net/bergefe/forgejo-runners:ubuntu-2404\",\"ubuntu-ansible:docker://git.berger-em.net/bergefe/forgejo-runners:ubuntu-2404-ansible\"]|" .runner ;
       forgejo-runner generate-config > config.yml ;
-      sed -i -e "s|  level: info|  level: debug|" config.yml ;
+      sed -i -e "s|  level: info|  level: info|" config.yml ;
       sed -i -e "s|network: .*|network: host|" config.yml ;
       sed -i -e "s|^  envs:$$|  envs:\n    DOCKER_HOST: tcp://docker:2376\n    DOCKER_TLS_VERIFY: 1\n    DOCKER_CERT_PATH: /certs/client|" config.yml ;
       sed -i -e "s|^  options:|  options: -v /certs/client:/certs/client|" config.yml ;
