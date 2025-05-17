@@ -58,7 +58,7 @@
         name: ntfy
         uris: 'https://archive.heckel.io/apt'
         types: deb
-        suites: stable
+        suites: debian
         components: main
         signed_by: 'https://archive.heckel.io/apt/pubkey.txt'
         state: present

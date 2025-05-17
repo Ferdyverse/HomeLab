@@ -1,0 +1,18 @@
+---
+
+- name: Access block
+  become: true
+  tags:
+    - lxc_config.motd
+  block:
+
+    - name: Remove old custom scripts
+      ansible.builtin.file:
+        path: /etc/profile.d/00_lxc-details.sh
+        state: absent
+
+    - name: Create motd extension
+      ansible.builtin.template:
+        src: 00_motd-extension.sh.j2
+        dest: /etc/profile.d/00_motd-extension.sh
+        mode: '0755'

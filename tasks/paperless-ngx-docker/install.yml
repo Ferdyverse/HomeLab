@@ -15,6 +15,7 @@
         - '{{ docker_container_data_folder }}/paperless'
         - '/home/{{ default_user }}/docker/paperless/'
         - '{{ docker_container_data_folder }}/paperless/scripts/'
+        - '{{ docker_container_data_folder }}/paperless/ai_data/'
 
     - name: Create consume dir with ftp
       ansible.builtin.file:

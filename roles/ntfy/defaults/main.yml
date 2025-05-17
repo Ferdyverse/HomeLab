@@ -19,11 +19,16 @@ ntfy_admin_user: "{{ default_user }}"
 ntfy_admin_password: '{{ lookup("community.general.onepassword", "Ntfy", vault="HomeLab") }}'
 
 ntfy_users:
-  - '{ "user": "ansible", "password": {{ lookup("community.general.onepassword", "Ntfy", field="Ansible Password", vault="HomeLab") }} }'
-  - '{ "user": "suki", "password": {{ lookup("community.general.onepassword", "Ntfy", field="Suki Password", vault="HomeLab") }} }'
-  - '{ "user": "proxmox", "password": {{ lookup("community.general.onepassword", "Ntfy", field="Proxmox Password", vault="HomeLab") }} }'
-  - '{ "user": "kuma", "password": {{ lookup("community.general.onepassword", "Ntfy", field="Kuma Password", vault="HomeLab") }} }'
-  - '{ "user": "changes", "password": {{ lookup("community.general.onepassword", "Ntfy", field="Changes Password", vault="HomeLab") }} }'
+  - user: "ansible"
+    password: '{{ lookup("community.general.onepassword", "Ntfy", field="Ansible Password", vault="HomeLab") }}'
+  - user: "suki"
+    password: '{{ lookup("community.general.onepassword", "Ntfy", field="Suki Password", vault="HomeLab") }}'
+  - user: "proxmox"
+    password: '{{ lookup("community.general.onepassword", "Ntfy", field="Proxmox Password", vault="HomeLab") }}'
+  - user: "kuma"
+    password: '{{ lookup("community.general.onepassword", "Ntfy", field="Kuma Password", vault="HomeLab") }}'
+  - user: "changes"
+    password: '{{ lookup("community.general.onepassword", "Ntfy", field="Changes Password", vault="HomeLab") }}'
 
 # Permissions:
 # read-write (alias: rw)
@@ -31,10 +36,24 @@ ntfy_users:
 # write-only (aliases: write, wo)
 # deny (alias: none
 ntfy_user_access:
-  - '{ "user": "ansible", "topic": "ansible", "permission": "wo" }'
-  - '{ "user": "suki", "topic": "alerts", "permission": "wo" }'
-  - '{ "user": "suki", "topic": "watchtower", "permission": "wo" }'
-  - '{ "user": "proxmox", "topic": "alerts", "permission": "wo" }'
-  - '{ "user": "proxmox", "topic": "proxmox", "permission": "wo" }'
-  - '{ "user": "kuma", "topic": "kuma", "permission": "wo" }'
-  - '{ "user": "changes", "topic": "changedetection", "permission": "rw" }'
+  - user: "ansible"
+    topic: "ansible"
+    permission: "wo"
+  - user: "suki"
+    topic: "alerts"
+    permission: "wo"
+  - user: "suki"
+    topic: "watchtower"
+    permission: "wo"
+  - user: "proxmox"
+    topic: "alerts"
+    permission: "wo"
+  - user: "proxmox"
+    topic: "proxmox"
+    permission: "wo"
+  - user: "kuma"
+    topic: "kuma"
+    permission: "wo"
+  - user: "changes"
+    topic: "changedetection"
+    permission: "rw"
