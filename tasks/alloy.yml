@@ -7,8 +7,7 @@
       ansible.builtin.include_role:
         name: grafana.grafana.alloy
       vars:
-        alloy_user_groups:
-          - caddy
+        alloy_user_groups: '{{ additional_user_groups }}'
         alloy_env_file_vars:
           CONFIG_FILE: '{{ alloy_config_path }}'
           CUSTOM_ARGS: "--disable-reporting"
@@ -23,4 +22,8 @@
         mode: "0644"
         lstrip_blocks: true
       loop: '{{ alloy_config_files | default("{}") }}'
-      notify: Restart alloy
+
+    - name: Restart alloy
+      ansible.builtin.service:
+        name: alloy
+        state: restarted

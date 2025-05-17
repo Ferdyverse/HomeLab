@@ -7,3 +7,13 @@
 
 - name: Deploy default Container
   ansible.builtin.include_tasks: default_container.yml
+
+- name: Configure Monitoring
+  ansible.builtin.include_tasks: tasks/alloy.yml
+  vars:
+    additional_user_groups:
+      - docker
+    alloy_config_files:
+      - { "src": "logfile_monitoring.alloy.j2", "dest": "logfile_monitoring.alloy" }
+  tags:
+    - docker.alloy

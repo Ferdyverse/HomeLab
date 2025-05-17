@@ -8,6 +8,7 @@
     group: '{{ default_user }}'
     mode: '0755'
     recurse: true
+  become: true
   loop:
     - '{{ docker_container_config_folder }}/adguardhome-sync'
 

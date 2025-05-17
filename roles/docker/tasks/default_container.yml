@@ -30,6 +30,7 @@
           WATCHTOWER_NOTIFICATIONS_HOSTNAME: "{{ inventory_hostname_short }}"
           WATCHTOWER_SCHEDULE: "0 0 0 * * *"
         state: started
+      when: inventory_hostname != "authentik"
 
     - name: Deploy Docker Socket
       community.docker.docker_container:

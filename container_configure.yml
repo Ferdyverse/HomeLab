@@ -63,7 +63,7 @@
         - lxc_config
 
     - name: Configure/Install Docker
-      when: inventory_hostname is match('.*(docker|gitea|authentik|onepassword|kestra).*')
+      when: inventory_hostname is match('.*(docker|gitea|authentik|kestra).*')
       tags:
         - docker
       block:
@@ -73,6 +73,7 @@
 
         - name: Deploy host container
           ansible.builtin.include_tasks: 'tasks/{{ inventory_hostname }}/main.yml'
+          when: inventory_hostname != 'authentik'
           tags:
             - docker.deploy
 
@@ -99,7 +100,9 @@
       ansible.builtin.include_tasks: tasks/authentik.yml
       when:
         - '"authentik" in inventory_hostname'
-      tags: authentik
+      tags:
+        - authentik
+        - never
 
     - name: Do OS update
       ansible.builtin.include_tasks: tasks/os_update.yml

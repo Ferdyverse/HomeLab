@@ -11,7 +11,7 @@
 
     - name: Create user ftpuser
       ansible.builtin.user:
-        name: "{{ ftp_user }}"
+        name: ftpuser
         shell: /bin/bash
         state: present
         home: '{{ docker_container_data_folder }}/paperless/consume/'
@@ -40,4 +40,8 @@
         - name: "ftp_custom.conf.j2"
           dest_name: "custom.conf"
           dest_path: "/etc/proftpd/conf.d"
-      notify: Restart proftpd
+
+    - name: Restart proftpd
+      ansible.builtin.service:
+        name: proftpd
+        state: restarted

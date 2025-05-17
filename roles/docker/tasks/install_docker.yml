@@ -74,7 +74,6 @@
         owner: '{{ default_user }}'
         group: '{{ default_user }}'
         mode: '0755'
-        recurse: true
       loop:
         - '{{ docker_container_config_folder }}'
         - '{{ docker_container_data_folder }}'
