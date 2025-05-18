@@ -5,17 +5,20 @@
   block:
     - name: Create dirs
       ansible.builtin.file:
-        path: '{{ item }}'
+        path: '{{ item.path }}'
         state: directory
-        owner: '{{ default_user }}'
-        group: '{{ default_user }}'
-        mode: '0755'
+        owner: '{{ item.owner | default(default_user) }}'
+        group: '{{ item.group | default(default_user) }}'
+        mode: '{{ item.mode | default("0755") }}'
         recurse: true
       loop:
-        - '{{ docker_container_data_folder }}/paperless'
-        - '/home/{{ default_user }}/docker/paperless/'
-        - '{{ docker_container_data_folder }}/paperless/scripts/'
-        - '{{ docker_container_data_folder }}/paperless/ai_data/'
+        - path: '{{ docker_container_data_folder }}/paperless'
+          mode: '0777'
+          owner: 'root'
+          group: 'root'
+        - path: '/home/{{ default_user }}/docker/paperless/'
+        - path: '{{ docker_container_data_folder }}/paperless/scripts/'
+        - path: '{{ docker_container_data_folder }}/paperless/ai_data/'
 
     - name: Create consume dir with ftp
       ansible.builtin.file:
@@ -34,10 +37,18 @@
         group: '{{ default_user }}'
         mode: '0755'
       loop:
-        - { "name": "paperless_stack.yml.j2", "dest_name": "docker-compose.yml", "dest_path": "/home/{{ default_user }}/docker/paperless" }
-        - { "name": "docker-compose.env.j2", "dest_name": "docker-compose.env", "dest_path": "/home/{{ default_user }}/docker/paperless" }
-        - { "name": "ai.env.j2", "dest_name": "ai.env", "dest_path": "/home/{{ default_user }}/docker/paperless/" }
-        - { "name": "post-consumption.sh.j2", "dest_name": "post-consumption.sh", "dest_path": "{{ docker_container_data_folder }}/paperless/scripts/" }
+        - name: "paperless_stack.yml.j2"
+          dest_name: "docker-compose.yml"
+          dest_path: "/home/{{ default_user }}/docker/paperless"
+        - name: "docker-compose.env.j2"
+          dest_name: "docker-compose.env"
+          dest_path: "/home/{{ default_user }}/docker/paperless"
+        - name: "ai.env.j2"
+          dest_name: "ai.env"
+          dest_path: "/home/{{ default_user }}/docker/paperless/"
+        - name: "post-consumption.sh.j2"
+          dest_name: "post-consumption.sh"
+          dest_path: "{{ docker_container_data_folder }}/paperless/scripts/"
 
 - name: Run `docker compose up`
   community.docker.docker_compose_v2:
