@@ -102,7 +102,6 @@
         - '"authentik" in inventory_hostname'
       tags:
         - authentik
-        - never
 
     - name: Do OS update
       ansible.builtin.include_tasks: tasks/os_update.yml

@@ -1,26 +1,30 @@
 ---
 
-- name: Create dirs
-  ansible.builtin.file:
-    path: '{{ item }}'
-    state: directory
-    owner: '{{ default_user }}'
-    group: '{{ default_user }}'
-    mode: '0755'
-    recurse: true
-  loop:
-    - '{{ docker_container_data_folder }}/authentik/'
+- name: Auth block
+  become: true
+  block:
 
-- name: Create compose file
-  ansible.builtin.template:
-    src: 'authentik/{{ item.src }}'
-    dest: '{{ docker_container_data_folder }}/authentik/{{ item.dest }}'
-    owner: '{{ default_user }}'
-    group: '{{ default_user }}'
-    mode: '0755'
-  loop:
-    - { "src": "auth_env.j2", "dest": ".env" }
-    - { "src": "auth_stack.yml.j2", "dest": "docker-compose.yml" }
+    - name: Create dirs
+      ansible.builtin.file:
+        path: '{{ item }}'
+        state: directory
+        owner: '{{ default_user }}'
+        group: '{{ default_user }}'
+        mode: '0755'
+        recurse: true
+      loop:
+        - '{{ docker_container_data_folder }}/authentik/'
+
+    - name: Create compose file
+      ansible.builtin.template:
+        src: 'authentik/{{ item.src }}'
+        dest: '{{ docker_container_data_folder }}/authentik/{{ item.dest }}'
+        owner: '{{ default_user }}'
+        group: '{{ default_user }}'
+        mode: '0755'
+      loop:
+        - { "src": "auth_env.j2", "dest": ".env" }
+        - { "src": "auth_stack.yml.j2", "dest": "docker-compose.yml" }
 
 - name: Run `docker compose up`
   community.docker.docker_compose_v2:
