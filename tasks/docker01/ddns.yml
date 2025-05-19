@@ -15,16 +15,26 @@
         recurse: true
       become: true
       loop:
-        - '{{ docker_container_config_folder }}/ddns'
+        # - '{{ docker_container_config_folder }}/ddns'
         - '/home/{{ default_user }}/docker/ddns_stack/'
 
-    - name: Create config file
+    # - name: Create config file
+    #   ansible.builtin.template:
+    #     src: docker01/ddns_config.json.j2
+    #     dest: '{{ docker_container_config_folder }}/ddns/config.json'
+    #     owner: '{{ default_user }}'
+    #     group: '{{ default_user }}'
+    #     mode: '0755'
+
+    - name: Create .env file
       ansible.builtin.template:
-        src: docker01/ddns_config.json.j2
-        dest: '{{ docker_container_config_folder }}/ddns/config.json'
-        owner: '{{ default_user }}'
-        group: '{{ default_user }}'
-        mode: '0755'
+        src: templates/dot_env.j2
+        dest: '/home/{{ default_user }}/docker/ddns_stack/.env'
+        mode: '0600'
+      vars:
+        secrets:
+          - key: CLOUDFLARE_API_TOKEN
+            value: '{{ lookup("community.general.onepassword", "Cloudflare DDNS", field="Token", vault="HomeLab") }}'
 
     - name: Create compose file
       ansible.builtin.template:

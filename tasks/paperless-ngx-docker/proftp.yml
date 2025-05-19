@@ -23,7 +23,7 @@
         state: directory
         owner: '{{ default_user }}'
         group: 'ftpuser'
-        mode: '0755'
+        mode: '0775'
         recurse: true
 
     - name: Create config files
