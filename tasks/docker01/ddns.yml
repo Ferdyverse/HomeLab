@@ -35,6 +35,8 @@
         secrets:
           - key: CLOUDFLARE_API_TOKEN
             value: '{{ lookup("community.general.onepassword", "Cloudflare DDNS", field="Token", vault="HomeLab") }}'
+          - key: CLOUDFLARE_DISCORD_URL
+            value: '{{ lookup("community.general.onepassword", "Cloudflare DDNS", field="Discord URL", vault="HomeLab") }}'
 
     - name: Create compose file
       ansible.builtin.template:

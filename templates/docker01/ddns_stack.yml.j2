@@ -4,6 +4,7 @@ services:
 
   cloudflare-ddns:
     image: favonia/cloudflare-ddns:latest
+    container_name: cloudflare-ddns
     network_mode: 'host'
     restart: always
     user: "1000:1000"
@@ -19,7 +20,8 @@ services:
         # Tell Cloudflare to cache webpages and hide your IP (optional)
       - IP6_PROVIDER=none
         # Do not use IPv6
-
+      - SHOUTRRR=${CLOUDFLARE_DISCORD_URL}
+        # Notify me on Discord
 
 # Old version!
 #  cloudflare-ddns:
