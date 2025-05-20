@@ -25,6 +25,9 @@
               password: ${ADGUARD_PASSWORD}
             - $include: modules/gluten.yml
             - $include: modules/minecraft.yml
+            - $include: modules/hass.yml
+            - $include: modules/paperless.yml
+            - $include: modules/proxmox.yml
 
         - type: monitor
           title: Infrastructure

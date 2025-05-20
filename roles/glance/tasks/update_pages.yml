@@ -1,30 +1,45 @@
 ---
 
-- name: Create env file
-  ansible.builtin.template:
-    src: 'env.j2'
-    dest: '{{ glance_install_folder }}/.env'
-    owner: root
-    group: root
-    mode: '0775'
+- name: Pages block
   become: true
+  block:
 
-- name: Create config files
-  ansible.builtin.copy:
-    src: '{{ item }}'
-    dest: '{{ glance_install_folder }}/{{ item }}'
-    owner: root
-    group: root
-    mode: '0775'
-  become: true
-  loop:
-    - glance.yml
-    - homelab.yml
-    - news.yml
-    - modules/
+    - name: Create .env file
+      ansible.builtin.template:
+        src: templates/dot_env.j2
+        dest: '{{ glance_install_folder }}/.env'
+        owner: root
+        group: root
+        mode: '0755'
+      vars:
+        secrets:
+          - key: ADGUARD_USER
+            value: '{{ default_user }}'
+          - key: ADGUARD_PASSWORD
+            value: '{{ passwd_bergefe }}'
+          - key: GLUTEN_API_KEY
+            value: '{{ lookup("community.general.onepassword", "Gluten", vault="HomeLab") }}'
+          - key: HASS_API_KEY
+            value: '{{ lookup("community.general.onepassword", "Glance", field="Hass API Key", vault="HomeLab") }}'
+          - key: PAPERLESS_KEY
+            value: '{{ lookup("community.general.onepassword", "Glance", field="Paperless API Key", vault="HomeLab") }}'
+          - key: PROXMOXVE_KEY
+            value: '{{ lookup("community.general.onepassword", "Glance", field="Proxmox API Key", vault="HomeLab") }}'
 
-- name: Restart Glance
-  ansible.builtin.service:
-    name: glance
-    state: restarted
-  become: true
+    - name: Create config files
+      ansible.builtin.copy:
+        src: '{{ item }}'
+        dest: '{{ glance_install_folder }}/{{ item }}'
+        owner: root
+        group: root
+        mode: '0775'
+      loop:
+        - glance.yml
+        - homelab.yml
+        - news.yml
+        - modules/
+
+    - name: Restart Glance
+      ansible.builtin.service:
+        name: glance
+        state: restarted
