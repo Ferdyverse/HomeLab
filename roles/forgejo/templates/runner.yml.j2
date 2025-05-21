@@ -5,6 +5,7 @@ services:
     image: docker:dind
     hostname: docker  # Must set hostname as TLS certificates are only valid for docker or localhost
     privileged: true
+    restart: unless-stopped
     environment:
       DOCKER_TLS_CERTDIR: /certs
       DOCKER_HOST: docker
@@ -38,6 +39,7 @@ services:
 
   runner-daemon:
     image: code.forgejo.org/forgejo/runner:6
+    restart: unless-stopped
     links:
       - docker-in-docker
     environment:
