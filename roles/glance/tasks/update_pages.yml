@@ -25,6 +25,8 @@
             value: '{{ lookup("community.general.onepassword", "Glance", field="Paperless API Key", vault="HomeLab") }}'
           - key: PROXMOXVE_KEY
             value: '{{ lookup("community.general.onepassword", "Glance", field="Proxmox API Key", vault="HomeLab") }}'
+          - key: AUDIOBOOKSHELF_KEY
+            value: '{{ lookup("community.general.onepassword", "Glance", field="Audiobookshelf API Key", vault="HomeLab") }}'
 
     - name: Create config files
       ansible.builtin.copy:
