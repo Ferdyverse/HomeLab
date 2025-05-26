@@ -45,6 +45,7 @@ caddy_vhosts:
   - name: authentik
     hostname: auth.berger-em.net
     proxy_host: http://192.168.1.7:80
+    protected_enabled: false
 
   - name: bazarr
     hostname: 'bazarr.berger-em.net'

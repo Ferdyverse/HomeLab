@@ -1,6 +1,6 @@
 ---
 
-cloudflare_domain_list: home.berger-em.net, ntfy.berger-em.net, git.berger-em.net, mc.berger-em.net
+cloudflare_domain_list: home.berger-em.net, ntfy.berger-em.net, git.berger-em.net, mc.berger-em.net, auth.berger-em.net
 
 cloudflare_proxy_list: false
 
