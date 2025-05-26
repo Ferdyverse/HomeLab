@@ -28,6 +28,7 @@
             - $include: modules/hass.yml
             - $include: modules/paperless.yml
             - $include: modules/proxmox.yml
+            - $include: module/audio.yml
 
         - type: monitor
           title: Infrastructure
