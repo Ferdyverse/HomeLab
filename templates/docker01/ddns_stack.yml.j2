@@ -18,6 +18,7 @@ services:
         # Your domains (separated by commas)
       - PROXIED={{ cloudflare_proxy_list }}
         # Tell Cloudflare to cache webpages and hide your IP (optional)
+      - RECORD_COMMENT={{ cloudflare_record_comment }}
       - IP6_PROVIDER=none
         # Do not use IPv6
       - SHOUTRRR=${CLOUDFLARE_DISCORD_URL}
