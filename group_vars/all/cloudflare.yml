@@ -2,7 +2,7 @@
 
 cloudflare_domain_list: home.berger-em.net, ntfy.berger-em.net, git.berger-em.net, mc.berger-em.net, auth.berger-em.net
 
-cloudflare_proxy_list: "!is(mc.berger-em.net) || !id(home.berger-em.net)"
+cloudflare_proxy_list: "!is(mc.berger-em.net) || !is(home.berger-em.net)"
 
 # PROXIED=is(example.org): proxy only the domain example.org
 # PROXIED=is(example1.org) || sub(example2.org): proxy only the domain example1.org and subdomains of example2.org
