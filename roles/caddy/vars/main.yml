@@ -56,6 +56,10 @@ caddy_vhosts:
     hostname: 'changedetection.berger-em.net'
     proxy_host: http://192.168.1.24:5001
 
+  - name: checkmk
+    hostname: 'checkmk.berger-em.net'
+    proxy_host: http://192.168.1.16
+
   - name: dashboard
     hostname: 'dashboard.berger-em.net'
     proxy_host: http://192.168.1.31:8080
@@ -114,10 +118,6 @@ caddy_vhosts:
   - name: k1
     hostname: 'k1.berger-em.net'
     proxy_host: http://192.168.20.56:4408
-
-  - name: kestra
-    hostname: 'kestra.berger-em.net'
-    proxy_host: http://192.168.1.16:8080
 
   - name: kuma
     hostname: 'kuma.berger-em.net'

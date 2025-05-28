@@ -1,7 +1,7 @@
 ---
 
 - name: Get latest release tag from Codeberg
-  when: (latest_release is not defined) or (latest_release == 'latest')
+
   run_once: true
   block:
     - name: Determine latest Codeberg release (local)

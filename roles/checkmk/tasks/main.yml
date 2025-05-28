@@ -1,0 +1,49 @@
+---
+
+- name: Get latest release tag from Github
+  block:
+    - name: Get Tags from Github
+      ansible.builtin.uri:
+        url: '{{ checkmk_github_url }}'
+        body_format: json
+      register: _github_tags
+      until: _github_tags.status == 200
+      retries: 5
+
+    - name: Parse and filter tag names
+      ansible.builtin.set_fact:
+        valid_tags: >-
+          {{
+            _github_tags.json
+            | map(attribute='name')
+            | reject('search', 'rc|b|security')
+            | list
+          }}
+
+    - name: Sort tag names semantically
+      ansible.builtin.set_fact:
+        sorted_tags: "{{ valid_tags | community.general.version_sort }}"
+
+    - name: Set latest_release
+      ansible.builtin.set_fact:
+        latest_release: "{{ sorted_tags | last | regex_replace('^v?(.*)$', '\\1') }}"
+
+- name: Latest version
+  ansible.builtin.debug:
+    msg: "Latest version {{ latest_release }}"
+
+- name: Check if version file exists
+  ansible.builtin.stat:
+    path: '{{ checkmk_version_file }}'
+  register: release_file
+
+- name: Get version file
+  ansible.builtin.slurp:
+    src: '{{ checkmk_version_file }}'
+  register: current_release
+  become: true
+  when: release_file.stat.exists
+
+- name: Install CheckMK
+  ansible.builtin.include_tasks: install.yml
+  when: (not release_file.stat.exists) or (latest_release not in current_release['content'] | b64decode)

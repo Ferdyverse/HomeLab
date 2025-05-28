@@ -1,8 +1,6 @@
 ---
 
 - name: Get latest release tag from Github
-  when: (latest_release is not defined) or (latest_release == 'latest')
-  run_once: true
   block:
     - name: Determine latest GitHub release (local)
       ansible.builtin.uri:

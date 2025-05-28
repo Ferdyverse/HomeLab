@@ -1,0 +1,35 @@
+---
+
+# https://download.checkmk.com/checkmk/2.4.0p2/check-mk-raw-2.4.0p2_0.bookworm_amd64.deb
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
+- name: Stop service
+  ansible.builtin.service:
+    name: omd
+    enabled: true
+    state: stopped
+  when: ansible_facts['services']['checkmk.service']['status'] | default('not-found') != 'not-found'
+  become: true
+
+- name: Install CheckMK
+  become: true
+  block:
+    - name: Download and Install checkmk
+      ansible.builtin.apt:
+        deb: 'https://download.checkmk.com/checkmk/{{ latest_release }}/check-mk-raw-{{ latest_release }}_0.{{ ansible_distribution_release }}_amd64.deb'
+
+    - name: Start service
+      ansible.builtin.systemd_service:
+        name: omd
+        enabled: true
+        daemon_reload: true
+        state: started
+
+    - name: Save current version to file
+      ansible.builtin.blockinfile:
+        path: '{{ checkmk_version_file }}'
+        create: true
+        mode: '0744'
+        block: |
+          {{ latest_release }}

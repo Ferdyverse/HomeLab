@@ -133,14 +133,13 @@
         - layer4.conf
       notify: Reload caddy
 
-    - name: Create environment file
-      ansible.builtin.template:
-        mode: "0640"
-        src: env.j2
-        dest: "{{ caddy_config_path }}/.env"
-        owner: "{{ caddy_user_name }}"
+    - name: Create dummy .env file
+      ansible.builtin.file:
+        path: '{{ caddy_config_path }}/.env'
+        state: touch
+        owner: '{{ caddy_user_name }}'
         group: '{{ caddy_group_name }}'
-      notify: Reload caddy
+        mode: '0640'
 
     - name: Enable and start Caddy service
       ansible.builtin.systemd_service:
