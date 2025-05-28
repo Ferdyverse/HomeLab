@@ -2,11 +2,12 @@
 
 collections:
   # Basic ansible community modules
-  - name: community.general
+  - name: checkmk.general
   - name: community.crypto
   - name: community.docker
-  - name: grafana.grafana
+  - name: community.general
   - name: community.grafana
-  - name: prometheus.prometheus
+  - name: grafana.grafana
   - name: onepassword.connect
+  - name: prometheus.prometheus
   - name: serverscom.mitogen

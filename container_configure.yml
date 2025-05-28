@@ -62,6 +62,11 @@
       tags:
         - lxc_config
 
+    - name: Configure/Install Checkmk
+      ansible.builtin.include_tasks: tasks/checkmk.yml
+      tags:
+        - checkmk
+
     - name: Configure/Install Docker
       when: inventory_hostname is match('.*(docker|gitea|authentik|kestra).*')
       tags:
