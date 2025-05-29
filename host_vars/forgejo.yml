@@ -1,0 +1,25 @@
+---
+
+# Baisc host settings
+host_name: forgejo
+host_ip: 192.168.1.34
+host_gateway: 192.168.1.1
+host_subnet: /24
+host_vlan: 1
+
+# LXC settings
+lxc_data:
+  vmid: 119
+  node: "pikachu"
+  cores: 2
+  memory: 2048
+  disk: 'zfs:35'
+  netif:
+    net0: "name=eth0,gw={{ host_gateway }},ip={{ host_ip }}{{ host_subnet }},bridge=vmbr0,firewall=0,tag={{ host_vlan }}"
+
+# Reverse Proxy settings
+proxy:
+  - name: '{{ host_name }}'
+    hostname: 'git.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:3000'
+    protected_enabled: false

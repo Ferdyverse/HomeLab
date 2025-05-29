@@ -17,6 +17,12 @@
         omd_config:
           - var: AUTOSTART
             value: 'on'
+        mkp_packages:
+          - name: 'discord'
+            version: 0.0.1
+            url: 'https://exchange.checkmk.com/packages/discord/1322/discord-0.0.1.mkp'
+            installed: true
+            enabled: true
   when:
     - '"checkmk" in inventory_hostname'
 
@@ -37,7 +43,6 @@
     checkmk_agent_host_name: "{{ inventory_hostname }}"
     checkmk_agent_discover: 'true'
     checkmk_agent_tls: 'true'
-    checkmk_agent_no_log: 'false'
     checkmk_agent_host_ip: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
     checkmk_agent_host_attributes:
       ipaddress: "{{ checkmk_agent_host_ip | default(omit) }}"

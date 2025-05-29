@@ -1,6 +1,6 @@
 ---
 
-- name: 'Add vhost {{ vhost.name }}'
+- name: 'Add vhosts for {{ vhost.name | default(lxc_host) }}'
   ansible.builtin.template:
     src: "{{ vhost.template }}"
     dest: "{{ caddy_config_path }}/vhosts/{{ vhost.name }}"
@@ -8,5 +8,11 @@
     group: '{{ caddy_group_name }}'
     mode: "0644"
     lstrip_blocks: true
-  tags: caddy.vhosts
+  vars:
+    # merge *defaults* (left) with *proxy entry* (right) – proxy overrides defaults
+    vhost: "{{ caddy_vhost_defaults | combine(proxy, recursive=True, list_merge='replace') }}"
+  loop: "{{ hostvars[lxc_host].proxy | default([]) }}"
+  loop_control:
+    loop_var: proxy
   notify: Reload caddy
+  tags: caddy.vhosts

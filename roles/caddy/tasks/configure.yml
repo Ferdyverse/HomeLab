@@ -11,13 +11,13 @@
       register: existing_vhosts
       when: caddy_rm_unmanaged_vhosts
 
-    - name: Remove old Caddy vhost files
-      tags: caddy.vhosts
-      ansible.builtin.file:
-        path: "{{ item.path }}"
-        state: absent
-      loop: "{{ existing_vhosts.files | default([]) }}"
-      when: item.path | basename not in caddy_vhosts | map(attribute='name') | list
+    # - name: Remove old Caddy vhost files
+    #   tags: caddy.vhosts
+    #   ansible.builtin.file:
+    #     path: "{{ item.path }}"
+    #     state: absent
+    #   loop: "{{ existing_vhosts.files | default([]) }}"
+    #   when: item.path | basename not in caddy_vhosts | map(attribute='name') | list
 
     - name: Rewrite Caddyfile
       ansible.builtin.template:
@@ -57,8 +57,6 @@
     - name: Configure vhosts
       ansible.builtin.include_tasks: vhosts.yml
       tags: caddy.vhosts
-      vars:
-        vhost: "{{ caddy_vhost_defaults | combine(vhost_) }}"
-      loop: "{{ caddy_vhosts }}"
+      loop: "{{ groups['proxmox_all_lxc'] }}"
       loop_control:
-        loop_var: vhost_
+        loop_var: lxc_host

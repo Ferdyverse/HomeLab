@@ -1,0 +1,65 @@
+---
+
+host_name: caddy
+host_ip: 192.168.1.50
+host_gateway: 192.168.1.1
+host_subnet: /24
+host_vlan: 1
+
+lxc_data:
+  vmid: 110
+  node: 'pikachu'
+  coes: 4
+  memory: 4096
+  disk: 'zfs:5'
+  netif:
+    net0: "name=eth0,gw={{ host_gateway }},ip={{ host_ip }}{{ host_subnet }},bridge=vmbr0,firewall=0,tag={{ host_vlan }}"
+
+# Here are proy hosts listed, that do not have there own machines
+proxy:
+  - name: evoli
+    hostname: 'evoli.berger-em.net'
+    proxy_host: https://192.168.1.14:8006
+    protected_private: true
+    protected_internal: false
+
+  - name: gitea
+    hostname: 'gitea.berger-em.net'
+    proxy_host: http://192.168.20.11:3000
+
+  - name: hardbase
+    hostname: 'hardbase.berger-em.net'
+    proxy_host: https://192.168.1.12:5001
+
+  - name: hass
+    hostname: 'hass.berger-em.net'
+    proxy_host: http://192.168.20.10:8123
+
+  - name: k1
+    hostname: 'k1.berger-em.net'
+    proxy_host: http://192.168.20.56:4408
+
+  - name: mqtt
+    hostname: 'mqtt.berger-em.net'
+    proxy_host: http://192.168.20.10:1883
+
+  - name: pikachu
+    hostname: 'pikachu.berger-em.net'
+    proxy_host: https://192.168.1.11:8006
+    protected_private: true
+
+  - name: proxmox
+    hostname: 'proxmox.berger-em.net'
+    proxy_host: https://192.168.1.14:8006
+    protected_private: true
+    protected_internal: false
+
+  - name: solar
+    hostname: 'solar.berger-em.net'
+    proxy_host: http://192.168.20.29
+
+  - name: udm
+    hostname: 'udm.berger-em.net'
+    proxy_host: https://192.168.1.1:443
+    protected_private: true
+    protected_internal: false

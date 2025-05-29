@@ -1,0 +1,55 @@
+---
+
+# Baisc host settings
+host_name: docker01
+host_ip: 192.168.1.24
+host_gateway: 192.168.1.1
+host_subnet: /24
+host_vlan: 1
+
+# LXC settings
+lxc_data:
+  vmid: 106
+  node: "pikachu"
+  cores: 4
+  memory: 4096
+  disk: 'zfs:80'
+  netif:
+    net0: "name=eth0,gw={{ host_gateway }},ip={{ host_ip }}{{ host_subnet }},bridge=vmbr0,firewall=0,tag={{ host_vlan }}"
+  tags:
+    - ansible
+    - docker
+
+# Reverse Proxy settings
+proxy:
+  - name: 1pw
+    hostname: '1pw.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:8085'
+    protected_private: true
+    protected_internal: false
+
+  - name: changedetection
+    hostname: 'changedetection.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:5001'
+
+  - name: minimailer
+    hostname: 'minimailer.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:5000'
+    authentik_enabled: true
+
+  - name: portainer
+    hostname: 'portainer.berger-em.net'
+    proxy_host: 'https://{{ host_ip }}:9443'
+    protected_private: true
+    protected_internal: false
+
+  - name: teddycloud
+    hostname: 'teddycloud.berger-em.net'
+    proxy_host: 'https://{{ host_ip }}:443'
+    protected_enabled: false
+
+  - name: twitch-points
+    hostname: 'twitch-points.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:5002'
+    protected_private: true
+    protected_internal: false

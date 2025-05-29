@@ -1,0 +1,66 @@
+---
+
+# Baisc host settings
+host_name: docker02
+host_ip: 192.168.1.30
+host_gateway: 192.168.1.1
+host_subnet: /24
+host_vlan: 1
+
+# LXC settings
+lxc_data:
+  vmid: 112
+  node: "evoli"
+  cores: 2
+  memory: 4096
+  disk: 'zfs:80'
+  netif:
+    net0: "name=eth0,gw={{ host_gateway }},ip={{ host_ip }}{{ host_subnet }},bridge=vmbr0,firewall=0,tag={{ host_vlan }}"
+
+# Reverse Proxy settings
+proxy:
+  - name: bazarr
+    hostname: 'bazarr.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:6767'
+    protected_enabled: false
+
+  - name: gluten
+    hostname: 'gluten.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:8000'
+
+  - name: jellyseerr
+    hostname: 'jellyseerr.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:5055'
+
+  - name: lidarr
+    hostname: 'lidarr.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:8686'
+
+  - name: nzb
+    hostname: 'nzb.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:6789'
+
+  - name: prowlarr
+    hostname: 'prowlarr.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:9696'
+
+  - name: qbit
+    hostname: 'qbit.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:8080'
+
+  - name: radarr
+    hostname: 'radarr.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:7878'
+
+  - name: readarr
+    hostname: 'readarr.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:8787'
+
+  - name: sonarr
+    hostname: 'sonarr.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:8989'
+
+  - name: terminal
+    hostname: 'terminal.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:3000'
+    authentik_enabled: true

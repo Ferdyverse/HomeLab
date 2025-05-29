@@ -25,3 +25,6 @@ prometheus_write_url: '{{ prometheus_base_url }}/api/v1/write'
 
 # Alloy
 alloy_config_path: /etc/alloy
+
+# Caddy overwrite
+proxy: []
