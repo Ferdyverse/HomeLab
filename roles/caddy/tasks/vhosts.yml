@@ -9,7 +9,7 @@
     mode: "0644"
     lstrip_blocks: true
   vars:
-    # merge *defaults* (left) with *proxy entry* (right) – proxy overrides defaults
+    # merge *defaults* (left) with *proxy entry* (right) - proxy overrides defaults
     vhost: "{{ caddy_vhost_defaults | combine(proxy, recursive=True, list_merge='replace') }}"
   loop: "{{ hostvars[lxc_host].proxy | default([]) }}"
   loop_control:

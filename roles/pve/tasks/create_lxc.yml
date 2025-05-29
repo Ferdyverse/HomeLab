@@ -15,10 +15,6 @@
         host_vars_list: "{{ host_vars_list | default([]) + [lookup('ansible.builtin.file', item.path) | from_yaml] }}"
       loop: "{{ defined_hosts.files }}"
 
-    - name: Debug
-      ansible.builtin.debug:
-        var: host_vars_list
-
     - name: Create missing LXC container
       community.general.proxmox:
         api_host: '{{ pve_api_host }}'
@@ -27,21 +23,23 @@
         api_password: '{{ pve_root_password }}'
         state: 'present'
 
-        cores: '{{ item.lxc_data.cores | default(pve_lxc_defaults.cores) }}'
-        description: '{{ item.lxc_data.description | default(pve_lxc_defaults.description) }}'
-        disk: '{{ item.lxc_data.disk | default(pve_lxc_defaults.disk) }}'
-        features: '{{ item.lxc_data.features | default(pve_lxc_defaults.features) }}'
-        force: '{{ item.lxc_data.force | default(pve_lxc_defaults.force) }}'
         hostname: '{{ item.host_name }}'
-        memory: '{{ item.lxc_data.memory | default(pve_lxc_defaults.memory.ct) }}'
-        netif: '{{ item.lxc_data.netif | default(pve_lxc_defaults.netif) }}'
-        node: '{{ item.lxc_data.node | default(pve_lxc_defaults.node) }}'
-        onboot: '{{ item.lxc_data.onboot | default(pve_lxc_defaults.onboot) }}'
-        ostemplate: '{{ item.lxc_data.ostemplate | default(pve_lxc_defaults.ostemplate) }}'
-        password: '{{ item.lxc_data.password | default(pve_lxc_defaults.password) }}'
-        swap: '{{ item.lxc_data.swap | default(pve_lxc_defaults.swap) }}'
-        tags: '{{ item.lxc_data.tags | default(pve_lxc_defaults.tags) }}'
-        vmid: '{{ item.lxc_data.vmid | default(pve_lxc_defaults.vmid) }}'
+        cores: '{{ vhost.cores }}'
+        description: '{{ vhost.description }}'
+        disk: '{{ vhost.disk }}'
+        features: '{{ vhost.features }}'
+        force: '{{ vhost.force }}'
+        memory: '{{ vhost.memory }}'
+        netif: '{{ vhost.netif }}'
+        node: '{{ vhost.node }}'
+        onboot: '{{ vhost.onboot }}'
+        ostemplate: '{{ vhost.ostemplate }}'
+        password: '{{ vhost.password }}'
+        swap: '{{ vhost.swap }}'
+        tags: '{{ vhost.tags }}'
+        vmid: '{{ vhost.vmid }}'
+      vars:
+        vhost: "{{ pve_lxc_defaults | combine(item.lxc_data, recursive=True, list_merge='replace') }}"
       loop: '{{ host_vars_list }}'
       timeout: 60
       loop_control:
