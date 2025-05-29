@@ -2,38 +2,55 @@
 
 - name: Create LXC Container
   run_once: true
+  delegate_to: localhost
   block:
+    - name: Get all defined hosts
+      ansible.builtin.find:
+        paths: "./host_vars"
+        patterns: "*.yml"
+      register: defined_hosts
+
+    - name: Get vars from file
+      ansible.builtin.set_fact:
+        host_vars_list: "{{ host_vars_list | default([]) + [lookup('ansible.builtin.file', item.path) | from_yaml] }}"
+      loop: "{{ defined_hosts.files }}"
+
+    - name: Debug
+      ansible.builtin.debug:
+        var: host_vars_list
+
     - name: Create missing LXC container
       community.general.proxmox:
         api_host: '{{ pve_api_host }}'
         api_port: '{{ pve_api_port }}'
         api_user: '{{ pve_apiuser }}'
         api_password: '{{ pve_root_password }}'
-
-        cores: '{{ item.value.cores | default(pve_lxc_defaults.cores) }}'
-        description: '{{ item.description | default(pve_lxc_defaults.description) }}'
-        disk: '{{ item.value.disk | default(pve_lxc_defaults.disk) }}'
-        features: '{{ item.value.features | default(pve_lxc_defaults.features) }}'
-        force: '{{ item.value.force | default(pve_lxc_defaults.force) }}'
-        hostname: '{{ item.key }}'
-        memory: '{{ item.value.memory | default(pve_lxc_defaults.memory.ct) }}'
-        netif: '{{ item.value.netif | default(pve_lxc_defaults.netif) }}'
-        node: '{{ item.value.node | default(pve_lxc_defaults.node) }}'
-        onboot: '{{ item.value.onboot | default(pve_lxc_defaults.onboot) }}'
-        ostemplate: '{{ item.value.ostemplate | default(pve_lxc_defaults.ostemplate) }}'
-        password: '{{ item.value.password | default(pve_lxc_defaults.password) }}'
-        swap: '{{ item.value.swap | default(pve_lxc_defaults.swap) }}'
-        tags: '{{ item.value.tags | default(pve_lxc_defaults.tags) }}'
-        vmid: '{{ item.value.vmid | default(pve_lxc_defaults.vmid) }}'
         state: 'present'
-      with_dict: '{{ pve_lxc_container }}'
+
+        cores: '{{ item.lxc_data.cores | default(pve_lxc_defaults.cores) }}'
+        description: '{{ item.lxc_data.description | default(pve_lxc_defaults.description) }}'
+        disk: '{{ item.lxc_data.disk | default(pve_lxc_defaults.disk) }}'
+        features: '{{ item.lxc_data.features | default(pve_lxc_defaults.features) }}'
+        force: '{{ item.lxc_data.force | default(pve_lxc_defaults.force) }}'
+        hostname: '{{ item.host_name }}'
+        memory: '{{ item.lxc_data.memory | default(pve_lxc_defaults.memory.ct) }}'
+        netif: '{{ item.lxc_data.netif | default(pve_lxc_defaults.netif) }}'
+        node: '{{ item.lxc_data.node | default(pve_lxc_defaults.node) }}'
+        onboot: '{{ item.lxc_data.onboot | default(pve_lxc_defaults.onboot) }}'
+        ostemplate: '{{ item.lxc_data.ostemplate | default(pve_lxc_defaults.ostemplate) }}'
+        password: '{{ item.lxc_data.password | default(pve_lxc_defaults.password) }}'
+        swap: '{{ item.lxc_data.swap | default(pve_lxc_defaults.swap) }}'
+        tags: '{{ item.lxc_data.tags | default(pve_lxc_defaults.tags) }}'
+        vmid: '{{ item.lxc_data.vmid | default(pve_lxc_defaults.vmid) }}'
+      loop: '{{ host_vars_list }}'
       timeout: 60
       loop_control:
+        label: "{{ item.host_name }}"
         pause: 2
       notify:
         - Sleep
       register: 'created_lxc_container'
-      when: 'not item.key in groups["proxmox_all_lxc"]'
+      when: 'item.host_name not in groups["proxmox_all_lxc"]'
 
     - name: Flush handlers
       ansible.builtin.meta: flush_handlers
