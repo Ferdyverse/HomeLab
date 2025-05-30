@@ -2,7 +2,6 @@
 
 # creates and starts containers from container vars with host vars defaults
 - name: Configure containers
-
   hosts: proxmox_all_lxc
   gather_facts: false
 
@@ -82,7 +81,7 @@
           tags:
             - docker.deploy
 
-    - name: 'Configure/Install container'
+    - name: 'Configure/Install role based container'
       ansible.builtin.include_tasks: tasks/lxc_config.yml
       vars:
         container: '{{ lxc }}'
@@ -101,12 +100,9 @@
       loop_control:
         loop_var: lxc
 
-    - name: Configure/Install Authentik
-      ansible.builtin.include_tasks: tasks/authentik.yml
-      when:
-        - '"authentik" in inventory_hostname'
-      tags:
-        - authentik
+    - name: Configure/Install task based container
+      ansible.builtin.include_tasks: 'tasks/{{ inventory_hostname }}.yml'
+      when: inventory_hostname is match('.*(authentik|netbird).*')
 
     - name: Do OS update
       ansible.builtin.include_tasks: tasks/os_update.yml

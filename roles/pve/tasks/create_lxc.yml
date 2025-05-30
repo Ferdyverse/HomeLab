@@ -30,7 +30,8 @@
         features: '{{ vhost.features }}'
         force: '{{ vhost.force }}'
         memory: '{{ vhost.memory }}'
-        netif: '{{ vhost.netif }}'
+        netif:
+          net0: "name=eth0,gw={{ item.host_gateway }},ip={{ item.host_ip }}{{ item.host_subnet }},bridge=vmbr0,firewall=0,tag={{ item.host_vlan }}"
         node: '{{ vhost.node }}'
         onboot: '{{ vhost.onboot }}'
         ostemplate: '{{ vhost.ostemplate }}'
@@ -55,7 +56,7 @@
 
     - name: Set facts
       ansible.builtin.set_fact:
-        created_hosts: '{{ created_hosts | combine({item.item.key: {"node": item.item.value.node, "vmid": item.item.value.vmid}}) }}'
+        created_hosts: '{{ created_hosts | combine({item.item.host_name: {"node": item.vhost.node, "vmid": item.vhost.vmid}}) }}'
       with_items: '{{ created_lxc_container.results }}'
       when: item.changed # noqa: no-handler
 
