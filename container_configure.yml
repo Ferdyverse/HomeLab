@@ -67,7 +67,7 @@
         - checkmk
 
     - name: Configure/Install Docker
-      when: inventory_hostname is match('.*(docker|gitea|authentik|kestra).*')
+      when: inventory_hostname is match('.*(docker|gitea|authentik|kestra|nextcloud).*')
       tags:
         - docker
       block:
@@ -102,7 +102,7 @@
 
     - name: Configure/Install task based container
       ansible.builtin.include_tasks: 'tasks/{{ inventory_hostname }}.yml'
-      when: inventory_hostname is match('.*(authentik|netbird).*')
+      when: inventory_hostname is match('.*(authentik).*')
 
     - name: Do OS update
       ansible.builtin.include_tasks: tasks/os_update.yml
