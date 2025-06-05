@@ -23,43 +23,30 @@
       become: false
       vars:
         secrets:
-            # Postgress PW
           - key: PG_PASS
             value: '{{ lookup("community.general.onepassword", "Authentik", field="PG Password", vault="HomeLab") }}'
-
-            # SECRET KEY
           - key: AUTHENTIK_SECRET_KEY
             value: '{{ lookup("community.general.onepassword", "Authentik", field="Secret key", vault="HomeLab") }}'
-
-            # Error Reporting
           - key: AUTHENTIK_ERROR_REPORTING__ENABLED
             value: true
-
-            # Ports
           - key: COMPOSE_PORT_HTTP
             value: 80
           - key: COMPOSE_PORT_HTTPS
             value: 443
-
-            # SMTP Host Emails are sent to
           - key: AUTHENTIK_EMAIL__HOST
             value: '{{ lookup("community.general.onepassword", "Authentik", field="EMail Server", vault="HomeLab") }}'
           - key: AUTHENTIK_EMAIL__PORT
             value: 465
-            # E-Mail authentication (don't add quotation marks to your password)
           - key: AUTHENTIK_EMAIL__USERNAME
             value: authentik@berger-em.de
           - key: AUTHENTIK_EMAIL__PASSWORD
             value: '{{ lookup("community.general.onepassword", "Authentik", field="EMail Password", vault="HomeLab") }}'
-            # Use StartTLS
           - key: AUTHENTIK_EMAIL__USE_TLS
             value: false
-            # Use SSL
           - key: AUTHENTIK_EMAIL__USE_SSL
             value: true
           - key: AUTHENTIK_EMAIL__TIMEOUT
             value: 10
-            # Email address authentik will send from, should have a correct @domain
           - key: AUTHENTIK_EMAIL__FROM
             value: authentik@berger-em.de
 
