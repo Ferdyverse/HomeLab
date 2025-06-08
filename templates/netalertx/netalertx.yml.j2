@@ -1,0 +1,14 @@
+services:
+  netalertx:
+    container_name: netalertx
+    image: "ghcr.io/jokob-sk/netalertx:latest"
+    network_mode: "host"
+    restart: unless-stopped
+    volumes:
+      - {{ docker_container_config_folder }}/netalertx/config:/app/config
+      - {{ docker_container_data_folder }}/netalertx/db:/app/db
+      - type: tmpfs
+        target: /app/api
+    environment:
+      - TZ=Europe/Berlin
+      - PORT=20211
