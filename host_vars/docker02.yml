@@ -67,5 +67,5 @@ proxy:
 
   - name: drk
     hostname: 'drk.berger-em.net'
-    proxy_host: 'http://{{ host_ip }}:8000'
+    proxy_host: 'http://{{ host_ip }}:6000'
     protected_enabled: false
