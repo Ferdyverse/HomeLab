@@ -2,7 +2,7 @@
 
 cloudflare_record_comment: "Created via DDNS container"
 
-cloudflare_domain_list: home.berger-em.net, ntfy.berger-em.net, git.berger-em.net, mc.berger-em.net, auth.berger-em.net, nextcloud.berger-em.net
+cloudflare_domain_list: home.berger-em.net, ntfy.berger-em.net, git.berger-em.net, mc.berger-em.net, auth.berger-em.net, nextcloud.berger-em.net, drk.berger-em.net
 
 cloudflare_proxy_list: '!is(mc.berger-em.net, home.berger-em.net)'
 

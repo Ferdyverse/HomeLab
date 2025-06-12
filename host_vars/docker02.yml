@@ -64,3 +64,8 @@ proxy:
     hostname: 'terminal.berger-em.net'
     proxy_host: 'http://{{ host_ip }}:3000'
     authentik_enabled: true
+
+  - name: drk
+    hostname: 'drk.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:8000'
+    protected_enabled: false
