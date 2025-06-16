@@ -16,6 +16,29 @@
           - /:/host
         state: started
 
+    - name: Create watchtower config folder
+      ansible.builtin.file:
+        path: '/home/{{ default_user }}/docker/watchtower'
+        state: directory
+        owner: '{{ default_user }}'
+        group: '{{ default_user }}'
+        mode: '0755'
+
+    - name: Create watchtower config file
+      ansible.builtin.copy:
+        dest: '/home/{{ default_user }}/docker/watchtower/config.json'
+        mode: '0600'
+        owner: '{{ default_user }}'
+        group: '{{ default_user }}'
+        content: |
+          {
+            "auths": {
+                "git.berger-em.net": {
+                    "auth": "{{ lookup("community.general.onepassword", "Forgejo", field="watchtower token", vault="HomeLab") }}"
+                }
+            }
+          }
+
     - name: Deploy watchtower
       community.docker.docker_container:
         name: '{{ docker_watchtower_name }}'
@@ -23,6 +46,7 @@
         restart_policy: "always"
         volumes:
           - /var/run/docker.sock:/var/run/docker.sock
+          - '/home/{{ default_user }}/docker/watchtower/config.json:/config.json'
         env:
           WATCHTOWER_NOTIFICATIONS: "shoutrrr"
           WATCHTOWER_NOTIFICATION_URL: "{{ ntfy_url_suki }}"
