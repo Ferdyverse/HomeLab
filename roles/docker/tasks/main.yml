@@ -8,6 +8,11 @@
 - name: Deploy default Container
   ansible.builtin.include_tasks: default_container.yml
 
+- name: Setup Periphery
+  ansible.builtin.include_tasks: periphery_setup.yml
+  tags:
+    - docker.komodo
+
 - name: Configure Monitoring
   ansible.builtin.include_tasks: tasks/alloy.yml
   vars:

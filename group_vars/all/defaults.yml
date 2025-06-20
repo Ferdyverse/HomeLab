@@ -28,3 +28,27 @@ alloy_config_path: /etc/alloy
 
 # Caddy overwrite
 proxy: []
+
+# Notifications for Watchtower
+wt_ntfy_suki: 'ntfy://suki:{{ lookup("community.general.onepassword", "Ntfy", field="Suki Password", vault="HomeLab") }}@ntfy.berger-em.net/watchtower'
+wt_discord: 'discord://{{ lookup("community.general.onepassword", "Discord Webhooks", section="WATCHTOWER", field="watchtower", vault="HomeLab") }}'
+wt_template: |
+  {%- raw -%}{{- if .Report -}}
+    {{- with .Report -}}
+  {{len .Scanned}} Scanned, {{len .Updated}} Updated, {{len .Failed}} Failed
+        {{- range .Updated}}
+  - {{.Name}} ({{.ImageName}}): {{.CurrentImageID.ShortID}} updated to {{.LatestImageID.ShortID}}
+        {{- end -}}
+        {{- range .Fresh}}
+  - {{.Name}} ({{.ImageName}}): {{.State}}
+      {{- end -}}
+      {{- range .Skipped}}
+  - {{.Name}} ({{.ImageName}}): {{.State}}: {{.Error}}
+      {{- end -}}
+      {{- range .Failed}}
+  - {{.Name}} ({{.ImageName}}): {{.State}}: {{.Error}}
+      {{- end -}}
+    {{- end -}}
+  {{- else -}}
+    {{range .Entries -}}{{.Message}}{{\"\n\"}}{{- end -}}
+  {{- end -}}{%- endraw -%}

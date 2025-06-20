@@ -1,0 +1,10 @@
+services:
+    drk:
+        image: git.berger-em.net/drk/form-manager:latest
+        container_name: form_manager
+        restart: unless-stopped
+        ports:
+            - 6000:8000
+        env_file: /home/{{ default_user }}/docker/drk/.env
+        volumes:
+            - /data/drk/data/db.sqlite3:/app/db.sqlite3

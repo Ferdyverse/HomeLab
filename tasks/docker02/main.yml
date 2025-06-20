@@ -6,14 +6,20 @@
   tags:
     - arr
 
-- name: Deploy Dumbterm
-  ansible.builtin.include_tasks:
-    file: dumbterm.yml
-  tags:
-    - dumbterm
+# - name: Deploy Dumbterm
+#   ansible.builtin.include_tasks:
+#     file: dumbterm.yml
+#   tags:
+#     - dumbterm
 
 - name: Deploy Minecraft
   ansible.builtin.include_tasks:
     file: minecraft.yml
   tags:
     - minecraft
+
+- name: Deploy Minecraft
+  ansible.builtin.include_tasks:
+    file: drk.yml
+  tags:
+    - drk

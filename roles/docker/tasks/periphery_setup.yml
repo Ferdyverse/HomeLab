@@ -1,0 +1,26 @@
+---
+
+- name: Deploy Periphery # noqa: command-instead-of-module
+  ansible.builtin.shell:
+    cmd: |
+      curl -sSL https://raw.githubusercontent.com/moghtech/komodo/main/scripts/setup-periphery.py | python3 - --user \
+      && systemctl --user start periphery \
+      && systemctl --user enable periphery
+    chdir: "/home/bergefe"
+  become: true
+  become_user: '{{ default_user }}'
+
+- name: Enable lingering
+  ansible.builtin.command:
+    cmd: loginctl enable-linger {{ default_user }}
+  changed_when: true
+  become: true
+
+- name: Create Periphery config
+  ansible.builtin.template:
+    src: periphery.config.toml.j2
+    dest: '/home/{{ default_user }}/.config/komodo/periphery.config.toml'
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+    mode: '0600'
+  when: inventory_hostname != 'docker02'

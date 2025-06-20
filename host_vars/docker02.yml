@@ -32,6 +32,10 @@ proxy:
     hostname: 'jellyseerr.berger-em.net'
     proxy_host: 'http://{{ host_ip }}:5055'
 
+  - name: komodo
+    hostname: 'komo.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:9120'
+
   - name: lidarr
     hostname: 'lidarr.berger-em.net'
     proxy_host: 'http://{{ host_ip }}:8686'

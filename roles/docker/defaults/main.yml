@@ -8,10 +8,6 @@ docker_portainer_agent_image: portainer/agent:latest
 docker_watchtower_name: watchtower
 docker_watchtower_image: nickfedor/watchtower:latest
 
-# WhatsUpDocker
-docker_wud_name: wud
-docker_wud_image: getwud/wud:latest
-
 # Docker Socket Proxy
 docker_socket_container_name: socket-proxy
 docker_socket_container_image: lscr.io/linuxserver/socket-proxy:latest

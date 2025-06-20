@@ -28,6 +28,10 @@ proxy:
     protected_private: true
     protected_internal: false
 
+  - name: audiobookshelf
+    hostname: 'audiobookshelf.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:8080'
+
   - name: changedetection
     hostname: 'changedetection.berger-em.net'
     proxy_host: 'http://{{ host_ip }}:5001'
