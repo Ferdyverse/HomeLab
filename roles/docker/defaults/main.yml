@@ -11,3 +11,11 @@ docker_watchtower_image: nickfedor/watchtower:latest
 # Docker Socket Proxy
 docker_socket_container_name: socket-proxy
 docker_socket_container_image: lscr.io/linuxserver/socket-proxy:latest
+
+
+# Periphery
+docker_periphery_github_url: https://api.github.com/repos/moghtech/komodo/releases/latest
+docker_periphery_version_file: /opt/periphery.txt
+
+docker_komodo_bin_path: '/home/{{ default_user }}/.local/bin/periphery'
+docker_komodo_config_path: '/home/{{ default_user }}/.config/komodo'

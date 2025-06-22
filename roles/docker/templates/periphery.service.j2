@@ -1,0 +1,11 @@
+[Unit]
+Description=Agent to connect with Komodo Core
+
+[Service]
+Environment="HOME=/home/{{ default_user }}"
+ExecStart=/bin/sh -lc "{{ docker_komodo_bin_path }} --config-path {{ docker_komodo_config_path }}"
+Restart=on-failure
+TimeoutStartSec=0
+
+[Install]
+WantedBy=default.target

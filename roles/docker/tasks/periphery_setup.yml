@@ -1,20 +1,42 @@
 ---
 
-- name: Deploy Periphery # noqa: command-instead-of-module
-  ansible.builtin.shell:
-    cmd: |
-      curl -sSL https://raw.githubusercontent.com/moghtech/komodo/main/scripts/setup-periphery.py | python3 - --user \
-      && systemctl --user start periphery \
-      && systemctl --user enable periphery
-    chdir: "/home/bergefe"
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
+- name: Stop service # noqa: command-instead-of-module
+  ansible.builtin.command:
+    cmd: systemctl --user stop periphery
+  when: ansible_facts['services']['periphery.service']['status'] | default('not-found') != 'not-found'
+  changed_when: false
+
+- name: Ensure necessary directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ default_user }}"
+    group: "{{ default_user }}"
+    mode: "0750"
+  loop:
+    - '/home/{{ default_user }}/.local/bin/'
+    - '{{ docker_komodo_config_path }}'
+    - '/home/{{ default_user }}/.config/systemd/user'
+    - '/etc/komodo/ssl'
   become: true
-  become_user: '{{ default_user }}'
 
 - name: Enable lingering
   ansible.builtin.command:
     cmd: loginctl enable-linger {{ default_user }}
-  changed_when: true
+  changed_when: false
   become: true
+
+- name: Download Komodo Periphery Agent
+  ansible.builtin.get_url:
+    url: "https://github.com/moghtech/komodo/releases/download/v{{ latest_release }}/periphery-x86_64"
+    dest: '{{ docker_komodo_bin_path }}'
+    mode: "0755"
+    owner: "{{ default_user }}"
+    group: "{{ default_user }}"
+    force: true
 
 - name: Create Periphery config
   ansible.builtin.template:
@@ -22,5 +44,27 @@
     dest: '/home/{{ default_user }}/.config/komodo/periphery.config.toml'
     owner: '{{ default_user }}'
     group: '{{ default_user }}'
-    mode: '0600'
-  when: inventory_hostname != 'docker02'
+    mode: '0640'
+
+- name: Create Periphery service
+  ansible.builtin.template:
+    src: periphery.service.j2
+    dest: '/home/{{ default_user }}/.config/systemd/user/periphery.service'
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+    mode: '0644'
+
+- name: Enable and start periphery service # noqa: command-instead-of-module
+  ansible.builtin.shell: |
+    systemctl --user daemon-reload
+    systemctl --user enable --now periphery
+  changed_when: false
+
+- name: Save current version to file
+  ansible.builtin.blockinfile:
+    path: '{{ docker_periphery_version_file }}'
+    create: true
+    mode: '0744'
+    block: |
+      {{ latest_release }}
+  become: true
