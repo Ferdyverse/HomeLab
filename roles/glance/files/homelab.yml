@@ -37,6 +37,9 @@
             - title: Grafana
               url: https://grafana.berger-em.net
               icon: di:grafana
+            - title: Komodo
+              url: https://komo.berger-em.net
+              icon: di:komodo
             - title: Portainer
               url: https://portainer.berger-em.net
               icon: di:portainer
@@ -86,15 +89,15 @@
             - title: Changedetection
               url: https://changedetection.berger-em.net
               icon: di:changedetection
-            - title: Dumbterm
-              url: https://terminal.berger-em.net
-              icon: di:dumbterm
             - title: Forgejo
               url: https://git.berger-em.net
               icon: di:forgejo
             - title: Hardbase
               url: https://hardbase.berger-em.net
               icon: di:synology
+            - title: Pangolin
+              url: https://pangolin.berger-em.net
+              icon: di:pangolin
             - title: Uptime Kuma
               url: https://kuma.berger-em.net
               icon: di:uptime-kuma

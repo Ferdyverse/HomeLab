@@ -71,7 +71,7 @@ allowed_ips = []
 ## Example: passkeys = ["your-passkey"]
 ## Env: PERIPHERY_PASSKEYS or PERIPHERY_PASSKEYS_FILE
 ## Default: empty, which will not require any passkey to be passed by core.
-passkeys = ["{{ lookup("community.general.onepassword", "Komodo", field="periphery passkey", vault="HomeLab") }}"]
+passkeys = ["{{ lookup('community.general.onepassword', 'Komodo', section='Keys', field='periphery', vault='HomeLab') }}"]
 
 ############
 # Security #

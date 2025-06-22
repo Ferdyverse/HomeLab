@@ -5,6 +5,7 @@ services:
       komodo.skip: # Prevent Komodo from stopping with StopAllContainers
     command: --quiet --wiredTigerCacheSizeGB 0.25
     restart: unless-stopped
+    env_file: /home/{{ default_user }}/docker/komodo/.env
     volumes:
       - {{ docker_container_data_folder }}/komodo/mongodb/data:/data/db
       - {{ docker_container_config_folder }}/komodo/mongodb/config:/data/configdb
@@ -21,6 +22,7 @@ services:
       - mongo
     ports:
       - 9120:9120
+    env_file: /home/{{ default_user }}/docker/komodo/.env
     environment:
       KOMODO_DATABASE_ADDRESS: mongo:27017
       KOMODO_DATABASE_USERNAME: ${KOMODO_DB_USERNAME}

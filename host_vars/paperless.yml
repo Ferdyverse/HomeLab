@@ -13,7 +13,7 @@ lxc_data:
   node: "pikachu"
   cores: 4
   memory: 4096
-  disk: 'zfs:20'
+  disk: 'zfs:30'
   netif:
     net0: "name=eth0,gw={{ host_gateway }},ip={{ host_ip }}{{ host_subnet }},bridge=vmbr0,firewall=0,tag={{ host_vlan }}"
   tags:
