@@ -23,3 +23,9 @@
     file: drk.yml
   tags:
     - drk
+
+- name: Deploy Komodo
+  ansible.builtin.include_tasks:
+    file: komodo.yml
+  tags:
+    - komodo
