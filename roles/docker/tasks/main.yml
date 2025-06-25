@@ -8,41 +8,43 @@
 - name: Deploy default Container
   ansible.builtin.include_tasks: default_container.yml
 
-- name: Get latest release tag from Github
+- name: Komodo block
   block:
-    - name: Determine latest GitHub release (local)
-      ansible.builtin.uri:
-        url: '{{ docker_periphery_github_url }}'
-        body_format: json
-      register: _github_release
-      until: _github_release.status == 200
-      retries: 5
+    - name: Get latest komodo release tag from Github
+      block:
+        - name: Determine latest GitHub release (local)
+          ansible.builtin.uri:
+            url: '{{ docker_periphery_github_url }}'
+            body_format: json
+          register: _github_release
+          until: _github_release.status == 200
+          retries: 5
 
-    - name: Set latest_release
-      ansible.builtin.set_fact:
-        latest_release: "{{ _github_release.json.tag_name
-          | regex_replace('^v?(.*)$', '\\1') }}"
+        - name: Set latest_release for komodo
+          ansible.builtin.set_fact:
+            latest_release: "{{ _github_release.json.tag_name
+              | regex_replace('^v?(.*)$', '\\1') }}"
 
-- name: Latest version
-  ansible.builtin.debug:
-    msg: "Latest version {{ latest_release }}"
+    - name: Latest komodo version
+      ansible.builtin.debug:
+        msg: "Latest version {{ latest_release }}"
 
-- name: Check if version file exists
-  ansible.builtin.stat:
-    path: '{{ docker_periphery_version_file }}'
-  register: release_file
+    - name: Check if komodo version file exists
+      ansible.builtin.stat:
+        path: '{{ docker_periphery_version_file }}'
+      register: release_file
 
-- name: Get version file
-  ansible.builtin.slurp:
-    src: '{{ docker_periphery_version_file }}'
-  register: current_release
-  become: true
-  when: release_file.stat.exists
+    - name: Get komodo version file
+      ansible.builtin.slurp:
+        src: '{{ docker_periphery_version_file }}'
+      register: current_release
+      become: true
+      when: release_file.stat.exists
 
-- name: Setup Periphery
-  ansible.builtin.include_tasks: periphery_setup.yml
-  when: (not release_file.stat.exists) or (latest_release not in current_release['content'] | b64decode)
-  tags: docker.komodo
+    - name: Setup Periphery
+      ansible.builtin.include_tasks: periphery_setup.yml
+      when: (not release_file.stat.exists) or (latest_release not in current_release['content'] | b64decode)
+      tags: docker.komodo
 
 - name: Configure Monitoring
   ansible.builtin.include_tasks: tasks/alloy.yml

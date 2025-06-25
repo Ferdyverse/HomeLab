@@ -1,12 +1,8 @@
 ---
 
-- name: Populate service facts
-  ansible.builtin.service_facts:
-
 - name: Stop service # noqa: command-instead-of-module
   ansible.builtin.command:
     cmd: systemctl --user stop periphery
-  when: ansible_facts['services']['periphery.service']['status'] | default('not-found') != 'not-found'
   changed_when: false
 
 - name: Ensure necessary directories
