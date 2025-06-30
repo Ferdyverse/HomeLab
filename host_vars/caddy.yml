@@ -39,6 +39,10 @@ proxy:
     hostname: 'k1.berger-em.net'
     proxy_host: http://192.168.20.56:4408
 
+  - name: k1_cam
+    hostname: 'k1cam.berger-em.net'
+    proxy_host: http://192.168.20.56:8080
+
   - name: mqtt
     hostname: 'mqtt.berger-em.net'
     proxy_host: http://192.168.20.10:1883
