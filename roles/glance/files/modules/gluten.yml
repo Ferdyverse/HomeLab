@@ -17,7 +17,7 @@
               <div class="color-highlight size-h3">
                 The VPN is not connected!
               </div>
-            </dv>
+            </div>
           </div>
         </div>
       {{ else }}
