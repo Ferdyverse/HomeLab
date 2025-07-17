@@ -40,6 +40,10 @@ proxy:
     hostname: 'lidarr.berger-em.net'
     proxy_host: 'http://{{ host_ip }}:8686'
 
+  - name: n8n
+    hostname: 'n8n.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:5678'
+
   - name: nzb
     hostname: 'nzb.berger-em.net'
     proxy_host: 'http://{{ host_ip }}:6789'

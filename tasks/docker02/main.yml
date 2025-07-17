@@ -29,3 +29,9 @@
     file: komodo.yml
   tags:
     - komodo
+
+- name: Deploy n8n
+  ansible.builtin.include_tasks:
+    file: n8n.yml
+  tags:
+    - n8n
