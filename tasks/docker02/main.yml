@@ -35,3 +35,9 @@
     file: n8n.yml
   tags:
     - n8n
+
+- name: Deploy couchdb
+  ansible.builtin.include_tasks:
+    file: couchdb.yml
+  tags:
+    - couchdb

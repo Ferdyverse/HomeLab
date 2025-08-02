@@ -1,0 +1,12 @@
+---
+services:
+  couchdb:
+    image: couchdb:latest
+    ports:
+      - '5984:5984'
+    environment:
+      - COUCHDB_USER=${COUCHDB_USER}
+      - COUCHDB_PASSWORD=${COUCHDB_PW}
+    volumes:
+      - {{ docker_container_data_folder }}/couchdb:/opt/couchdb/data
+      - {{ docker_container_config_folder }}/couchdb/local.ini:/opt/couchdb/etc/local.ini

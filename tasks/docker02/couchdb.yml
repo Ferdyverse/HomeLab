@@ -1,0 +1,47 @@
+---
+
+- name: Create dirs
+  ansible.builtin.file:
+    path: '{{ item.path }}'
+    state: directory
+    owner: '{{ item.owner | default(default_user) }}'
+    group: '{{ item.group | default(default_user) }}'
+    mode: '{{ item.mode | default("0755") }}'
+    recurse: true
+  loop:
+    - path: '{{ docker_container_data_folder }}/couchdb'
+    - path: '{{ docker_container_config_folder }}/couchdb'
+    - path: '/home/{{ default_user }}/docker/couchdb'
+  become: true
+
+- name: Create compose file
+  ansible.builtin.template:
+    src: docker02/couchdb.yml.j2
+    dest: '/home/{{ default_user }}/docker/couchdb/docker-compose.yml'
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+    mode: '0755'
+
+- name: Create config file
+  ansible.builtin.template:
+    src: docker02/couchdb_config.ini.j2
+    dest: '{{ docker_container_config_folder }}/couchdb/local.ini'
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+    mode: '0755'
+
+- name: Create .env file
+  ansible.builtin.template:
+    src: templates/dot_env.j2
+    dest: '/home/{{ default_user }}/docker/couchdb/.env'
+    mode: '0600'
+  vars:
+    secrets:
+      - key: COUCHDB_USER
+        value: '{{ lookup("community.general.onepassword", "CouchDB", field="username", vault="HomeLab") }}'
+      - key: COUCHDB_PW
+        value: '{{ lookup("community.general.onepassword", "CouchDB", vault="HomeLab") }}'
+
+- name: Run `docker compose up`
+  community.docker.docker_compose_v2:
+    project_src: '/home/{{ default_user }}/docker/couchdb/'
