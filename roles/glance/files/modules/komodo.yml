@@ -3,7 +3,7 @@
   method: POST
   cache: 30m
   allow-insecure: true
-  url: https://komo.berger-em.net/read
+  url: ${KOMODO_URL}/read
   body-type: json
   body:
     type: ListStacks
