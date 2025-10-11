@@ -18,12 +18,6 @@
   tags:
     - minecraft
 
-- name: Deploy Minecraft
-  ansible.builtin.include_tasks:
-    file: drk.yml
-  tags:
-    - drk
-
 - name: Deploy Komodo
   ansible.builtin.include_tasks:
     file: komodo.yml
@@ -35,9 +29,3 @@
     file: n8n.yml
   tags:
     - n8n
-
-- name: Deploy couchdb
-  ansible.builtin.include_tasks:
-    file: couchdb.yml
-  tags:
-    - couchdb

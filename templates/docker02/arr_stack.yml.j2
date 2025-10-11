@@ -168,21 +168,6 @@ services:
     ports:
       - 6767:6767
 
-  readarr:
-    image: lscr.io/linuxserver/readarr:develop
-    container_name: readarr
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Berlin
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - {{ docker_container_config_folder }}/readarr:/config
-      - {{ docker_container_data_folder }}:/data
-    ports:
-      - 8787:8787
-    restart: unless-stopped
-
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
     container_name: jellyseerr

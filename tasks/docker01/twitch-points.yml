@@ -24,7 +24,7 @@
 - name: Deploy Twitch Points Farmer
   community.docker.docker_container:
     name: twitch_points
-    image: rdavidoff/twitch-channel-points-miner-v2
+    image: rdavidoff/twitch-channel-points-miner-v2:latest
     restart_policy: "unless-stopped"
     ports:
       - 5002:5000
