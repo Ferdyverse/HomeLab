@@ -148,7 +148,4 @@
               url: https://prowlarr.berger-em.net
               icon: di:prowlarr
 
-        - type: split-column
-          max-columns: 1
-          widgets:
-            - $include: modules/audio.yml
+        - $include: modules/komodo.yml
