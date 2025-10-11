@@ -29,6 +29,7 @@
             - $include: modules/paperless.yml
             - $include: modules/proxmox.yml
             - $include: modules/audio.yml
+            - $include: modules/komodo.yml
 
         - type: monitor
           title: Infrastructure
@@ -78,6 +79,9 @@
             - title: Semaphore
               url: https://semaphore.berger-em.net
               icon: di:semaphore
+            - title: Trader
+              url: https://trader.berger-em.net
+              icon: sh:tradetally
 
         - type: monitor
           title: Services
@@ -127,9 +131,6 @@
             - title: Lidarr
               url: https://lidarr.berger-em.net
               icon: di:lidarr
-            - title: Readarr
-              url: https://readarr.berger-em.net
-              icon: di:readarr
 
         - type: monitor
           title: Downloader

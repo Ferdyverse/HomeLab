@@ -27,6 +27,13 @@
             value: '{{ lookup("community.general.onepassword", "Glance", field="Proxmox API Key", vault="HomeLab") }}'
           - key: AUDIOBOOKSHELF_KEY
             value: '{{ lookup("community.general.onepassword", "Glance", field="Audiobookshelf API Key", vault="HomeLab") }}'
+          - key: KOMODO_URL
+            value: 'https://komo.berger-em.net'
+          - key: KOMODO_API_KEY
+            value: '{{ lookup("community.general.onepassword", "Komodo", field="API Key", vault="HomeLab") }}'
+          - key: KOMODO_API_SECRET
+            value: '{{ lookup("community.general.onepassword", "Komodo", field="API Secret", vault="HomeLab") }}'
+
 
     - name: Create config files
       ansible.builtin.copy:
