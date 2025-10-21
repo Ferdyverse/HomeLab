@@ -85,3 +85,7 @@ proxy:
   - name: trader
     hostname: 'trader.berger-em.net'
     proxy_host: 'http://{{ host_ip }}:8050'
+
+  - name: lose
+    hostname: 'lose.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:6050'
