@@ -75,12 +75,12 @@
             - title: Paperless
               url: https://paperless.berger-em.net
               icon: di:paperless-ngx
+            - title: Rubbellose
+              url: https://lose.berger-em.net
+              icon: sh:tradetally
             - title: Semaphore
               url: https://semaphore.berger-em.net
               icon: di:semaphore
-            - title: Trader
-              url: https://trader.berger-em.net
-              icon: sh:tradetally
 
         - type: monitor
           title: Services
