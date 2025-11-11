@@ -1,0 +1,37 @@
+---
+
+- name: Create dirs
+  ansible.builtin.file:
+    path: '{{ item.path }}'
+    state: directory
+    owner: '{{ item.owner | default(default_user) }}'
+    group: '{{ item.group | default(default_user) }}'
+    mode: '{{ item.mode | default("0755") }}'
+    recurse: true
+  loop:
+    - path: '{{ docker_container_data_folder }}/termix/data'
+    - path: '/home/{{ default_user }}/docker/termix'
+  become: true
+
+- name: Create .env file
+  ansible.builtin.template:
+    src: templates/dot_env.j2
+    dest: '/home/{{ default_user }}/docker/termix/.env'
+    mode: '0600'
+  become: false
+  vars:
+    secrets:
+      - key: PORT
+        value: '8080'
+
+- name: Create compose file
+  ansible.builtin.template:
+    src: termix/termix.yml.j2
+    dest: '/home/{{ default_user }}/docker/termix/docker-compose.yml'
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+    mode: '0755'
+
+- name: Run `docker compose up`
+  community.docker.docker_compose_v2:
+    project_src: '/home/{{ default_user }}/docker/termix/'

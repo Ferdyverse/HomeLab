@@ -67,7 +67,7 @@
         - checkmk
 
     - name: Configure/Install Docker
-      when: inventory_hostname is match('.*(docker|authentik|forgejo|nextcloud).*')
+      when: inventory_hostname is match('.*(docker|authentik|forgejo|nextcloud|termix).*')
       tags:
         - docker
       block:

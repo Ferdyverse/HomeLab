@@ -1,0 +1,26 @@
+---
+
+# Baisc host settings
+host_name: termix
+host_ip: 192.168.1.10
+host_gateway: 192.168.1.1
+host_subnet: /24
+host_vlan: 1
+
+# LXC settings
+lxc_data:
+  vmid: 123
+  node: "pikachu"
+  cores: 4
+  memory: 4096
+  disk: 'zfs:10'
+  netif:
+    net0: "name=eth0,gw={{ host_gateway }},ip={{ host_ip }}{{ host_subnet }},bridge=vmbr0,firewall=0,tag={{ host_vlan }}"
+
+# Reverse Proxy settings
+proxy:
+  - name: '{{ host_name }}'
+    hostname: termix.berger-em.net
+    proxy_host: 'http://{{ host_ip }}:8080'
+    protected_private: true
+    protected_internal: false

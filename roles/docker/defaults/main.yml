@@ -1,18 +1,5 @@
 ---
 
-# Portainer Agent
-docker_portainer_agent_name: portainer_agent
-docker_portainer_agent_image: portainer/agent:latest
-
-# Watchtower
-docker_watchtower_name: watchtower
-docker_watchtower_image: nickfedor/watchtower:latest
-
-# Docker Socket Proxy
-docker_socket_container_name: socket-proxy
-docker_socket_container_image: lscr.io/linuxserver/socket-proxy:latest
-
-
 # Periphery
 docker_periphery_github_url: https://api.github.com/repos/moghtech/komodo/releases/latest
 docker_periphery_version_file: /opt/periphery.txt

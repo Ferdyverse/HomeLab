@@ -46,6 +46,9 @@
             - title: Proxmox
               url: https://proxmox.berger-em.net
               icon: di:proxmox
+            - title: Termix
+              url: https://termix.berger-em.net
+              icon: di:termix
             - title: UDM
               url: https://udm.berger-em.net
               icon: di:ubiquiti-networks

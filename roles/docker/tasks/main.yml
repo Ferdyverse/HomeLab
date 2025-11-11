@@ -5,8 +5,8 @@
   tags:
     - docker.setup
 
-- name: Deploy default Container
-  ansible.builtin.include_tasks: default_container.yml
+# - name: Deploy default Container
+#  ansible.builtin.include_tasks: default_container.yml
 
 - name: Komodo block
   block:
