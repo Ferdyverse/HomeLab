@@ -1,6 +1,6 @@
 ---
 
-- name: 'Add vhosts for {{ vhost.name | default(lxc_host) }}'
+- name: 'Add vhosts for {{ vhost.name | default("unkown") }}'
   ansible.builtin.template:
     src: "{{ vhost.template }}"
     dest: "{{ caddy_config_path }}/vhosts/{{ vhost.name }}"

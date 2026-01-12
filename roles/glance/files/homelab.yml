@@ -72,6 +72,9 @@
             - title: Jellyseerr
               url: https://jellyseerr.berger-em.net
               icon: di:jellyseerr
+            - title: Orca Slicer
+              url: https://orca.berger-em.net
+              icon: di:orcaslicer
             - title: Personal Zoo
               url: https://zoo.berger-em.net
               icon: di:atuin

@@ -67,3 +67,9 @@ proxy:
     proxy_host: https://192.168.1.1:443
     protected_private: true
     protected_internal: false
+
+  - name: orca
+    hostname: 'orca.berger-em.net'
+    proxy_host: 'http://192.168.10.5:3000'
+    protect_private: true
+    protect_internal: false

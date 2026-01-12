@@ -1,0 +1,39 @@
+---
+services:
+  orcaslicer:
+    image: lscr.io/linuxserver/orcaslicer:latest
+    container_name: orcaslicer
+    security_opt:
+      - seccomp:unconfined #optional
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
+      - HARDEN_DESKTOP=true
+      - RESTART_APP=true
+      - SELKIES_GAMEPAD_ENABLED=false
+      - SELKIES_ENABLE_PLAYER2=false
+      - SELKIES_ENABLE_PLAYER3=false
+      - SELKIES_ENABLE_PLAYER4=false
+    volumes:
+      - '{{ docker_container_data_folder }}/orca/onedrive/Orca Slicer/:/config'
+      - '{{ docker_container_data_folder }}/orca/onedrive/3D Printer/:/models'
+    ports:
+      - 3000:3000
+      - 3001:3001
+    shm_size: "1gb" #optional
+    restart: unless-stopped
+    depends_on:
+      - onedrive
+
+  onedrive:
+    image: driveone/onedrive:latest
+    restart: unless-stopped
+    environment:
+        - ONEDRIVE_UID=1000
+        - ONEDRIVE_GID=1000
+        - ONEDRIVE_VERBOSE=true
+        - ONEDRIVE_THREADS=4
+    volumes: 
+        - '{{ docker_container_data_folder }}/orca/onedrive_conf:/onedrive/conf'
+        - '{{ docker_container_data_folder }}/orca/onedrive:/onedrive/data/'

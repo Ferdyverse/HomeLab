@@ -1,0 +1,23 @@
+export ONEDRIVE_DATA_DIR="{{ docker_container_data_folder }}/orca/onedrive"
+export ONEDRIVE_CONF_DIR="{{ docker_container_data_folder }}/orca/onedrive_conf"
+export ONEDRIVE_UID=1000
+export ONEDRIVE_GID=1000
+
+rm '/home/{{ default_user }}/docker/orca/configured' 2>/dev/null || true
+
+docker run -it --name onedrive -v "${ONEDRIVE_CONF_DIR}:/onedrive/conf" \
+    -v "${ONEDRIVE_DATA_DIR}:/onedrive/data" \
+    -e "ONEDRIVE_UID=${ONEDRIVE_UID}" \
+    -e "ONEDRIVE_GID=${ONEDRIVE_GID}" \
+    driveone/onedrive:latest
+
+# Ask if config was successfull
+read -p "Have you completed the OneDrive configuration in the opened container? (y/n): " response
+if [[ "$response" != "y" && "$response" != "Y" ]]; then
+    echo "Please complete the OneDrive configuration before proceeding."
+    echo "You can rerun this script to configure OneDrive again."
+    exit 1
+else
+    echo "Configuration completed."
+    touch '/home/{{ default_user }}/docker/orca/configured'
+fi
