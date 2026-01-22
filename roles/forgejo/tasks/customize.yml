@@ -3,22 +3,22 @@
 - name: Customize Forgejo
   become: true
   block:
-    - name: Create forgejo custom dir
-      ansible.builtin.file:
-        path: '{{ forgejo_work_path }}/custom/templates'
-        state: directory
-        owner: "git"
-        group: "git"
-        mode: '0644'
-        recurse: true
-
-    - name: Copy custom templates
-      ansible.builtin.copy:
-        src: '{{ item.src }}'
-        dest: '{{ forgejo_work_path }}/custom/{{ item.name }}'
-        owner: 'git'
-        group: 'git'
-        mode: '0644'
-      loop:
-        - name: home.tmpl
-          src: 'fj_home.tmpl'
+    - name: Stop service
+      ansible.builtin.service:
+        name: forgejo
+        enabled: true
+        state: stopped
+      when: ansible_facts['services']['forgejo.service']['status'] | default('not-found') != 'not-found'
+    - name: Create forgejo config file
+      ansible.builtin.template:
+        src: app.ini.j2
+        dest: '{{ forgejo_config_path }}/app.ini'
+        mode: "0644"
+        variable_end_string: '$$'
+        variable_start_string: '$$'
+    - name: Start service
+      ansible.builtin.systemd_service:
+        name: forgejo
+        enabled: true
+        state: started
+        daemon_reload: true

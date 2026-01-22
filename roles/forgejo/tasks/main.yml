@@ -41,6 +41,6 @@
   ansible.builtin.include_tasks: runner.yml
   tags: forgejo.runner
 
-# - name: Customize Forgejo
-#   ansible.builtin.include_tasks: customize.yml
-#   tags: forgejo.customize
+- name: Customize Forgejo
+  ansible.builtin.include_tasks: customize.yml
+  tags: forgejo.customize
