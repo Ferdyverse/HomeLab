@@ -1715,7 +1715,7 @@ PROTOCOL = smtps
 ;; Mail server address, e.g. smtp.gmail.com.
 ;; For smtp+unix, this should be a path to a unix socket instead.
 ;; (Before 1.18, see the notice, this was combined with SMTP_PORT as HOST.)
-SMTP_ADDR = {{ forgejo_mail_server }}
+SMTP_ADDR = $$ forgejo_mail_server $$
 ;;
 ;; Mail server port. Common ports are:
 ;;   25:  insecure SMTP
@@ -1752,10 +1752,10 @@ SMTP_PORT = 465
 ;FROM_DISPLAY_NAME_FORMAT = {{ .DisplayName }}
 ;;
 ;; Mailer user name and password, if required by provider.
-USER = {{ forgejo_mail_user }}
+USER = $$ forgejo_mail_user $$
 ;;
 ;; Use PASSWD = `your password` for quoting if you use special characters in the password.
-PASSWD = `{{ forgejo_mail_user_password }}`
+PASSWD = `$$ forgejo_mail_user_password $$`
 ;;
 ;; Send mails only in plain text, without HTML alternative
 ;SEND_AS_PLAIN_TEXT = false
