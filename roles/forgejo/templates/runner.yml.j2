@@ -13,7 +13,7 @@ services:
       - {{ docker_container_data_folder }}/runner/docker_certs:/certs
 
   runner-register:
-    image: code.forgejo.org/forgejo/runner:6
+    image: code.forgejo.org/forgejo/runner:12
     links:
       - docker-in-docker
     environment:
@@ -38,7 +38,7 @@ services:
       '
 
   runner-daemon:
-    image: code.forgejo.org/forgejo/runner:6
+    image: code.forgejo.org/forgejo/runner:12
     restart: unless-stopped
     links:
       - docker-in-docker

@@ -21,3 +21,6 @@ forgejo_secret_key: '{{ lookup("community.general.onepassword", "Forgejo", field
 forgejo_internal_token: '{{ lookup("community.general.onepassword", "Forgejo", field="Internal Token", vault="HomeLab") }}'
 forgejo_oauth_jwt_secret: '{{ lookup("community.general.onepassword", "Forgejo", field="JWT Secret", vault="HomeLab") }}'
 forgejo_runner_shared_secret: '{{ lookup("community.general.onepassword", "Forgejo", field="Runner Shared Secret", vault="HomeLab") }}'
+forgejo_mail_user: '{{ lookup("community.general.onepassword", "Forgejo", field="username", section="Mail", vault="HomeLab") }}'
+forgejo_mail_user_password: '{{ lookup("community.general.onepassword", "Forgejo", field="password", section="Mail", vault="HomeLab") }}'
+forgejo_mail_server: '{{ lookup("community.general.onepassword", "Forgejo", field="server", section="Mail", vault="HomeLab") }}'
