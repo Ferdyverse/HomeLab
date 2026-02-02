@@ -36,6 +36,11 @@ if [[ $PAM_RHOST == 192.168.1.34 ]]; then
   exit 0
 fi
 
+if [[ $PAM_RHOST == 192.168.1.10 ]]; then
+  echo "Session from Termix!"
+  exit 0
+fi
+
 if is_ip_in_cidr "$PAM_RHOST" "$CIDR"; then
   curl -H "Title:$SERVER" \
       -d "SSH login from private VLAN was successful!
