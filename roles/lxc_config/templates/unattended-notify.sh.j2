@@ -1,0 +1,68 @@
+#!/bin/bash
+set -euo pipefail
+
+# Webhook URL laden (empfohlen aus Secret-Datei)
+if [ -f /root/unattended-discord.conf ]; then
+  # shellcheck disable=SC1091
+  source /root/unattended-discord.conf
+fi
+: "${WEBHOOK_URL:?WEBHOOK_URL is not set}"
+
+STATUS="${1:-unknown}"
+HOSTNAME="$(hostname)"
+TS="$(date -Is)"
+
+LOG_FILE="/var/log/unattended-upgrades/unattended-upgrades.log"
+TMP_LOG="$(mktemp)"
+
+# letzte Zeilen holen, Control-Chars entfernen, hart kürzen
+if [ -r "$LOG_FILE" ]; then
+  tail -n 40 "$LOG_FILE" \
+    | perl -pe 's/[[:cntrl:]&&[^\t\n\r]]/?/g' \
+    | tail -c 900 > "$TMP_LOG"
+else
+  printf '%s' "(kein Logfile lesbar: %s)" "$LOG_FILE" > "$TMP_LOG"
+fi
+
+if [ "$STATUS" = "success" ]; then
+  COLOR=3066993
+  TITLE="✅ Unattended Upgrades erfolgreich"
+else
+  COLOR=15158332
+  TITLE="❌ Unattended Upgrades FEHLER"
+fi
+
+# JSON sicher mit jq bauen
+PAYLOAD="$(
+  jq -n \
+    --rawfile log "$TMP_LOG" \
+    --arg title "$TITLE" \
+    --arg host "$HOSTNAME" \
+    --arg time "$TS" \
+    --arg status "$STATUS" \
+    --argjson color "$COLOR" \
+    '{
+      embeds: [{
+        title: $title,
+        color: $color,
+        fields: [
+          {name:"Host", value:$host, inline:true},
+          {name:"Zeit", value:$time, inline:true},
+          {name:"Status", value:$status, inline:true},
+          {name:"Letzte Log-Zeilen", value: ("```\n" + $log + "\n```"), inline:false}
+        ]
+      }]
+    }'
+)"
+
+HTTP_CODE="$(curl -sS -o /tmp/discord_webhook_resp.txt -w "%{http_code}" \
+  -H "Content-Type: application/json" \
+  -X POST \
+  --data "$PAYLOAD" \
+  "$WEBHOOK_URL" || echo "curl_failed")"
+
+if [ "$HTTP_CODE" != "204" ]; then
+  echo "Discord webhook failed: http=$HTTP_CODE body=$(cat /tmp/discord_webhook_resp.txt)" >&2
+  exit 1
+fi
+rm -f "$TMP_LOG"

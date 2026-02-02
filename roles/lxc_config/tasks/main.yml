@@ -2,6 +2,8 @@
 
 - name: Configure LXC container
   become: true
+  tags:
+    - lxc_config
   block:
     - name: Create ssh config
       ansible.builtin.include_tasks: ssh_config.yml
@@ -17,6 +19,11 @@
       ansible.builtin.include_tasks: create_motd.yml
       tags:
         - lxc_config.motd
+
+    - name: Setup unattended upgrades
+      ansible.builtin.include_tasks: unattended_upgrades.yml
+      tags:
+        - lxc_config.unattended_upgrades
 
 - name: Generate local ssh files
   ansible.builtin.include_tasks: local_ssh.yml
