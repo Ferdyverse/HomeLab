@@ -46,12 +46,12 @@
       when: (not release_file.stat.exists) or (latest_release not in current_release['content'] | b64decode)
       tags: docker.komodo
 
-- name: Configure Monitoring
-  ansible.builtin.include_tasks: tasks/alloy.yml
-  vars:
-    additional_user_groups:
-      - docker
-    alloy_config_files:
-      - { "src": "logfile_monitoring.alloy.j2", "dest": "logfile_monitoring.alloy" }
-  tags:
-    - docker.alloy
+# - name: Configure Monitoring
+#   ansible.builtin.include_tasks: tasks/alloy.yml
+#   vars:
+#     additional_user_groups:
+#       - docker
+#     alloy_config_files:
+#       - { "src": "logfile_monitoring.alloy.j2", "dest": "logfile_monitoring.alloy" }
+#   tags:
+#     - docker.alloy
