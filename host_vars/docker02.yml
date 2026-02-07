@@ -28,6 +28,10 @@ proxy:
     hostname: 'couchdb.berger-em.net'
     proxy_host: 'http://{{ host_ip }}:5984'
 
+  - name: tagger
+    hostname: 'tags.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:8010'
+
   - name: gluten
     hostname: 'gluten.berger-em.net'
     proxy_host: 'http://{{ host_ip }}:8000'

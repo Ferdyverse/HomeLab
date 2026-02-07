@@ -29,6 +29,8 @@ ntfy_users:
     password: '{{ lookup("community.general.onepassword", "Ntfy", field="Kuma Password", vault="HomeLab") }}'
   - user: "changes"
     password: '{{ lookup("community.general.onepassword", "Ntfy", field="Changes Password", vault="HomeLab") }}'
+  - user: "tagger"
+    password: '{{ lookup("community.general.onepassword", "Ntfy", field="Tagger Password", vault="HomeLab") }}'
 
 # Permissions:
 # read-write (alias: rw)
@@ -56,4 +58,7 @@ ntfy_user_access:
     permission: "wo"
   - user: "changes"
     topic: "changedetection"
+    permission: "rw"
+  - user: "tagger"
+    topic: "family-tagger"
     permission: "rw"
