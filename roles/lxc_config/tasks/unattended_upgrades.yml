@@ -17,10 +17,10 @@
     group: root
     mode: '0644'
 
-- name: Add unattended-upgrades discord hook config
+- name: Add unattended-upgrades notify hook config
   ansible.builtin.template:
-    src: 99unattended-discord.j2
-    dest: /etc/apt/apt.conf.d/99unattended-discord
+    src: 99unattended-notify.j2
+    dest: /etc/apt/apt.conf.d/99unattended-notify
     owner: root
     group: root
     mode: '0644'
@@ -35,12 +35,14 @@
 
 - name: Create discord webhook config (secret)
   ansible.builtin.copy:
-    dest: /root/unattended-discord.conf
+    dest: /root/unattended.conf
     owner: root
     group: root
     mode: '0600'
     content: |
-      WEBHOOK_URL={{ lookup("community.general.onepassword", "Discord Webhooks", section="Upgrades", field="webhook_url", vault="HomeLab") }}
+      HUB_URL={{ lxc_config_hub_url }}
+      HUB_TOKEN={{ lookup("community.general.onepassword", "Notification Hub", section="Tokens", field="unattended", vault="HomeLab") }}
+      HUB_SLUG=unattended
 
 - name: Enable apt timers
   ansible.builtin.systemd:

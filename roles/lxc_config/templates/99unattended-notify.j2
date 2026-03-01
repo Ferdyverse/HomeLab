@@ -1,0 +1,7 @@
+Unattended-Upgrade::Post-Invoke {
+    "/usr/local/bin/unattended-notify.sh success || true";
+};
+
+Unattended-Upgrade::OnError {
+    "/usr/local/bin/unattended-notify.sh error || true";
+};
