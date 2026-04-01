@@ -1,0 +1,63 @@
+---
+
+- name: Auth block
+  become: true
+  block:
+
+    - name: Create dirs
+      ansible.builtin.file:
+        path: '{{ item }}'
+        state: directory
+        owner: '{{ default_user }}'
+        group: '{{ default_user }}'
+        mode: '0755'
+        recurse: true
+      loop:
+        - '{{ docker_container_data_folder }}/authentik/'
+
+    - name: Create .env file
+      ansible.builtin.template:
+        src: dot_env.j2
+        dest: '{{ docker_container_data_folder }}/authentik/.env'
+        mode: '0640'
+      become: false
+      vars:
+        secrets:
+          - key: PG_PASS
+            value: '{{ lookup("community.general.onepassword", "Authentik", field="PG Password", vault="HomeLab") }}'
+          - key: AUTHENTIK_SECRET_KEY
+            value: '{{ lookup("community.general.onepassword", "Authentik", field="Secret key", vault="HomeLab") }}'
+          - key: AUTHENTIK_ERROR_REPORTING__ENABLED
+            value: true
+          - key: COMPOSE_PORT_HTTP
+            value: 80
+          - key: COMPOSE_PORT_HTTPS
+            value: 443
+          - key: AUTHENTIK_EMAIL__HOST
+            value: '{{ lookup("community.general.onepassword", "Authentik", field="EMail Server", vault="HomeLab") }}'
+          - key: AUTHENTIK_EMAIL__PORT
+            value: 465
+          - key: AUTHENTIK_EMAIL__USERNAME
+            value: authentik@berger-em.de
+          - key: AUTHENTIK_EMAIL__PASSWORD
+            value: '{{ lookup("community.general.onepassword", "Authentik", field="EMail Password", vault="HomeLab") }}'
+          - key: AUTHENTIK_EMAIL__USE_TLS
+            value: false
+          - key: AUTHENTIK_EMAIL__USE_SSL
+            value: true
+          - key: AUTHENTIK_EMAIL__TIMEOUT
+            value: 10
+          - key: AUTHENTIK_EMAIL__FROM
+            value: authentik@berger-em.de
+
+    - name: Create compose file
+      ansible.builtin.template:
+        src: auth_stack.yml.j2
+        dest: '{{ docker_container_data_folder }}/authentik/docker-compose.yml'
+        owner: '{{ default_user }}'
+        group: '{{ default_user }}'
+        mode: '0755'
+
+- name: Run `docker compose up`
+  community.docker.docker_compose_v2:
+    project_src: '{{ docker_container_data_folder }}/authentik/'

@@ -57,3 +57,14 @@ proxy:
     proxy_host: 'http://{{ host_ip }}:5002'
     protected_private: true
     protected_internal: false
+
+# Services deployed on this host
+services:
+  - name: adguardhome_sync
+  - name: audiobookshelf
+  - name: changedetection
+  - name: ddns
+  - name: portainer
+  - name: teddycloud
+  - name: twitch_points
+  - name: onepassword

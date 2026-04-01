@@ -61,34 +61,21 @@
       tags:
         - lxc_config
 
-#    - name: Configure/Install Checkmk
-#      ansible.builtin.include_tasks: tasks/checkmk.yml
-#      tags:
-#        - checkmk
-
-    - name: Configure/Install Docker
-      when: inventory_hostname is match('.*(docker|authentik|forgejo|nextcloud|termix).*')
+    - name: Install Docker
+      ansible.builtin.include_role:
+        name: docker
+      when: inventory_hostname is match('.*(docker|authentik|forgejo|nextcloud|termix|paperless).*')
       tags:
         - docker
-      block:
-        - name: Install Docker
-          ansible.builtin.include_role:
-            name: docker
 
-        - name: Deploy host container
-          ansible.builtin.include_tasks: 'tasks/{{ inventory_hostname }}/main.yml'
-          when: inventory_hostname != 'authentik'
-          tags:
-            - docker.deploy
-
+    # Hosts with exactly one role (LXC-only or single-service Docker)
+    # Runs only when container.search (or container.name) is found in inventory_hostname
     - name: 'Configure/Install role based container'
       ansible.builtin.include_tasks: tasks/lxc_config.yml
       vars:
         container: '{{ lxc }}'
       loop:
-        - name: adguard
-          role: adguard_home
-          search: dns
+        - { name: adguard, role: adguard_home, search: dns }
         - name: actualbudget
         - name: glance
         - name: semaphore
@@ -97,12 +84,26 @@
         - name: uptimekuma
         - name: grafana
         - name: forgejo
+        - name: authentik
+        - name: termix
+        - name: paperless
+        - name: nextcloud
+        - name: kestra
+        - name: netalertx
       loop_control:
         loop_var: lxc
+      tags:
+        - docker.deploy
 
-    - name: Configure/Install task based container
-      ansible.builtin.include_tasks: 'tasks/{{ inventory_hostname }}.yml'
-      when: inventory_hostname is match('.*(authentik).*')
+    # Hosts with multiple services — service list defined in host_vars
+    - name: 'Deploy {{ service.name }}'
+      ansible.builtin.include_role:
+        name: '{{ service.name }}'
+      when: services is defined
+      loop: '{{ services | default([]) }}'
+      loop_var: service
+      tags:
+        - docker.deploy
 
     - name: Do OS update
       ansible.builtin.include_tasks: tasks/os_update.yml

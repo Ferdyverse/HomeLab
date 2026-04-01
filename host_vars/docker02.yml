@@ -93,3 +93,10 @@ proxy:
   - name: lose
     hostname: 'lose.berger-em.net'
     proxy_host: 'http://{{ host_ip }}:6050'
+
+# Services deployed on this host
+services:
+  - name: arr_stack
+  - name: minecraft
+  - name: komodo
+  - name: n8n

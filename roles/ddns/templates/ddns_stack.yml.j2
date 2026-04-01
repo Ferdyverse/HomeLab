@@ -1,0 +1,25 @@
+---
+
+services:
+
+  cloudflare-ddns:
+    image: favonia/cloudflare-ddns:latest
+    container_name: cloudflare-ddns
+    network_mode: 'host'
+    restart: always
+    user: "1000:1000"
+    read_only: true
+    cap_drop: [all]
+    security_opt: [no-new-privileges:true]
+    environment:
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+        # Your Cloudflare API token
+      - DOMAINS={{ cloudflare_domain_list }}
+        # Your domains (separated by commas)
+      - PROXIED={{ cloudflare_proxy_list }}
+        # Tell Cloudflare to cache webpages and hide your IP (optional)
+      - RECORD_COMMENT={{ cloudflare_record_comment }}
+      - IP6_PROVIDER=none
+        # Do not use IPv6
+      - SHOUTRRR=${CLOUDFLARE_DISCORD_URL}
+        # Notify me on Discord
