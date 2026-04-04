@@ -28,6 +28,10 @@ proxy:
     protected_private: true
     protected_internal: false
 
+  - name: actualbudget
+    hostname: 'actual.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:5006'
+
   - name: audiobookshelf
     hostname: 'audiobookshelf.berger-em.net'
     proxy_host: 'http://{{ host_ip }}:8080'
@@ -60,6 +64,7 @@ proxy:
 
 # Services deployed on this host
 docker_roles:
+  - name: actualbudget
   - name: adguardhome_sync
   - name: audiobookshelf
   - name: changedetection

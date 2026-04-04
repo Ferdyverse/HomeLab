@@ -114,7 +114,6 @@
         container: '{{ lxc }}'
       loop:
         - { name: adguard, role: adguard_home, search: dns }
-        - name: actualbudget
         - name: glance
         - name: semaphore
         - name: ntfy
@@ -134,7 +133,7 @@
         - docker.deploy
 
     # Hosts with multiple services — service list defined in host_vars
-    - name: 'Deploy {{ service.name }}'
+    - name: Deploy multi-service hosts
       ansible.builtin.include_role:
         name: '{{ service.name }}'
       when: docker_roles is defined

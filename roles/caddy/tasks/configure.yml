@@ -3,20 +3,22 @@
 - name: Configure Caddy
   become: true
   block:
-    - name: Clean up old Caddy vhost files
-      tags: caddy.vhosts
-      ansible.builtin.find:
-        paths: "{{ caddy_config_path }}/vhosts"
-        patterns: "*"
-      register: caddy_existing_vhosts
-      when: caddy_rm_unmanaged_vhosts
 
     - name: Remove old Caddy vhost files
       tags: caddy.vhosts
       ansible.builtin.file:
-        path: "{{ item.path }}"
+        path: "{{ caddy_config_path }}/vhosts"
         state: absent
-      loop: "{{ caddy_existing_vhosts.files | default([]) }}"
+
+    - name: Create vhosts directory
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+        owner: "{{ caddy_user_name }}"
+        group: '{{ caddy_group_name }}'
+      loop:
+        - "{{ caddy_config_path }}/vhosts"
 
     - name: Rewrite Caddyfile
       ansible.builtin.template:
