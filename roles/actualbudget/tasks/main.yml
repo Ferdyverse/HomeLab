@@ -1,45 +1,41 @@
 ---
 
-- name: Create dirs
-  ansible.builtin.file:
-    path: '{{ item.path }}'
-    state: directory
-    owner: '{{ item.owner | default(default_user) }}'
-    group: '{{ item.group | default(default_user) }}'
-    mode: '{{ item.mode | default("0755") }}'
-    recurse: true
-  loop:
-    - path: '{{ docker_container_data_folder }}/actualbudget/data'
-    - path: '/home/{{ default_user }}/docker/actualbudget'
+# Role based on: https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/install/actualbudget-install.sh
+
+- name: Install nodejs
+  ansible.builtin.include_tasks: nodejs.yml
+
+- name: Get latest release tag from Github
+  block:
+    - name: Determine latest GitHub release (local)
+      ansible.builtin.uri:
+        url: '{{ actualbudget_github_url }}'
+        body_format: json
+      register: _github_release
+      until: _github_release.status == 200
+      retries: 5
+
+    - name: Set latest_release
+      ansible.builtin.set_fact:
+        latest_release: "{{ _github_release.json.tag_name
+          | regex_replace('^v?(.*)$', '\\1') }}"
+
+- name: Latest version
+  ansible.builtin.debug:
+    msg: "Latest version {{ latest_release }}"
+
+- name: Check if version file exists
+  ansible.builtin.stat:
+    path: '{{ actualbudget_version_file }}'
+  register: release_file
+
+- name: Get version file
+  ansible.builtin.slurp:
+    src: '{{ actualbudget_version_file }}'
+  register: current_release
   become: true
+  when: release_file.stat.exists
 
-- name: Create .env file
-  ansible.builtin.template:
-    src: dot_env.j2
-    dest: '/home/{{ default_user }}/docker/actualbudget/.env'
-    mode: '0600'
-  vars:
-    secrets:
-      - key: ACTUAL_TRUSTED_PROXIES
-        value: '[192.168.10.0/24]'
-      - key: ACTUAL_OPENID_DISCOVERY_URL
-        value: https://auth.berger-em.net/application/o/actual-budget/
-      - key: ACTUAL_OPENID_CLIENT_ID
-        value: '{{ lookup("community.general.onepassword", "ActualBudget", section="Authentik", field="client-id", vault="HomeLab") }}'
-      - key: ACTUAL_OPENID_CLIENT_SECRET
-        value: '{{ lookup("community.general.onepassword", "ActualBudget", section="Authentik", field="client-secret", vault="HomeLab") }}'
-      - key: ACTUAL_OPENID_SERVER_HOSTNAME
-        value: https://actual.berger-em.net
-
-- name: Create compose file
-  ansible.builtin.template:
-    src: actualbudget.yml.j2
-    dest: '/home/{{ default_user }}/docker/actualbudget/compose.yml'
-    owner: '{{ default_user }}'
-    group: '{{ default_user }}'
-    mode: '0755'
-
-- name: Run `docker compose up`
-  community.docker.docker_compose_v2:
-    project_src: '/home/{{ default_user }}/docker/actualbudget/'
-    recreate: always
+- name: Install Actualbudget
+  ansible.builtin.include_tasks: install.yml
+  when: (not release_file.stat.exists) or (latest_release not in current_release['content'] | b64decode)

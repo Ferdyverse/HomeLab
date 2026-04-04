@@ -22,3 +22,24 @@
 }
 
 import vhosts/*
+
+# Fallback for unmatched requests. This should be the last entry in the Caddyfile.
+*.berger-em.net {
+	import snippets/tls.conf
+
+	log {
+		output file /var/log/caddy/fallback.log {
+			roll_size 100M
+			mode 660
+		}
+	}
+
+	# Route all unmatched requests to pangolin.berger-em.net
+	reverse_proxy https://195.201.133.132:443 {
+		header_up Host {host}
+
+		transport http {
+			tls_server_name pangolin.berger-em.net
+		}
+	}
+}

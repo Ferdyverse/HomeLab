@@ -1,5 +1,8 @@
 ---
 
+# Python interpreter (suppresses auto-discovery warning)
+ansible_python_interpreter: /usr/bin/python3.11
+
 # User for new hosts
 bootstrap_user: root
 default_user: bergefe

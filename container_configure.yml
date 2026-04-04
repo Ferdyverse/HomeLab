@@ -5,6 +5,44 @@
   hosts: proxmox_all_lxc
   gather_facts: false
 
+  pre_tasks:
+
+    # Step 1: detect OS — raw needs no Python, ignore if host is offline
+    - name: Detect OS
+      ansible.builtin.raw: . /etc/os-release && echo "$ID $VERSION_CODENAME"
+      register: os_info
+      changed_when: false
+      ignore_unreachable: true
+      ignore_errors: true
+
+    # Step 2a: Debian and Ubuntu 22.04+ have python3.11 in default repos
+    #          Run apt-get update first to handle stale caches on fresh containers
+    - name: Install Python 3.11 from default repositories
+      ansible.builtin.raw: |
+        apt-get update -qq 2>/dev/null || true
+        DEBIAN_FRONTEND=noninteractive apt-get install -y python3.11
+      become: true
+      changed_when: false
+      register: python_default_install
+      ignore_errors: true
+      when:
+        - not (os_info.unreachable | default(false))
+        - not (os_info.failed | default(false))
+
+    # Step 2b: Ubuntu 20.04 — python3.11 only via deadsnakes PPA
+    #          add-apt-repository -y already runs apt-get update internally
+    - name: Install Python 3.11 via deadsnakes PPA (Ubuntu only, after default repos fail)
+      ansible.builtin.raw: |
+        add-apt-repository -y ppa:deadsnakes/ppa
+        DEBIAN_FRONTEND=noninteractive apt-get install -y python3.11
+      become: true
+      changed_when: false
+      when:
+        - not (os_info.unreachable | default(false))
+        - not (os_info.failed | default(false))
+        - python_default_install is failed
+        - "'ubuntu' in os_info.stdout"
+
   tasks:
 
     - name: Ansible Ping server
@@ -99,9 +137,10 @@
     - name: 'Deploy {{ service.name }}'
       ansible.builtin.include_role:
         name: '{{ service.name }}'
-      when: services is defined
-      loop: '{{ services | default([]) }}'
-      loop_var: service
+      when: docker_roles is defined
+      loop: '{{ docker_roles | default([]) }}'
+      loop_control:
+        loop_var: service
       tags:
         - docker.deploy
 

@@ -24,14 +24,6 @@ proxy:
     proxy_host: 'http://{{ host_ip }}:6767'
     protected_enabled: false
 
-  - name: couchdb
-    hostname: 'couchdb.berger-em.net'
-    proxy_host: 'http://{{ host_ip }}:5984'
-
-  - name: tagger
-    hostname: 'tags.berger-em.net'
-    proxy_host: 'http://{{ host_ip }}:8010'
-
   - name: gluten
     hostname: 'gluten.berger-em.net'
     proxy_host: 'http://{{ host_ip }}:8000'
@@ -47,10 +39,6 @@ proxy:
   - name: lidarr
     hostname: 'lidarr.berger-em.net'
     proxy_host: 'http://{{ host_ip }}:8686'
-
-  - name: n8n
-    hostname: 'n8n.berger-em.net'
-    proxy_host: 'http://{{ host_ip }}:5678'
 
   - name: nzb
     hostname: 'nzb.berger-em.net'
@@ -68,10 +56,6 @@ proxy:
     hostname: 'radarr.berger-em.net'
     proxy_host: 'http://{{ host_ip }}:7878'
 
-  - name: readarr
-    hostname: 'readarr.berger-em.net'
-    proxy_host: 'http://{{ host_ip }}:8787'
-
   - name: sonarr
     hostname: 'sonarr.berger-em.net'
     proxy_host: 'http://{{ host_ip }}:8989'
@@ -86,17 +70,12 @@ proxy:
     proxy_host: 'http://{{ host_ip }}:6000'
     protected_enabled: false
 
-  - name: trader
-    hostname: 'trader.berger-em.net'
-    proxy_host: 'http://{{ host_ip }}:8050'
-
   - name: lose
     hostname: 'lose.berger-em.net'
     proxy_host: 'http://{{ host_ip }}:6050'
 
 # Services deployed on this host
-services:
+docker_roles:
   - name: arr_stack
   - name: minecraft
   - name: komodo
-  - name: n8n

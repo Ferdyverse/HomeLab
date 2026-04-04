@@ -1,0 +1,9 @@
+---
+
+nodejs_version: "22.x" # noqa: var-naming[no-role-prefix]
+
+actualbudget_github_url: https://api.github.com/repos/actualbudget/ansible/releases/latest
+actualbudget_version_file: /opt/actualbudget_version.txt
+
+actualbudget_install_folder: /opt/actualbudget
+actualbudget_data_folder: /opt/actualbudget
