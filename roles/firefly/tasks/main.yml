@@ -1,0 +1,275 @@
+---
+
+- name: Create dirs
+  ansible.builtin.file:
+    path: '{{ item.path }}'
+    state: directory
+    owner: '{{ item.owner | default(default_user) }}'
+    group: '{{ item.group | default(default_user) }}'
+    mode: '{{ item.mode | default("0755") }}'
+    recurse: true
+  loop:
+    - path: '{{ docker_container_data_folder }}/firefly/db'
+    - path: '{{ docker_container_data_folder }}/firefly/upload'
+    - path: '/home/{{ default_user }}/docker/firefly'
+  become: true
+
+- name: Create .env file
+  ansible.builtin.template:
+    src: dot_env.j2
+    dest: '/home/{{ default_user }}/docker/firefly/.env'
+    mode: '0600'
+  vars:
+    secrets:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: SITE_OWNER
+        value: "ferdy@berger-em.de"
+      - key: APP_KEY
+        value: '{{ lookup("community.general.onepassword", "Firefly", field="APP_KEY", vault="HomeLab") }}'
+      - key: DEFAULT_LANGUAGE
+        value: de_DE
+      - key: DEFAULT_LOCALE
+        value: equal
+      - key: TZ
+        value: Europe/Berlin
+      - key: TRUSTED_PROXIES
+        value: '*'
+      - key: LOG_CHANNEL
+        value: stack
+      - key: APP_LOG_LEVEL
+        value: notice
+      - key: AUDIT_LOG_LEVEL
+        value: emergency
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        value: db
+      - key: DB_PORT
+        value: '3306'
+      - key: DB_DATABASE
+        value: firefly
+      - key: DB_USERNAME
+        value: '{{ lookup("community.general.onepassword", "Firefly", section="Database", field="username", vault="HomeLab") }}'
+      - key: DB_PASSWORD
+        value: '{{ lookup("community.general.onepassword", "Firefly", section="Database", field="password", vault="HomeLab") }}'
+      - key: MYSQL_USE_SSL
+        value: 'false'
+      - key: CACHE_DRIVER
+        value: file
+      - key: SESSION_DRIVER
+        value: file
+      - key: MAP_DEFAULT_LAT
+        value: 51.1657,10.4515
+      - key: MAP_DEFAULT_LON
+        value: 51.1657,10.4515
+      - key: MAP_DEFAULT_ZOOM
+        value: '6'
+      - key: AUTHENTICATION_GUARD
+        value: web
+      - key: STATIC_CRON_TOKEN
+        value: '{{ lookup("community.general.onepassword", "Firefly", field="STATIC_CRON_TOKEN", vault="HomeLab") }}'
+      - key: APP_NAME
+        value: FireflyIII
+      - key: BROADCAST_DRIVER
+        value: log
+      - key: QUEUE_DRIVER
+        value: sync
+      - key: CACHE_PREFIX
+        value: firefly
+      - key: FIREFLY_III_LAYOUT
+        value: v1
+      - key: APP_URL
+        value: https://firefly.berger-em.net
+
+- name: Create .importer.env file
+  ansible.builtin.template:
+    src: dot_env.j2
+    dest: '/home/{{ default_user }}/docker/firefly/.importer.env'
+    mode: '0600'
+  vars:
+    secrets:
+      - key: FIREFLY_III_URL
+        value: http://app:8080
+      - key: VANITY_URL
+        value: https://firefly.berger-em.net
+      - key: FIREFLY_III_ACCESS_TOKEN
+        value: '{{ lookup("community.general.onepassword", "Firefly", field="IMPORTER_ACCESS_TOKEN", vault="HomeLab") }}'
+      - key: NORDIGEN_ID
+        value: '{{ lookup("community.general.onepassword", "Firefly", section="GoCardless", field="id", vault="HomeLab") }}'
+      - key: NORDIGEN_SECRET
+        value: '{{ lookup("community.general.onepassword", "Firefly", section="GoCardless", field="secret", vault="HomeLab") }}'
+      - key: RESPOND_TO_GOCARDLESS_LIMIT
+        value: wait
+      - key: GOCARDLESS_GET_ACCOUNT_DETAILS
+        value: 'false'
+      - key: GOCARDLESS_GET_BALANCE_DETAILS
+        value: false
+      - key: FALLBACK_LOCALE
+        value: de_DE
+      - key: USE_CACHE
+        value: 'false'
+      - key: IGNORE_DUPLICATE_ERRORS
+        value: false
+      - key: IGNORE_NOT_FOUND_TRANSACTIONS
+        value: false
+      - key: AUTO_IMPORT_SECRET
+        value: '{{ lookup("community.general.onepassword", "Firefly", field="STATIC_CRON_TOKEN", vault="HomeLab") }}'
+      - key: CAN_POST_AUTOIMPORT
+        value: false
+      - key: CAN_POST_FILES
+        value: false
+      - key: FALLBACK_IN_DIR
+        value: false
+      - key: VERIFY_TLS_SECURITY
+        value: 'true'
+      - key: CONNECTION_TIMEOUT
+        value: '31.41'
+      - key: APP_ENV
+        value: local
+      - key: APP_DEBUG
+        value: false
+      - key: LOG_CHANNEL
+        value: stack
+      - key: TRUSTED_PROXIES
+        value: '*'
+      - key: TZ
+        value: Europe/Berlin
+      - key: ENABLE_MAIL_REPORT
+        value: false
+      - key: EXPECT_SECURE_URL
+        value: true
+      - key: FAKE_DATA
+        value: fals
+      - key: BROADCAST_DRIVER
+        value: log
+      - key: CACHE_DRIVER
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: SESSION_DRIVER
+        value: file
+      - key: SESSION_LIFETIME
+        value: '120'
+      - key: IS_EXTERNAL
+        value: 'false'
+      - key: REDIS_HOST
+        value: 127.0.0.1
+      - key: REDIS_PASSWORD
+        value: null
+      - key: REDIS_PORT
+        value: '6379'
+      - key: REDIS_DB
+        value: '0'
+      - key: REDIS_CACHE_DB
+        value: '1'
+      - key: APP_NAME
+        value: DataImporter
+      - key: APP_URL
+        value: http://localhost
+
+- name: Create .db.env file
+  ansible.builtin.template:
+    src: dot_env.j2
+    dest: '/home/{{ default_user }}/docker/firefly/.db.env'
+    mode: '0600'
+  vars:
+    secrets:
+      - key: MYSQL_RANDOM_ROOT_PASSWORD
+        value: 'yes'
+      - key: MYSQL_USER
+        value: '{{ lookup("community.general.onepassword", "Firefly", section="Database", field="username", vault="HomeLab") }}'
+      - key: MYSQL_PASSWORD
+        value: '{{ lookup("community.general.onepassword", "Firefly", section="Database", field="password", vault="HomeLab") }}'
+      - key: MYSQL_DATABASE
+        value: firefly
+
+- name: Create .toolbox.env file
+  ansible.builtin.template:
+    src: dot_env.j2
+    dest: '/home/{{ default_user }}/docker/firefly/.toolbox.env'
+    mode: '0600'
+  vars:
+    secrets:
+      # ===========================================
+      # REQUIRED: Authentication
+      # ===========================================
+      # Comma-separated list of enabled auth methods.
+      # Options: 'basic', 'oidc', 'firefly', 'none' (not recommended)
+      # Examples: AUTH_METHODS=firefly or AUTH_METHODS=basic,firefly
+      - key: AUTH_METHODS
+        value: firefly
+
+      # Session secret - REQUIRED in production
+      # Generate with: openssl rand -hex 32
+      - key: AUTH_SESSION_SECRET
+        value: '{{ lookup("community.general.onepassword", "Firefly", section="Toolbox", field="AUTH_SESSION_SECRET", vault="HomeLab") }}'
+
+      - key: AUTH_FIREFLY_CLIENT_ID
+        value: '{{ lookup("community.general.onepassword", "Firefly", section="Toolbox", field="AUTH_FIREFLY_CLIENT_ID", vault="HomeLab") }}'
+      - key: AUTH_FIREFLY_CLIENT_SECRET
+        value: '{{ lookup("community.general.onepassword", "Firefly", section="Toolbox", field="AUTH_FIREFLY_CLIENT_SECRET", vault="HomeLab") }}'
+
+      # ===========================================
+      # REQUIRED: Firefly III Configuration
+      # ===========================================
+      - key: FIREFLY_API_URL
+        value: http://app:8080
+      - key: FIREFLY_API_TOKEN
+        value: '{{ lookup("community.general.onepassword", "Firefly", section="Toolbox", field="FIREFLY_API_TOKEN", vault="HomeLab") }}'
+
+      # ===========================================
+      # REQUIRED: CORS Configuration
+      # ===========================================
+      # Set to your actual frontend URL (e.g., https://toolbox.example.com)
+      - key: CORS_ORIGINS
+        value: https://ftools.berger-em.net
+
+      # Public URL for OAuth callbacks (set when using reverse proxy)
+      - key: APP_URL
+        value: https://ftools.berger-em.net
+
+      # ===========================================
+      # Optional: AI Configuration
+      # ===========================================
+      # Choose provider: 'openai' or 'ollama' (auto-detects if not set)
+      - key: AI_PROVIDER
+        value: openai
+
+      # OpenAI Configuration
+      - key: OPENAI_API_KEY
+        value: '{{ lookup("community.general.onepassword", "Firefly", section="Toolbox", field="OPENAI_API_KEY", vault="HomeLab") }}'
+      - key: OPENAI_API_URL
+        value: https://api.openai.com/v1
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini
+
+      # Ollama Configuration (alternative to OpenAI)
+      # - OLLAMA_API_URL=http://localhost:11434
+      # - OLLAMA_MODEL=llama3.2
+
+      # ===========================================
+      # Server Configuration
+      # ===========================================
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: '3000'
+      # - LOG_LEVEL=info  # Options: debug, info, warn, error
+      - key: DEFAULT_LOCALE
+        value: de  # Default language: 'en' or 'de'
+
+- name: Create compose file
+  ansible.builtin.template:
+    src: firefly.yml.j2
+    dest: '/home/{{ default_user }}/docker/firefly/compose.yml'
+    owner: '{{ default_user }}'
+    group: '{{ default_user }}'
+    mode: '0755'
+
+# - name: Run `docker compose up`
+#   community.docker.docker_compose_v2:
+#     project_src: '/home/{{ default_user }}/docker/firefly/'
+#     recreate: always

@@ -40,6 +40,14 @@ proxy:
     hostname: 'changedetection.berger-em.net'
     proxy_host: 'http://{{ host_ip }}:5001'
 
+  - name: firefly
+    hostname: 'firefly.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:8090'
+
+  - name: firefly-toolbox
+    hostname: 'ftools.berger-em.net'
+    proxy_host: 'http://{{ host_ip }}:3000'
+
   - name: minimailer
     hostname: 'minimailer.berger-em.net'
     proxy_host: 'http://{{ host_ip }}:5000'
@@ -69,6 +77,7 @@ docker_roles:
   - name: audiobookshelf
   - name: changedetection
   - name: ddns
+  - name: firefly
   - name: portainer
   - name: teddycloud
   - name: twitch_points
